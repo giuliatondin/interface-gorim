@@ -3,7 +3,8 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { FarmersModule } from './farmers/farmers.module';
+import { AgriculturistsModule } from './agriculturists/agriculturists.module';
+import { ErrorsModule } from './errors/errors.module';
 
 @NgModule({
   declarations: [
@@ -12,7 +13,8 @@ import { FarmersModule } from './farmers/farmers.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FarmersModule
+    AgriculturistsModule,
+    ErrorsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

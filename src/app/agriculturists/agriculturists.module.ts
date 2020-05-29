@@ -2,19 +2,19 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppComponent } from '../app.component';
 
-//Components of farmers
-import { FarmerComponent } from './farmer/farmer.component';
+//Components of farmers 
+import { AgriculturistComponent } from './agriculturist/agriculturist.component';
 import { ParcelComponent } from './parcel/parcel.component';
 
 @NgModule({
   declarations: [
-    FarmerComponent,
+    AgriculturistComponent,
     ParcelComponent
   ],
   exports: [
-    FarmerComponent
+    AgriculturistComponent
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class FarmersModule{}
+export class AgriculturistsModule{}
