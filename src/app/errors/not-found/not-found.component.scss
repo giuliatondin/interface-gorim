@@ -1,0 +1,16 @@
+@import "../../../styles.scss";
+.not-found {
+    display: flex;
+    flex-flow: column;
+    padding-top: 180px;
+    align-items: center;
+    img {
+        width: 80px;
+        height: 120px;
+        margin-bottom: 35px;
+    }
+    @include media-breakpoint-down(sm) {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+}

@@ -7,6 +7,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NotFoundComponent implements OnInit {
 
+  description = "Página não encontrada :("
+  image = {
+    link: '../../../assets/imgs/not-found-icon.png',
+    alt: 'Icone da pagina nao encontrada',
+    title: 'Página não encontrada'
+  }
+
   constructor() { }
 
   ngOnInit(): void {
