@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AgriculturistsModule } from './agriculturists/agriculturists.module';
 import { ErrorsModule } from './errors/errors.module';
+import { WorldModule } from './world/world.module';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { ErrorsModule } from './errors/errors.module';
     BrowserModule,
     AppRoutingModule,
     AgriculturistsModule,
+    WorldModule,
     ErrorsModule
   ],
   providers: [],
