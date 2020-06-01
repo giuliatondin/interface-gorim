@@ -1,4 +1,5 @@
-export interface Agriculturist {
+import { Person } from '../../world/person';
+export interface Agriculturist extends Person {
     qtdParcelas: number;
     idParcelaInicio: number;
     produtividade: number;
@@ -6,5 +7,4 @@ export interface Agriculturist {
     imposto: number;
     multa: number;
     gastos: number;
-    //Others infos in interface Person
 }
