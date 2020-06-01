@@ -2,8 +2,11 @@
 .not-found {
     display: flex;
     flex-flow: column;
-    padding-top: 200px;
+    margin-top: 180px;
     align-items: center;
+    background-color: #fff;
+    padding-top: 20px;
+    padding-bottom: 20px;
     img {
         width: 80px;
         height: 120px;

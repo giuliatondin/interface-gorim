@@ -2,10 +2,16 @@ html {
     height: 100%;
 }
 
-body,
+.body,
 h2 {
     font-family: $text-font;
     color: $main-color;
+}
+
+.body {
+    background-image: url('/assets/imgs/background-img.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 h2 {
@@ -18,4 +24,16 @@ h2 {
     -moz-box-shadow: -1px 5px 40px 5px rgba(0, 0, 0, 0.31);
     box-shadow: -1px 5px 40px 5px rgba(0, 0, 0, 0.31);
     background-color: #fff;
+}
+
+.btn--primary {
+    border: 2px solid $btn-primary;
+    font-weight: 600;
+    color: $btn-primary;
+    margin: 0 auto;
+    display: block;
+    &:hover {
+        background-color: $btn-primary;
+        color: #fff;
+    }
 }
