@@ -2,10 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './header/header.component';
 import { TransferComponent } from './transfer/transfer.component';
-import { PurchaseComponent } from './purchase/purchase.component';
 
 @NgModule({
-  declarations: [HeaderComponent, TransferComponent, PurchaseComponent],
+  declarations: [HeaderComponent, TransferComponent],
   imports: [
     CommonModule
   ], 

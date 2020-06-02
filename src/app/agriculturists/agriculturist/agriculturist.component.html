@@ -6,10 +6,16 @@
             <div class="col-md-8 col-xl-7">
                 <mat-tab-group mat-align-tabs="center">
                     <mat-tab label="Parcelas">
-                        <app-parcel></app-parcel>
+                        <div *ngIf="existProducts; then parcelBlock else alertBlock"></div>
+                        <ng-template #parcelBlock>
+                            <app-parcel></app-parcel>
+                        </ng-template>
+                        <ng-template #alertBlock>
+                            <app-alert></app-alert>
+                        </ng-template>
                     </mat-tab>
                     <mat-tab label="Comprar produtos">
-                        Comprar produtos
+                        <app-purchase></app-purchase>
                     </mat-tab>
                     <mat-tab label="Valores dos produtos">
                         Valores dos produtos

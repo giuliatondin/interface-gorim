@@ -1,17 +1,22 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTabsModule } from '@angular/material/tabs'; 
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatSelectModule} from '@angular/material/select'; 
 import { AppComponent } from '../app.component';
 
 //Components of farmers 
 import { AgriculturistComponent } from './agriculturist/agriculturist.component';
 import { ParcelComponent } from './parcel/parcel.component';
 import { WorldModule } from '../world/world.module';
+import { PurchaseComponent } from './purchase/purchase.component';
+import { AlertComponent } from './alert/alert.component';
 
 @NgModule({
   declarations: [
     AgriculturistComponent,
-    ParcelComponent
+    ParcelComponent,
+    AlertComponent,
+    PurchaseComponent
   ],
   exports: [
     AgriculturistComponent,
@@ -19,7 +24,8 @@ import { WorldModule } from '../world/world.module';
   imports:[
     CommonModule,
     WorldModule,
-    MatTabsModule
+    MatTabsModule, 
+    MatSelectModule
   ],
   providers: [],
   bootstrap: [AppComponent]

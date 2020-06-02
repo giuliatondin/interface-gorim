@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AgriculturistComponent implements OnInit {
 
-  description = 'Almost before we knew it, we had left the ground'
+  existProducts = true;
 
   constructor() { }
 
