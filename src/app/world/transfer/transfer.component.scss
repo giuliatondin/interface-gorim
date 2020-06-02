@@ -18,11 +18,11 @@
         padding: 0;
     }
     &--btn {
-        border: 2px solid $bg-color;
+        border: 2px solid $btn-color;
         font-weight: 600;
         width: 50px;
         &:hover {
-            background-color: $bg-color;
+            background-color: $btn-color;
         }
         &--img {
             width: 20px;

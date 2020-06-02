@@ -4,7 +4,17 @@
         <hr>
         <div class="row">
             <div class="col-md-8 col-xl-7">
-                <app-parcel></app-parcel>
+                <mat-tab-group mat-align-tabs="center">
+                    <mat-tab label="Parcelas">
+                        <app-parcel></app-parcel>
+                    </mat-tab>
+                    <mat-tab label="Comprar produtos">
+                        Comprar produtos
+                    </mat-tab>
+                    <mat-tab label="Valores dos produtos">
+                        Valores dos produtos
+                    </mat-tab>
+                </mat-tab-group>
             </div>
             <div class="col-md-4 col-xl-5">
                 <app-transfer></app-transfer>

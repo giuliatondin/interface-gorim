@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatTabsModule } from '@angular/material/tabs'; 
 import { AppComponent } from '../app.component';
 
 //Components of farmers 
@@ -13,11 +14,12 @@ import { WorldModule } from '../world/world.module';
     ParcelComponent
   ],
   exports: [
-    AgriculturistComponent
+    AgriculturistComponent,
   ],
   imports:[
     CommonModule,
-    WorldModule
+    WorldModule,
+    MatTabsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

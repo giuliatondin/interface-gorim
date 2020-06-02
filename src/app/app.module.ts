@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { AgriculturistsModule } from './agriculturists/agriculturists.module';
 import { ErrorsModule } from './errors/errors.module';
 import { WorldModule } from './world/world.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { WorldModule } from './world/world.module';
     AppRoutingModule,
     AgriculturistsModule,
     WorldModule,
-    ErrorsModule
+    ErrorsModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

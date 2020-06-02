@@ -27,13 +27,13 @@ h2 {
 }
 
 .btn--primary {
-    border: 2px solid $btn-primary;
-    font-weight: 600;
-    color: $btn-primary;
+    border: 2px solid $btn-color;
+    font-weight: 500;
+    color: $btn-color;
     margin: 0 auto;
     display: block;
     &:hover {
-        background-color: $btn-primary;
+        background-color: $btn-color;
         color: #fff;
     }
 }

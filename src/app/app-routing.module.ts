@@ -3,14 +3,13 @@ import { Routes, RouterModule } from '@angular/router';
 //List of components
 import { AgriculturistComponent } from './agriculturists/agriculturist/agriculturist.component';
 import { NotFoundComponent } from './errors/not-found/not-found.component';
-import { ParcelComponent } from './agriculturists/parcel/parcel.component';
 
 
 const routes: Routes = [
   {
     //Welcome page, only for tests
     path: '', 
-    component: ParcelComponent
+    component: AgriculturistComponent
   },
   { path: 'agriculturist',
     component: AgriculturistComponent
