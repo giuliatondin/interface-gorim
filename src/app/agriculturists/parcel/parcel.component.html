@@ -1,16 +1,14 @@
 <div class="form parcel__form mt-3">
-    <div class="d-flex-mb-2">
+    <div>
         <div class="table-responsive">
-            <table class="table table-bordered">
+            <table class="table table-borderless">
+                <thead>
+                    <tr>
+                        <th scope="col">Parcela 1</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr>
-                        <td class="pt-3">
-                            <span>Parcela 1</span>
-                            <div class="form-check pl-3">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                <label class="form-check-label" for="exampleCheck1">Pedir selo verde</label>
-                            </div>
-                        </td>
                         <td>
                             <div class="form-group d-flex flex-column">
                                 <label for="seed" class="mb-0 mr-2">Semente</label>
@@ -21,12 +19,30 @@
                                 </select>
                             </div>
                             <div class="form-group d-flex flex-column">
+                                <label for="seed" class="mb-0 mr-2">Preço</label>
+                                <select class="form-control form-control-sm" id="seed">
+                                    <option>R$100,00</option>
+                                    <option>R$130,00</option>
+                                    <option>R$150,00</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group d-flex flex-column">
                                 <label for="seed" class="mb-0 mr-2">Fertilizante</label>
                                 <select class="form-control form-control-sm" id="seed">
-                                    <option>Nenhum</option>
-                                    <option>Fertilizante 1</option>
-                                    <option>Fertilizante 2</option>
-                                </select>
+                                        <option>Nenhum</option>
+                                        <option>Fertilizante 1</option>
+                                        <option>Fertilizante 2</option>
+                                    </select>
+                            </div>
+                            <div class="form-group d-flex flex-column">
+                                <label for="seed" class="mb-0 mr-2">Preço</label>
+                                <select class="form-control form-control-sm" id="seed">
+                                        <option>R$100,00</option>
+                                        <option>R$130,00</option>
+                                        <option>R$150,00</option>
+                                    </select>
                             </div>
                         </td>
                         <td>
@@ -39,6 +55,16 @@
                                 </select>
                             </div>
                             <div class="form-group d-flex flex-column">
+                                <label for="seed" class="mb-0 mr-2">Preço</label>
+                                <select class="form-control form-control-sm" id="seed">
+                                        <option>R$100,00</option>
+                                        <option>R$130,00</option>
+                                        <option>R$150,00</option>
+                                    </select>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group d-flex flex-column">
                                 <label for="seed" class="mb-0 mr-2">Máquina</label>
                                 <select class="form-control form-control-sm" id="seed">
                                     <option>Nenhuma</option>
@@ -46,9 +72,27 @@
                                     <option>Máquina 2</option>
                                 </select>
                             </div>
-                            <div class="form-check pl-4">
+                            <div class="form-group d-flex flex-column">
+                                <label for="seed" class="mb-0 mr-2">Preço</label>
+                                <select class="form-control form-control-sm" id="seed">
+                                        <option>R$100,00</option>
+                                        <option>R$130,00</option>
+                                        <option>R$150,00</option>
+                                    </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check pl-3">
                                 <input type="checkbox" class="form-check-input" id="exampleCheck1">
                                 <label class="form-check-label" for="exampleCheck1">Pulverizador</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-check pl-3">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                <label class="form-check-label" for="exampleCheck1">Pedir selo verde</label>
                             </div>
                         </td>
                     </tr>
@@ -56,5 +100,5 @@
             </table>
         </div>
     </div>
-    <button type="submit" class="btn btn--primary mt-4 mb-3">Terminar jogada</button>
+    <button type="submit" class="btn btn--primary mb-3">Terminar jogada</button>
 </div>
