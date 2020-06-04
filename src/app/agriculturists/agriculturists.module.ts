@@ -8,14 +8,12 @@ import { AppComponent } from '../app.component';
 import { AgriculturistComponent } from './agriculturist/agriculturist.component';
 import { ParcelComponent } from './parcel/parcel.component';
 import { WorldModule } from '../world/world.module';
-import { AlertComponent } from './alert/alert.component';
 import { StockComponent } from './stock/stock.component';
 
 @NgModule({
   declarations: [
     AgriculturistComponent,
     ParcelComponent,
-    AlertComponent,
     StockComponent
   ],
   exports: [

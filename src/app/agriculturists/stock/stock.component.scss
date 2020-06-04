@@ -1,0 +1,10 @@
+@import "../../../styles.scss";
+form {
+    overflow: hidden;
+    select {
+        margin-bottom: 20px;
+        @media (min-width: 576px) {
+            margin-bottom: 0px;
+        }
+    }
+}
