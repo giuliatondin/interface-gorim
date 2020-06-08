@@ -12,10 +12,10 @@ const routes: Routes = [
     path: '', 
     component: AgriculturistComponent
   },
-  { path: 'agriculturist',
+  { path: 'agricultor', //agriculturist
     component: AgriculturistComponent
   },
-  { path: 'entrepreneur',
+  { path: 'empresario', //entrepreneur 
     component: EntrepreneurComponent
   },
   { path: '**', component: NotFoundComponent}
