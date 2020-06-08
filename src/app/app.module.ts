@@ -7,6 +7,7 @@ import { AgriculturistsModule } from './agriculturists/agriculturists.module';
 import { ErrorsModule } from './errors/errors.module';
 import { WorldModule } from './world/world.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { EntrepreneursModule } from './entrepreneurs/entrepreneurs.module';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BrowserModule,
     AppRoutingModule,
     AgriculturistsModule,
+    EntrepreneursModule,
     WorldModule,
     ErrorsModule,
     BrowserAnimationsModule
