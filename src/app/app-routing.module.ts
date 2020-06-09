@@ -5,6 +5,7 @@ import { AgriculturistComponent } from './agriculturists/agriculturist/agricultu
 import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { EntrepreneurComponent } from './entrepreneurs/entrepreneur/entrepreneur.component';
 import { AgriculturistHistoryComponent } from './agriculturists/agriculturist-history/agriculturist-history.component';
+import { EntrepreneurHistoryComponent } from './entrepreneurs/entrepreneur-history/entrepreneur-history.component';
 
 const routes: Routes = [
   {
@@ -18,8 +19,12 @@ const routes: Routes = [
   { path: 'empresario', //entrepreneur 
     component: EntrepreneurComponent
   },
-  { path: 'historico-agricultor', //history
+  { path: 'historico-agricultor', //history-agriculturist
     component: AgriculturistHistoryComponent
+  },
+  {
+    path: 'historico-empresario', //history-entrepreneur
+    component: EntrepreneurHistoryComponent
   },
   { path: '**', component: NotFoundComponent}
 ];
