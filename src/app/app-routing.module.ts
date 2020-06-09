@@ -6,18 +6,23 @@ import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { EntrepreneurComponent } from './entrepreneurs/entrepreneur/entrepreneur.component';
 import { AgriculturistHistoryComponent } from './agriculturists/agriculturist-history/agriculturist-history.component';
 import { EntrepreneurHistoryComponent } from './entrepreneurs/entrepreneur-history/entrepreneur-history.component';
+import { MasterComponent } from './master/master.component';
 
 const routes: Routes = [
   {
     //Welcome page, only for tests
     path: '', 
-    component: AgriculturistComponent
+    component: MasterComponent
   },
   { path: 'agricultor', //agriculturist
     component: AgriculturistComponent
   },
   { path: 'empresario', //entrepreneur 
     component: EntrepreneurComponent
+  },
+  {
+    path: 'mestre', //master
+    component: MasterComponent
   },
   { path: 'historico-agricultor', //history-agriculturist
     component: AgriculturistHistoryComponent
