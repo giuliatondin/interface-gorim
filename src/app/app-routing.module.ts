@@ -4,8 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AgriculturistComponent } from './agriculturists/agriculturist/agriculturist.component';
 import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { EntrepreneurComponent } from './entrepreneurs/entrepreneur/entrepreneur.component';
-import { HistoryComponent } from './world/history/history.component';
-
+import { AgriculturistHistoryComponent } from './agriculturists/agriculturist-history/agriculturist-history.component';
 
 const routes: Routes = [
   {
@@ -19,8 +18,8 @@ const routes: Routes = [
   { path: 'empresario', //entrepreneur 
     component: EntrepreneurComponent
   },
-  { path: 'historico', //history
-    component: HistoryComponent
+  { path: 'historico-agricultor', //history
+    component: AgriculturistHistoryComponent
   },
   { path: '**', component: NotFoundComponent}
 ];
