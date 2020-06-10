@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-
 @Component({
   selector: 'app-product-ordered',
   templateUrl: './product-ordered.component.html',
