@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-table-values',
@@ -6,6 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./table-values.component.scss']
 })
 export class TableValuesComponent implements OnInit {
+
+  @Input() role: string;
 
   constructor() { }
 

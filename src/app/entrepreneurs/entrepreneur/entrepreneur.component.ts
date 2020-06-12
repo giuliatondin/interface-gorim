@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EntrepreneurComponent implements OnInit {
 
+  role="entrepreneur"
+
   constructor() { }
 
   ngOnInit(): void {

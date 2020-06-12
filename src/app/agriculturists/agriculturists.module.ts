@@ -9,7 +9,6 @@ import { AppComponent } from '../app.component';
 import { AgriculturistComponent } from './agriculturist/agriculturist.component';
 import { ParcelComponent } from './parcel/parcel.component';
 import { WorldModule } from '../world/world.module';
-import { StockComponent } from './stock/stock.component';
 import { AgriculturistHistoryComponent } from './agriculturist-history/agriculturist-history.component';
 import { HistoryListComponent } from './agriculturist-history/history-list/history-list.component';
 
@@ -17,7 +16,6 @@ import { HistoryListComponent } from './agriculturist-history/history-list/histo
   declarations: [
     AgriculturistComponent,
     ParcelComponent,
-    StockComponent,
     AgriculturistHistoryComponent,
     HistoryListComponent
   ],

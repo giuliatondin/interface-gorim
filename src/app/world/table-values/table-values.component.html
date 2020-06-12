@@ -12,23 +12,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <tr *ngIf="role === 'entrepreneur'">
                         <th scope="row" class="type">Baixo</th>
-                        <td>R$80,000</td>
-                        <td>R$85,00</td>
-                        <td>R$90,00</td>
+                        <td>D$80,000</td>
+                        <td>D$85,00</td>
+                        <td>D$90,00</td>
                     </tr>
                     <tr>
                         <th scope="row" class="type">Médio</th>
-                        <td>R$80,000</td>
-                        <td>R$85,00</td>
-                        <td>R$90,00</td>
+                        <td>D$80,000</td>
+                        <td>D$85,00</td>
+                        <td>D$90,00</td>
                     </tr>
-                    <tr>
+                    <tr *ngIf="role as entrepreneur">
                         <th scope="row" class="type">Alto</th>
-                        <td>R$80,000</td>
-                        <td>R$85,00</td>
-                        <td>R$90,00</td>
+                        <td>D$80,000</td>
+                        <td>D$85,00</td>
+                        <td>D$90,00</td>
                     </tr>
                 </tbody>
             </table>
