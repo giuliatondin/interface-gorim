@@ -18,26 +18,26 @@ export class EntrepreunersService{
 
     /**
      * 
-     * @param numParcel 1~6
-     * @param idProduct 1~13
-     * @param idAgriculturist 5~[playerQuantity-4]
-     * @param productPrice 'b' = 0 || 'm' = 1 || 'a' = 2
+     * @param numParcela 1~6
+     * @param idProd 1~13
+     * @param idAgr 5~[playerQuantity-4]
+     * @param precoProd 'b' = 0 || 'm' = 1 || 'a' = 2
      */
     postEntrepreunerSellFormParcel(
-        idEntrepreuner: number,
-        numParcel: number,
-        idProduct: number,
-        idAgriculturist: number,
-        productPrice: number
+        id: number,
+        numParcela: number,
+        idProd: number,
+        idAgr: number,
+        precoProd: number
     ){
         const formData = new FormData();
-        formData.append('prod', idProduct.toString());
-        formData.append('idAgr', idAgriculturist.toString());
-        formData.append('numParcela', numParcel.toString());
-        formData.append('precoProd', productPrice.toString());
+        formData.append('prod', idProd.toString());
+        formData.append('idAgr', idAgr.toString());
+        formData.append('numParcela', numParcela.toString());
+        formData.append('precoProd', precoProd.toString());
 
         return this.httpClient.post(
-            API + idEntrepreuner + '/venda',
+            API + id + '/venda',
             formData
         );
     }
@@ -48,7 +48,7 @@ export class EntrepreunersService{
     ){
         const formData = new FormData();
         formData.append('id', id.toString());
-        //formData.append('transfers', );
+        //formData.append('transferencias', );
 
         return this.httpClient.post(
             API,
