@@ -33,13 +33,13 @@ export class AgriculturistsService{
     
     postAgricultiristForm(
         id: number,
-        //transfers: array,
-        //requests: array
+        //transferencias: array,
+        //pedidos: array
     ){
         const formData = new FormData();
         formData.append("id", id.toString());
-        // formData.append("transfers", );
-        // formData.append("requests", );
+        // formData.append("transferencias", );
+        // formData.append("pedidos", );
 
         return this.httpClient.post(
             API,
