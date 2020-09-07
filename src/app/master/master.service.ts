@@ -16,10 +16,10 @@ export class MasterService{
     }
 
     iniciaJogada(
-        playerQuantity : number
+        quantidadeJogadores : number
     ){
         const formData = new FormData();
-        formData.append("playerQuantity", playerQuantity.toString());
+        formData.append("quantidadeJogadores", quantidadeJogadores.toString());
         return this.httpClient.post(
             API,
             formData
