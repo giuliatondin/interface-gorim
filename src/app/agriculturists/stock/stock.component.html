@@ -1,0 +1,41 @@
+<div class="stockForm">
+    <div class="alert alert-secondary mt-3 text-center" role="alert">
+        Os produtos adquiridos aqui serão incluídos no seu estoque. Caso não utilize todos os produtos adquiridos nessa rodada, você poderá utilizá-los nas próximas.
+    </div>
+    <form action="">
+        <div class="row mb-sm-3">
+            <div class="col-sm-6 d-flex flex-column">
+                <label for="seed" class="mb-0 mr-2">Empresário de</label>
+                <select class="form-control form-control-sm" id="seed">
+                <option>Sementes</option>
+                <option>Agrotóxicos</option>
+                <option>Fertilizantes</option>
+                <option>Máquinas</option>
+            </select>
+            </div>
+            <div class="col-sm-6 d-flex flex-column">
+                <label for="seed" class="mb-0 mr-2">Produtos</label>
+                <select class="form-control form-control-sm" id="seed">
+                <option>Semente 1</option>
+                <option>Semente 2</option>
+                <option>Semente 3</option>
+            </select>
+            </div>
+        </div>
+        <div class="row align-items-sm-center">
+            <div class="col-sm-6 d-flex flex-column">
+                <label for="seed" class="mb-0 mr-2">Preço</label>
+                <select class="form-control form-control-sm" id="seed">
+                <option>D$80,00</option>
+                <option>D$85,00</option>
+                <option>D$90,00</option>
+            </select>
+            </div>
+            <div class="col-sm-6 d-flex flex-column">
+                <label for="quantity" class="mb-0 mr-2">Quantidade</label>
+                <input class="form-control" onKeyDown="return false" placeholder="0" type="number" id="quantity" name="quantity" min="1" max="5">
+            </div>
+        </div>
+        <button type="submit" class="btn btn--primary mb-3 mt-4">Solicitar</button>
+    </form>
+</div>
