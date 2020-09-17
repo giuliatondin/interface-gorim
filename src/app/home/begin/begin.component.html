@@ -1,0 +1,16 @@
+<div class="container">
+    <h3 class="text-center">Novo Jogo</h3>
+    <form [formGroup]="beginForm" (submit)="comecarJogo()">
+        <div>
+            <label for="quantidadeJogadores">Quantidade de Jogadores</label>
+            <input #quantidadeJogadoresInput
+                formControlName="quantidadeJogadores"
+                type="number"
+                min="6"
+                max="16"
+                class="form-control form-control-sm"
+            >
+            <button class="btn btn--secondary mt-3" type="submit">Começar</button>
+        </div>
+    </form>
+</div>

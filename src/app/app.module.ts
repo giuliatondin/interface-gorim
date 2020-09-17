@@ -9,6 +9,7 @@ import { WorldModule } from './world/world.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EntrepreneursModule } from './entrepreneurs/entrepreneurs.module';
 import { MasterModule } from './master/master.module';
+import { HomeModule } from './home/home.module';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { MasterModule } from './master/master.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HomeModule,
     AgriculturistsModule,
     EntrepreneursModule,
     MasterModule,

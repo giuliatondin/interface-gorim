@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 
-const API = environment.ApiUrl + '/mestre';
+import { World } from '../world/world';
+
+const API = environment.ApiUrl + '/request/api/mestre';
 
 @Injectable({
     providedIn: 'root'
@@ -13,17 +15,6 @@ export class MasterService{
         private httpClient : HttpClient
     ){
         //
-    }
-
-    iniciaJogada(
-        quantidadeJogadores : number
-    ){
-        const formData = new FormData();
-        formData.append("quantidadeJogadores", quantidadeJogadores.toString());
-        return this.httpClient.post(
-            API,
-            formData
-        );
     }
 
     finalizarEtapa(){
@@ -42,6 +33,12 @@ export class MasterService{
     getAgriculturists(){
         return this.httpClient.get(
             API + '/agricultores'
+        );
+    }
+
+    getInfoMundo(){
+        return this.httpClient.get<World>(
+            API + '/infoMundo'
         );
     }
 }
