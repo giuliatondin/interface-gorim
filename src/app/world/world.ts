@@ -4,4 +4,5 @@ export interface World{
     poluicaoMundo: number;
     produtividadeMundo: number;
     idJogo: string;
+    quantidadeJogadores: number;
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit/*, ViewChild, ElementRef*/ } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { BeginService } from './begin.service';
 
@@ -17,7 +17,8 @@ export class BeginComponent implements OnInit{
     constructor(
         private formBuilder: FormBuilder,
         private router: Router,
-        private beginService: BeginService
+        private beginService: BeginService,
+        private route: ActivatedRoute
     ){
         //
     }
@@ -26,6 +27,7 @@ export class BeginComponent implements OnInit{
         this.beginForm = this.formBuilder.group({
             quantidadeJogadores: [
                 '', [
+                    Validators.required,
                     Validators.max(16),
                     Validators.min(6)
                 ]
@@ -38,11 +40,15 @@ export class BeginComponent implements OnInit{
         this.beginService
             .iniciaJogada(quantidadeJogadores)
             .subscribe(
-                () => this.router.navigate(['mestre']),
+                () => {
+                    const idJogo = 1;
+                    // get idJogo
+                    this.router.navigate([idJogo, 'mestre'], { replaceUrl: true });
+                },
                 err => {
                     console.log(err);
                     this.beginForm.reset();
-                    alert("Something went wrong. Please, try again.")
+                    alert("Something went wrong. Please, try again.");
                 }
             )
     }

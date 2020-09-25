@@ -11,18 +11,18 @@ import { MasterComponent } from './master/master.component';
 
 const routes: Routes = [
   {
-    //Welcome page, only for tests
+    //Welcome page
     path: '', 
     component: HomeComponent
   },
-  { path: 'agricultor', //agriculturist
+  { path: ':idJogo/agricultor/:idPersonagem', //agriculturist
     component: AgriculturistComponent
   },
-  { path: 'empresario', //entrepreneur 
+  { path: ':idJogo/empresario/:idPersonagem', //entrepreneur 
     component: EntrepreneurComponent
   },
   {
-    path: 'mestre', //master
+    path: ':idJogo/mestre', //master
     component: MasterComponent
   },
   { path: 'historico-agricultor', //history-agriculturist

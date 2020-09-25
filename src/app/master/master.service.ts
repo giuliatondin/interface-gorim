@@ -36,9 +36,11 @@ export class MasterService{
         );
     }
 
-    getInfoMundo(){
+    getInfoMundo(
+        idJogo: number
+    ){
         return this.httpClient.get<World>(
-            API + '/infoMundo'
+            API + '/infoMundo/' + idJogo
         );
     }
 }

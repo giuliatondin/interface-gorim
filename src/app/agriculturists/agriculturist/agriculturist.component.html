@@ -1,23 +1,41 @@
-<div class="content pt-5 pb-5">
-    <div class="container main__block pt-2 pb-3 pl-3 pr-3">
-        <app-header></app-header>
-        <hr>
-        <div class="row">
-            <div class="col-md-8 col-xl-7">
-                <mat-tab-group mat-align-tabs="center">
-                    <mat-tab label="Parcelas">
-                        <app-parcel></app-parcel>
-                    </mat-tab>
-                    <mat-tab label="Valores dos produtos">
-                        <app-table-values></app-table-values>
-                    </mat-tab>
-                </mat-tab-group>
-            </div>
-            <div class="col-md-4 col-xl-5">
-                <a href="/historico-agricultor" target="_blank" class="btn btn--primary mb-2">Abrir histórico</a>
-                <app-transfer></app-transfer>
-                <button class="btn btn--secondary mt-3">Finalizar jogada</button>
+<div class="content pt-5 pb-5" *ngIf="(infoAgr$ | async) as agr">
+    <div *ngIf="(infoMundo$ | async) as mundo">
+        <div class="container main__block pt-2 pb-3 pl-3 pr-3">
+        
+            <app-header
+                [nomePersonagem]="agr.nome"
+                [dinheiros]="agr.saldo"
+                [cidade]="agr.cidade"
+                [rodada]="mundo.rodada"
+                [poluicaoMundo]="mundo.poluicaoMundo"
+            ></app-header>
+            <hr>
+    
+            <i tabindex="0" (keyup.space)="sidebar.toggle()" (click)="sidebar.toggle()" class="fa fa-bars mr-2"></i>
+    
+            <div class="row">
+                <div class="col-md-8 col-xl-7">
+                    <mat-tab-group mat-align-tabs="center">
+                        <mat-tab label="Parcelas">
+                            <app-parcel></app-parcel>
+                        </mat-tab>
+                        <mat-tab label="Valores dos produtos">
+                            <app-table-values></app-table-values>
+                        </mat-tab>
+                    </mat-tab-group>
+                </div>
+                <div class="col-md-4 col-xl-5">
+                    <a href="/historico-agricultor" target="_blank" class="btn btn--primary mb-2">Abrir histórico</a>
+                    <app-transfer></app-transfer>
+                    <button class="btn btn--secondary mt-3">Finalizar jogada</button>
+                </div>
             </div>
         </div>
     </div>
+            
+    <app-sidebar #sidebar>
+        <app-vendacard
+            [idAgr]="idPersonagem"
+        ></app-vendacard>
+    </app-sidebar>
 </div>

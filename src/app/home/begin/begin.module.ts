@@ -1,11 +1,11 @@
 import { NgModule, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 import { BeginComponent } from './begin.component';
 import { BeginService } from './begin.service';
-import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
     declarations: [

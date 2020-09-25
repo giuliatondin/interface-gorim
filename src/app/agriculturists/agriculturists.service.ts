@@ -3,8 +3,10 @@ import { HttpClient } from '@angular/common/http'
 
 import { environment } from 'src/environments/environment';
 import { Agriculturist } from './agriculturist/agriculturist';
+import { World } from '../world/world';
 
 const API = environment.ApiUrl + '/request/api/agricultor';
+const APIMundo = environment.ApiUrl + '/request/api/mestre';
 
 @Injectable({
     providedIn: 'root'
@@ -44,6 +46,14 @@ export class AgriculturistsService{
         return this.httpClient.post(
             API,
             formData
+        );
+    }
+
+    getInfoMundo(
+        idJogo: number
+    ){
+        return this.httpClient.get<World>(
+            APIMundo + '/infoMundo/' + idJogo
         );
     }
 

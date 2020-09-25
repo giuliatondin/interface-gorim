@@ -11,25 +11,30 @@ import { ParcelComponent } from './parcel/parcel.component';
 import { WorldModule } from '../world/world.module';
 import { AgriculturistHistoryComponent } from './agriculturist-history/agriculturist-history.component';
 import { HistoryListComponent } from './agriculturist-history/history-list/history-list.component';
+import { VendaComponent } from '../agriculturists/venda/venda.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [
-    AgriculturistComponent,
-    ParcelComponent,
-    AgriculturistHistoryComponent,
-    HistoryListComponent
-  ],
-  exports: [
-    AgriculturistComponent,
-  ],
-  imports:[
-    CommonModule,
-    WorldModule,
-    MatTabsModule, 
-    MatSelectModule,
-    MatExpansionModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    declarations: [
+        AgriculturistComponent,
+        ParcelComponent,
+        AgriculturistHistoryComponent,
+        HistoryListComponent,
+        VendaComponent
+    ],
+    exports: [
+        AgriculturistComponent,
+    ],
+    imports:[
+        CommonModule,
+        WorldModule,
+        MatTabsModule, 
+        MatSelectModule,
+        MatExpansionModule,
+        FormsModule,
+        ReactiveFormsModule,
+    ],
+    providers: [],
+    bootstrap: [ AppComponent ]
 })
 export class AgriculturistsModule{}

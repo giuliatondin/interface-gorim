@@ -3,8 +3,10 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from 'src/environments/environment';
 import { Entrepreneur } from './entrepreneur/entrepreneur';
+import { World } from '../world/world';
 
 const API = environment.ApiUrl + '/request/api/empresario';
+const APIMundo = environment.ApiUrl + '/request/api/mestre';
 
 @Injectable({
     providedIn: 'root'
@@ -69,7 +71,15 @@ export class EntrepreunersService{
         id: number
     ){
         return this.httpClient.get<Entrepreneur>(
-            API + id
+            API + "/" + id
+        );
+    }
+
+    getInfoMundo(
+        idJogo: number
+    ){
+        return this.httpClient.get<World>(
+            APIMundo + '/infoMundo/' + idJogo
         );
     }
 }
