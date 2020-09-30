@@ -14,7 +14,7 @@ import { Agriculturist } from './agriculturist';
 export class AgriculturistComponent implements OnInit {
 
     infoAgr$: Observable<Agriculturist>;
-    idPersonagem: number;
+    idAgr: number;
 
     existProducts = true;
 
@@ -27,11 +27,11 @@ export class AgriculturistComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.idPersonagem = this.activatedRoute.snapshot.params.idPersonagem;
+        this.idAgr = this.activatedRoute.snapshot.params.idAgr;
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
-        console.log(this.idPersonagem);
+        console.log(this.idAgr);
         this.infoMundo$ = this.agrService.getInfoMundo(this.idJogo);
-        this.infoAgr$ = this.agrService.getInfo(this.idPersonagem);
+        this.infoAgr$ = this.agrService.getInfo(this.idAgr);
     }
 
 }

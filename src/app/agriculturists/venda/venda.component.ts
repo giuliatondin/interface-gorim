@@ -2,7 +2,8 @@ import { InvokeFunctionExpr } from '@angular/compiler';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, interval } from 'rxjs';
+import { flatMap, map } from 'rxjs/operators';
 
 import { Venda } from './venda';
 import { VendaService } from './venda.service';
@@ -21,77 +22,66 @@ export class VendaComponent implements OnInit{
 
     @Input() idAgr: number;
     idEmp: number;
-    sucesso: boolean;
-    idProduto: number;
-    quantidade: number;
-    preco: string;
 
     constructor(
-        private vendaService: VendaService,
-        private formBuilder: FormBuilder,
-        private activatedRoute: ActivatedRoute
+        private vendaService: VendaService
     ){
         //
     }
 
     ngOnInit(){
-        /*this.activatedRoute.params.subscribe(
-            params => {
-                this.idAgr = params.idAgr;
-            }
-        )*/
         this.getOrcamentos();
-
-        // idAgr: number;
-        // idEmp: number;
-        // sucesso: boolean;
-        // idProduto: number;
-        // quantidade: number;
-        // preco: string;
-
-        // this.comprasForm = this.formBuilder.group({
-        //     idAgr: [
-        //         , [
-        //             Validators.required
-        //         ]
-        //     ],
-        //     idEmp: [
-        //         , [
-        //             Validators.required
-        //         ]
-        //     ],
-        //     idProduto: [
-        //         , [
-        //             Validators.required
-        //         ]
-        //     ],
-        //     quantidade: [
-        //         , [
-        //             Validators.required
-        //         ]
-        //     ],
-        //     preco: [
-        //         , [
-        //             Validators.required
-        //         ]
-        //     ],
-        //     aleatorio: [
-
-        //     ]
-        // });
     }
 
     getOrcamentos(){
-        this.vendaService.getOrcamentos(this.idAgr)
-        .subscribe(
-            (data: Venda[]) => {
-                this.orcamentos = data;
-                console.log(this.orcamentos);
-            }
-        );
+        interval(10 * 1000)
+            .pipe(
+                flatMap(() => this.vendaService.getOrcamentos(this.idAgr))
+            )
+            .subscribe(
+                (data: Venda[]) => {
+                    this.orcamentos = data;
+                    console.log(this.orcamentos);
+                }
+            );
     }
 
-    comprar(){
-        //
+    apagarOrcamento(orcamento: Venda): Observable<any>{
+        return this.vendaService.apagarOrcamento(this.idAgr, orcamento);
+    }
+
+    salvarCompra(venda: Venda, resposta: boolean){
+        venda.sucesso = resposta;
+        this.apagarOrcamento(venda)
+            .subscribe(
+                () => {
+                    console.log("adicionando venda");
+                    this.vendaService.adicionaVendaById(venda.idEmp, venda)
+                        .subscribe(
+                            () => {
+                                this.vendaService.getOrcamentos(this.idAgr)
+                                    .subscribe(
+                                        (data: Venda[]) => {
+                                            this.orcamentos = data;
+                                            console.log(this.orcamentos);
+                                        }
+                                    );
+                            },
+                            err => console.log("Erro subscribe 'venda.component.adicionaVendaById()'" + err)
+                        )
+                },
+                err => console.log(err)
+            )
+            // .pipe(map(
+            //     () => this.vendaService.adicionaVendaById(venda.idEmp, venda),
+            //     err => console.log(err)
+            // ));
+        // this.vendaService.getOrcamentos(this.idAgr)
+        //     .subscribe(
+        //         (data: Venda[]) => {
+        //             this.orcamentos = data;
+        //             console.log(this.orcamentos);
+        //         }
+        //     );
     }
 }

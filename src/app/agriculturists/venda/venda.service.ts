@@ -4,7 +4,7 @@ import { environment } from 'src/environments/environment';
 
 import { Venda } from 'src/app/agriculturists/venda/venda';
 
-const API = environment.ApiUrl + '/request/api/agricultor/';
+const API = environment.ApiUrl + '/request/api/agricultor/venda/';
 
 @Injectable({
     providedIn: 'root'
@@ -21,18 +21,32 @@ export class VendaService {
         idAgr: number
     ){
         return this.httpClient.get<Venda[]>(
-            API + 'venda/' + idAgr
+            API + idAgr
         );
     }
 
     adicionaVendaById(
-        idAgr: number,
         idEmp: number,
         venda: Venda
     ){
+        console.log("Entrou no adicionaVenda()" + idEmp);
+        console.log(venda);
         return this.httpClient.post(
-            API + idAgr + '/venda/' + idEmp,
+            API + idEmp,
             venda
+        )
+    }
+
+    apagarOrcamento(
+        idAgr: number,
+        orcamento: Venda
+    ){
+        alert("Apagando");
+        console.log("idAgr: " + idAgr)
+        console.log(orcamento);
+        return this.httpClient.post(
+            API + 'delete/' + idAgr,
+            orcamento
         )
     }
 

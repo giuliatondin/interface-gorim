@@ -15,10 +15,10 @@ const routes: Routes = [
     path: '', 
     component: HomeComponent
   },
-  { path: ':idJogo/agricultor/:idPersonagem', //agriculturist
+  { path: ':idJogo/agricultor/:idAgr', //agriculturist
     component: AgriculturistComponent
   },
-  { path: ':idJogo/empresario/:idPersonagem', //entrepreneur 
+  { path: ':idJogo/empresario/:idEmp', //entrepreneur 
     component: EntrepreneurComponent
   },
   {

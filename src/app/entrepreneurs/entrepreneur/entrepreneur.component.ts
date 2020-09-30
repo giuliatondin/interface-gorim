@@ -14,7 +14,7 @@ import { Entrepreneur } from './entrepreneur';
 export class EntrepreneurComponent implements OnInit {
 
     infoEmp$: Observable<Entrepreneur>;
-    idPersonagem: number;
+    idEmp: number;
 
     infoMundo$: Observable<World>;
     idJogo: number;
@@ -30,11 +30,11 @@ export class EntrepreneurComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.idPersonagem = this.activatedRoute.snapshot.params.idPersonagem;
+        this.idEmp = this.activatedRoute.snapshot.params.idEmp;
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
-        console.log(this.idPersonagem);
+        console.log(this.idEmp);
         this.infoMundo$ = this.empService.getInfoMundo(this.idJogo);
-        this.infoEmp$ = this.empService.getInfo(this.idPersonagem);
+        this.infoEmp$ = this.empService.getInfo(this.idEmp);
     }
 
 }

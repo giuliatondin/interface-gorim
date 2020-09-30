@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Venda } from 'src/app/entrepreneurs/venda/venda';
 import { VendaComponent } from 'src/app/agriculturists/venda/venda.component';
 import { OrderProductService } from './order-product.service';
@@ -19,6 +19,10 @@ export class OrderProductComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
+        this.resetForm();
+    }
+
+    resetForm(){
         this.orcamentoForm = this.formBuilder.group({
             idAgr: [
                 '', [
@@ -31,7 +35,7 @@ export class OrderProductComponent implements OnInit {
             sucesso: [
                 false
             ],
-            idProduto: [
+            nomeProduto: [
                 '', [
                     Validators.required
                 ]
@@ -47,16 +51,16 @@ export class OrderProductComponent implements OnInit {
                 '', [
                     Validators.required
                 ]
+            ],
+            idJava: [
+                0
             ]
         });
     }
 
     adicionarOrcamento(){
-        
-        // const orcamento = this.orcamentoForm.getRawValue() as Venda;
-        // console.log(typeof(this.orcamentoForm.get('preco').value));
 
-        // console.log(orcamento);
+        console.log(this.orcamentoForm.get("idEmp").value);
 
         this.orderProductService
             .adicionarOrcamento(
@@ -66,6 +70,7 @@ export class OrderProductComponent implements OnInit {
             .subscribe(
                 () => {
                     this.orcamentoForm.reset();
+                    this.resetForm();
                     alert("FEITOOOOOOO!!");
                 },
                 err => {
