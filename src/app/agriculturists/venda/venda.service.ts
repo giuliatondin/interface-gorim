@@ -45,8 +45,8 @@ export class VendaService {
         console.log("idAgr: " + idAgr)
         console.log(orcamento);
         return this.httpClient.post(
-            API + 'delete/' + idAgr,
-            orcamento
+            API + 'delete/' + orcamento.idEmp + '/' + idAgr,
+            orcamento.idOrcamento
         )
     }
 

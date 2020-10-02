@@ -17,9 +17,11 @@ export class OrderProductService {
     }
 
     adicionarOrcamento(
+        idOrcamento: number,
         idAgr: number,
         orcamento: Venda
     ){
+        orcamento.idOrcamento = idOrcamento;
         return this.httpClient.post(
             API + idAgr,
             orcamento

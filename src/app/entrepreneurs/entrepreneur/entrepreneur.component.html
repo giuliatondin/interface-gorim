@@ -16,7 +16,11 @@
                 <div class="col-md-8 col-xl-7">
                     <mat-tab-group mat-align-tabs="center">
                         <mat-tab label="Pedidos">
-                            <app-order-product [idEmp]="idEmp" ></app-order-product>
+                            <app-order-product
+                                [idEmp]="idEmp"
+                                [produtos]="emp.produtos"
+                                [nomeAgricultores]="nomeAgricultores"
+                            ></app-order-product>
                         </mat-tab>
                         <mat-tab label="Valores dos produtos">
                             <app-table-values role="entrepreneur"></app-table-values>

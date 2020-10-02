@@ -82,4 +82,10 @@ export class EntrepreunersService{
             APIMundo + '/infoMundo/' + idJogo
         );
     }
+
+    getInfoAgricultores(){
+        return this.httpClient.get(
+            APIMundo +'/infoAgricultores'
+        );
+    }
 }

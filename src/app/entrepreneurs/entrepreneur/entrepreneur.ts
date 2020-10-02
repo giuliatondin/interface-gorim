@@ -1,4 +1,4 @@
-import { Person } from '../../world/person';
+import { Person } from '../../world/models/person';
 export interface Entrepreneur extends Person {
     // id: number;
     // nome: string;

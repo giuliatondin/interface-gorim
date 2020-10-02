@@ -1,4 +1,4 @@
-import { Person } from '../../world/person';
+import { Person } from '../../world/models/person';
 export interface Agriculturist extends Person {
     qtdParcelas: number;
     idParcelaInicio: number;

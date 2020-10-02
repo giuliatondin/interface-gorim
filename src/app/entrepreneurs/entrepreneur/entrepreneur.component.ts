@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { World } from 'src/app/world/world';
 import { EntrepreunersService } from '../entrepreneurs.service';
+import { AgriculturistSimplified } from '../../agriculturists/agriculturist/agriculturist.simplified';
 import { Entrepreneur } from './entrepreneur';
 
 @Component({
@@ -19,10 +20,7 @@ export class EntrepreneurComponent implements OnInit {
     infoMundo$: Observable<World>;
     idJogo: number;
 
-    // dinheiros: number;
-    // poluicaoMundo: number;
-    // rodada: number;
-    // cidade: string;
+    nomeAgricultores: AgriculturistSimplified[];
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -31,10 +29,17 @@ export class EntrepreneurComponent implements OnInit {
 
     ngOnInit(): void {
         this.idEmp = this.activatedRoute.snapshot.params.idEmp;
-        this.idJogo = this.activatedRoute.snapshot.params.idJogo;
-        console.log(this.idEmp);
-        this.infoMundo$ = this.empService.getInfoMundo(this.idJogo);
         this.infoEmp$ = this.empService.getInfo(this.idEmp);
+
+        this.idJogo = this.activatedRoute.snapshot.params.idJogo;
+        this.infoMundo$ = this.empService.getInfoMundo(this.idJogo);
+
+        this.empService.getInfoAgricultores()
+            .subscribe(
+                (data: AgriculturistSimplified[]) => {
+                    this.nomeAgricultores = data;
+                }
+            )
     }
 
 }

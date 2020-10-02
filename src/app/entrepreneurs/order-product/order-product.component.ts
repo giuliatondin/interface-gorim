@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { Venda } from 'src/app/entrepreneurs/venda/venda';
 import { VendaComponent } from 'src/app/agriculturists/venda/venda.component';
 import { OrderProductService } from './order-product.service';
+import { AgriculturistSimplified } from 'src/app/agriculturists/agriculturist/agriculturist.simplified';
 @Component({
     selector: 'app-order-product',
     templateUrl: './order-product.component.html',
@@ -11,15 +12,22 @@ import { OrderProductService } from './order-product.service';
 export class OrderProductComponent implements OnInit {
 
     orcamentoForm: FormGroup;
+    idOrcamento: number;
+
     @Input() idEmp: number;
+    @Input() produtos: string[];
+    @Input() nomeAgricultores: AgriculturistSimplified[];
 
     constructor(
         private formBuilder: FormBuilder,
         private orderProductService: OrderProductService
-    ) { }
+    ) {
+        this.idOrcamento = 0;
+    }
 
     ngOnInit(): void {
         this.resetForm();
+        console.log(this.produtos);
     }
 
     resetForm(){
@@ -64,6 +72,7 @@ export class OrderProductComponent implements OnInit {
 
         this.orderProductService
             .adicionarOrcamento(
+                this.idOrcamento,
                 this.orcamentoForm.get('idAgr').value,
                 this.orcamentoForm.getRawValue() as Venda
             )
@@ -72,6 +81,7 @@ export class OrderProductComponent implements OnInit {
                     this.orcamentoForm.reset();
                     this.resetForm();
                     alert("FEITOOOOOOO!!");
+                    this.idOrcamento++;
                 },
                 err => {
                     console.log(err);

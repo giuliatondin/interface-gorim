@@ -7,5 +7,5 @@ export interface Venda {
     nomeProduto: string;
     quantidade: number;
     preco: string;
-    idJava: number;
+    idOrcamento: number;
 }
