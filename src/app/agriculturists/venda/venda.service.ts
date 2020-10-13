@@ -29,8 +29,6 @@ export class VendaService {
         idEmp: number,
         venda: Venda
     ){
-        console.log("Entrou no adicionaVenda()" + idEmp);
-        console.log(venda);
         return this.httpClient.post(
             API + idEmp,
             venda
@@ -42,8 +40,6 @@ export class VendaService {
         orcamento: Venda
     ){
         alert("Apagando");
-        console.log("idAgr: " + idAgr)
-        console.log(orcamento);
         return this.httpClient.post(
             API + 'delete/' + orcamento.idEmp + '/' + idAgr,
             orcamento.idOrcamento

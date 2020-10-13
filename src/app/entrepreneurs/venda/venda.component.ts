@@ -37,7 +37,6 @@ export class VendaComponent implements OnInit{
             .subscribe(
                 (data: Venda[]) => {
                     this.orcamentos = data;
-                    console.log(this.orcamentos);
                 }
             );
     }

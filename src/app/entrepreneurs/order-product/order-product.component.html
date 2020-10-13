@@ -25,13 +25,13 @@
                         <label class="input-group-text" for="nomeProduto">Produto</label>
                     </div>
                     <select #nomeProduto
-                        formControlName="nomeProduto"
+                        formControlName="idProduto"
                         class="custom-select"
-                        id="nomeProduto"
+                        id="idProduto"
                     >
                         <option
                             *ngFor="let produto of produtos"
-                            value="{{produto.tipo | titlecase}}"
+                            value="{{produto.id}}"
                         >
                             {{produto.tipo | titlecase}}
                         </option>

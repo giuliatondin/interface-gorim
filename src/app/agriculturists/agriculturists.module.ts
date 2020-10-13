@@ -4,6 +4,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatSelectModule} from '@angular/material/select'; 
 import {MatExpansionModule} from '@angular/material/expansion';
 import { AppComponent } from '../app.component';
+import { MatRadioModule } from '@angular/material/radio';
 
 //Components of farmers 
 import { AgriculturistComponent } from './agriculturist/agriculturist.component';
@@ -13,6 +14,7 @@ import { AgriculturistHistoryComponent } from './agriculturist-history/agricultu
 import { HistoryListComponent } from './agriculturist-history/history-list/history-list.component';
 import { VendaComponent } from '../agriculturists/venda/venda.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ProdutoService } from './produto.service';
 
 @NgModule({
     declarations: [
@@ -33,8 +35,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         MatExpansionModule,
         FormsModule,
         ReactiveFormsModule,
+        MatRadioModule
     ],
-    providers: [],
+    providers: [
+        ProdutoService
+    ],
     bootstrap: [ AppComponent ]
 })
 export class AgriculturistsModule{}

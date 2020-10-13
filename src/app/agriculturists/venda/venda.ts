@@ -4,6 +4,7 @@ export interface Venda {
     nomeEmp: string;
     idEmp: number;
     sucesso: boolean;
+    idProduto: number;
     nomeProduto: string;
     quantidade: number;
     preco: string;

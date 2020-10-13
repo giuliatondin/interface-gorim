@@ -43,7 +43,7 @@ export class OrderProductComponent implements OnInit {
             sucesso: [
                 false
             ],
-            nomeProduto: [
+            idProduto: [
                 '', [
                     Validators.required
                 ]
@@ -59,16 +59,11 @@ export class OrderProductComponent implements OnInit {
                 '', [
                     Validators.required
                 ]
-            ],
-            idJava: [
-                0
             ]
         });
     }
 
     adicionarOrcamento(){
-
-        console.log(this.orcamentoForm.get("idEmp").value);
 
         this.orderProductService
             .adicionarOrcamento(

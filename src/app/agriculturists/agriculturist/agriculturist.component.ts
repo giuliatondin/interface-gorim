@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
+import { Produto } from 'src/app/world/models/produto';
+import { ProdutoSimplified } from 'src/app/world/models/produto.simplified';
 
 import { World } from 'src/app/world/world';
 import { AgriculturistsService } from '../agriculturists.service';
@@ -21,6 +23,8 @@ export class AgriculturistComponent implements OnInit {
     infoMundo$: Observable<World>;
     idJogo: number;
 
+    produtos: ProdutoSimplified[];
+
     constructor(
         private activatedRoute: ActivatedRoute,
         private agrService: AgriculturistsService
@@ -32,6 +36,13 @@ export class AgriculturistComponent implements OnInit {
         console.log(this.idAgr);
         this.infoMundo$ = this.agrService.getInfoMundo(this.idJogo);
         this.infoAgr$ = this.agrService.getInfo(this.idAgr);
+        this.agrService.getProdutosEmpresarios()
+            .subscribe(
+                produtos => {
+                    this.produtos = produtos;
+                    console.log(this.produtos);
+                }
+            )
     }
 
 }

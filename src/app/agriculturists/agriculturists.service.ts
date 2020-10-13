@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http'
 import { environment } from 'src/environments/environment';
 import { Agriculturist } from './agriculturist/agriculturist';
 import { World } from '../world/world';
+import { ProdutoSimplified } from '../world/models/produto.simplified';
 
 const API = environment.ApiUrl + '/request/api/agricultor';
 const APIMundo = environment.ApiUrl + '/request/api/mestre';
@@ -55,6 +56,12 @@ export class AgriculturistsService{
         return this.httpClient.get<World>(
             APIMundo + '/infoMundo/' + idJogo
         );
+    }
+
+    getProdutosEmpresarios(){
+        return this.httpClient.get<ProdutoSimplified[]>(
+            API + '/empresarios/produtos'
+        )
     }
 
 }

@@ -1,4 +1,4 @@
-<div class="content pt-5 pb-5" *ngIf="(infoEmp$ | async) as emp">
+<div class="content pt-5 pb-5"> <!--*ngIf="(infoEmp$ | async) as emp"-->
     <div *ngIf="(infoMundo$ | async) as mundo">
         <div class="container main__block pt-2 pb-3 pl-3 pr-3">
             <app-header
@@ -23,7 +23,7 @@
                             ></app-order-product>
                         </mat-tab>
                         <mat-tab label="Valores dos produtos">
-                            <app-table-values role="entrepreneur"></app-table-values>
+                            <app-table-values role="empresario" [produtos]="produtos"></app-table-values>
                         </mat-tab>
                     </mat-tab-group>
                 </div>
