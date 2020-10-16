@@ -16,13 +16,13 @@ import { ProdutoService } from '../produto.service';
 })
 export class VendaComponent implements OnInit{
     
-    //private quantidadeProdutos: number[];
+    private quantidadeProdutos: number[];
 
     comprasForm: FormGroup;
     errorMessage: string;
 
     orcamentos: Venda[];
-    //overPurchases: Venda[];
+    overPurchases: Venda[];
 
     @Input() idAgr: number;
     idEmp: number;
@@ -35,8 +35,98 @@ export class VendaComponent implements OnInit{
     }
 
     ngOnInit(){
-        //this.quantidadeProdutos = [0, 0, 0, 0];
+        this.quantidadeProdutos = [0, 0, 0, 0];
         this.getOrcamentos();
+    }
+
+    getIndiceProduto(idEmp: number, idProduto: number){
+        if(idEmp < 3) return (idEmp - 1)
+        else if(idProduto == 10) return 3
+        else return 2;
+    }
+
+    arrumaOverPurchases(data: Venda[]){
+        this.overPurchases = [];
+        this.orcamentos = [];
+
+        data.forEach(
+            orc => {
+                // Descobrir o tipo do produto
+                let indiceProduto = this.getIndiceProduto(orc.idEmp, orc.idProduto);
+
+                // Ver quantidade ja comprada do produto
+                let quantidadeJaComprada = this.quantidadeProdutos[indiceProduto];
+
+                // Ver se 0 > orc.quantidade || orc.quantidade > (6-qntd)
+                if(orc.quantidade < 0) this.vendaService.apagarOrcamento(this.idAgr, orc);
+
+                else if(orc.idOrcamento > 199) this.overPurchases.push(orc);
+
+                else if (orc.quantidade > (6 - quantidadeJaComprada)){
+                    // Se sim
+                        // Separar para quantidade comprável (orcamentoDivididoCompravel e orcamentoDivididoNaoCompravel)
+                        let quantidadePossivel = 6 - quantidadeJaComprada;
+                        
+                        let orcamentoDivididoNaoCompravel: Venda = {
+                            nomeAgr: orc.nomeAgr,
+                            idAgr: orc.idAgr,
+                            nomeEmp: orc.nomeEmp,
+                            idEmp: orc.idEmp,
+                            nomeProduto: orc.nomeProduto,
+                            idProduto: orc.idProduto,
+                            sucesso: orc.sucesso,
+                            idOrcamento: (orc.idOrcamento + 200),
+                            preco: orc.preco,
+                            quantidade: (orc.quantidade - quantidadePossivel)
+                        };
+
+                        // Remover orc de data
+                        this.vendaService.apagarOrcamento(this.idAgr, orc)
+                            .subscribe(
+                                () => {
+                                    this.overPurchases.push(orcamentoDivididoNaoCompravel);
+                                    this.vendaService.adicionaOverOrcamento(this.idAgr, orcamentoDivididoNaoCompravel)
+                                        .subscribe(
+                                            () => {
+                                                // if(quantidadePossivel > 0) this.orcamentos(orcamentoDivididoCompravel)
+                                                if(quantidadePossivel > 0){
+                                                    console.log("Entrou no if de quantidadePoss > 0");
+                                                    let orcamentoDivididoCompravel: Venda = {
+                                                        nomeAgr: orc.nomeAgr,
+                                                        idAgr: orc.idAgr,
+                                                        nomeEmp: orc.nomeEmp,
+                                                        idEmp: orc.idEmp,
+                                                        nomeProduto: orc.nomeProduto,
+                                                        idProduto: orc.idProduto,
+                                                        sucesso: orc.sucesso,
+                                                        idOrcamento: orc.idOrcamento,
+                                                        preco: orc.preco,
+                                                        quantidade: quantidadePossivel
+                                                    };
+                                                    this.vendaService.adicionaOverOrcamento(this.idAgr, orcamentoDivididoCompravel)
+                                                        .subscribe(
+                                                            () => 
+                                                            this.orcamentos.push(orcamentoDivididoCompravel),
+                                                            err => console.log(err)
+                                                        )
+                                                }
+                                                // this.overPurchases(orcamentoDivididoNaoCompravel)
+                                            },
+                                            err => console.log(err)
+                                        );
+                                    
+                                },
+                                err => console.log(err)
+                            )
+
+                        
+                }
+                else{
+                    // Se não, this.orcamentos(orc)
+                    this.orcamentos.push(orc);
+                }
+            }
+        );
     }
 
     getOrcamentos(){
@@ -46,30 +136,9 @@ export class VendaComponent implements OnInit{
             )
             .subscribe(
                 (data: Venda[]) => {
-                    this.orcamentos = data;
+                    //this.orcamentos = data;
 
-                    // data.forEach(
-                    //     prod => {
-                    //         this.overPurchases = [];
-                    //         this.orcamentos = [];
-                    //         let indiceProd = (prod.idEmp < 3) ? (prod.idEmp - 1) : (prod.idProduto == 10) ? 3 : 2;
-
-                    //         if(this.quantidadeProdutos[indiceProd] < 7){
-                    //             let qtdTotal = this.quantidadeProdutos[indiceProd] + prod.quantidade;
-
-                    //             if(qtdTotal > 6){
-                    //                 // Tirar os a mais e colocar em this.overPurchases
-                    //                 // Diminuir prod.quantidade para quantidade que seja possível comprar
-                    //             }
-
-                    //             if(prod.quantidade > 0) this.orcamentos.push(prod);
-                    //         }
-                    //         else{
-                    //             console.log("Você não pode comprar esse produto");
-                    //             // Logica para aparecer o produto disabled
-                    //         }
-                    //     }
-                    // );
+                    this.arrumaOverPurchases(data);
 
                 }
             );
@@ -87,10 +156,12 @@ export class VendaComponent implements OnInit{
                     this.vendaService.adicionaVendaById(venda.idEmp, venda)
                         .subscribe(
                             () => {
+                                if(venda.sucesso) this.quantidadeProdutos[this.getIndiceProduto(venda.idEmp, venda.idProduto)] += venda.quantidade;
                                 this.vendaService.getOrcamentos(this.idAgr)
                                     .subscribe(
                                         (data: Venda[]) => {
-                                            this.orcamentos = data;
+                                            // this.orcamentos = data;
+                                            this.arrumaOverPurchases(data);
                                         }
                                     );
                             },
@@ -103,13 +174,12 @@ export class VendaComponent implements OnInit{
     }
 
     sendProdutoSibilingComponent(venda: Venda){
-        let produto = {
+        this.produtoService.nextProduto({
             id: venda.idProduto,
             nome: venda.nomeProduto,
             preco: (venda.preco == "Baixo") ? 0 : (venda.preco == "Alto") ? 2 : 1,
             tipo: venda.idEmp,
             quantidade: venda.quantidade
-        };
-        this.produtoService.nextProduto(produto as Produto);
+        } as Produto);
     }
 }

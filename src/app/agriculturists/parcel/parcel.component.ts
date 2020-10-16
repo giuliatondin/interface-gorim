@@ -35,7 +35,9 @@ export class ParcelComponent implements OnInit {
         [0, 0, 0, 0], // p1
         [0, 0, 0, 0], // p2
         [0, 0, 0, 0], // p3
-        [0, 0, 0, 0]  // p4
+        [0, 0, 0, 0], // p4
+        [0, 0, 0, 0], // p5
+        [0, 0, 0, 0]  // p6
     ];
 
     constructor(
@@ -95,7 +97,6 @@ export class ParcelComponent implements OnInit {
     }
 
     contaQuantidade(parcela: number, tipo: number, event: MatRadioChange){
-        
         if(this.checkedButtons[parcela-1][tipo-1] != 0) {
             let idProdAntigo, precoAntigo;
             precoAntigo = this.checkedButtons[parcela-1][tipo-1]%10;
