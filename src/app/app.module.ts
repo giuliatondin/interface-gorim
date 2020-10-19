@@ -24,7 +24,7 @@ import { HomeModule } from './home/home.module';
         MasterModule,
         WorldModule,
         ErrorsModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
     ],
     providers: [],
     bootstrap: [AppComponent]

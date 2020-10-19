@@ -1,5 +1,4 @@
-import { InvokeFunctionExpr } from '@angular/compiler';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Observable, interval } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
@@ -8,6 +7,7 @@ import { Produto } from 'src/app/world/models/produto';
 import { Venda } from './venda';
 import { VendaService } from './venda.service';
 import { ProdutoService } from '../produto.service';
+import { WebStorageService } from '../webstorage.service';
 
 @Component({
     selector: 'app-vendacard',
@@ -29,13 +29,14 @@ export class VendaComponent implements OnInit{
 
     constructor(
         private vendaService: VendaService,
-        private produtoService: ProdutoService
+        private produtoService: ProdutoService,
+        private webStorageService: WebStorageService
     ){
         //
     }
 
     ngOnInit(){
-        this.quantidadeProdutos = [0, 0, 0, 0];
+        this.quantidadeProdutos = (this.webStorageService.hasData('vendaQuantidadeProdutos')) ? this.webStorageService.getData('vendaQuantidadeProdutos') : [0, 0, 0, 0];
         this.getOrcamentos();
     }
 
@@ -156,7 +157,10 @@ export class VendaComponent implements OnInit{
                     this.vendaService.adicionaVendaById(venda.idEmp, venda)
                         .subscribe(
                             () => {
-                                if(venda.sucesso) this.quantidadeProdutos[this.getIndiceProduto(venda.idEmp, venda.idProduto)] += venda.quantidade;
+                                if(venda.sucesso){
+                                    this.quantidadeProdutos[this.getIndiceProduto(venda.idEmp, venda.idProduto)] += venda.quantidade;
+                                    this.webStorageService.setData('vendaQuantidadeProdutos', this.quantidadeProdutos);
+                                }
                                 this.vendaService.getOrcamentos(this.idAgr)
                                     .subscribe(
                                         (data: Venda[]) => {

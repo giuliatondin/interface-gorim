@@ -5,6 +5,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { AppComponent } from '../app.component';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 //Components of farmers 
 import { AgriculturistComponent } from './agriculturist/agriculturist.component';
@@ -35,7 +36,8 @@ import { ProdutoService } from './produto.service';
         MatExpansionModule,
         FormsModule,
         ReactiveFormsModule,
-        MatRadioModule
+        MatRadioModule,
+        MatCheckboxModule
     ],
     providers: [
         ProdutoService
