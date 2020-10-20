@@ -4,7 +4,7 @@
     </div>
 </div>
 
-<form [formGroup]="parcelasForm" (action)="finalizarJogada()" class="parcel__form mt-2">
+<form [formGroup]="parcelasForm" (submit)="finalizarJogada()" class="parcel__form mt-2">
     <div class="table-responsive">
         <!-- <td>
             <div class="form-check pl-3">
@@ -17,9 +17,10 @@
             id="seloVerde"
             formControlName="seloVerde"
             aria-labelledby="seloVerde"
+            (change)="changePedirSeloVerde($event)"
         >Pedir Selo Verde</mat-checkbox>
         <mat-accordion>
-            <mat-expansion-panel formGroupName="parcelaUm">
+            <mat-expansion-panel formGroupName="parcela1">
                 <mat-expansion-panel-header>
                     <mat-panel-title class="title">
                         Parcela 1
@@ -35,17 +36,16 @@
                                     aria-labelledby="semente"
                                     name="sementeP1"
                                     (change)="contaQuantidade(1, 0, $event)"
-                                    >
+                                >
                                     <mat-radio-button
                                         value="none"
                                         name="Nenhum"
-                                        checked
                                     >Nenhum</mat-radio-button><br>
 
                                     <mat-radio-button
                                         value="1"
                                         name="Hortalica"
-                                        [disabled]="(quantidades[0][0] + quantidades[0][1] + quantidades[0][2] == 0)"
+                                        [disabled]=""
                                     >Hortaliça</mat-radio-button><br>
     
                                     <mat-radio-button
@@ -198,7 +198,7 @@
             </mat-expansion-panel>
         </mat-accordion>
         <mat-accordion>
-            <mat-expansion-panel formGroupName="parcelaDois">
+            <mat-expansion-panel formGroupName="parcela2">
                 <mat-expansion-panel-header>
                     <mat-panel-title class="title">
                         Parcela 2
@@ -375,7 +375,7 @@
             </mat-expansion-panel>
         </mat-accordion>
         <mat-accordion>
-            <mat-expansion-panel formGroupName="parcelaTres">
+            <mat-expansion-panel formGroupName="parcela3">
                 <mat-expansion-panel-header>
                     <mat-panel-title class="title">
                         Parcela 3
@@ -552,7 +552,7 @@
             </mat-expansion-panel>
         </mat-accordion>
         <mat-accordion>
-            <mat-expansion-panel formGroupName="parcelaQuatro">
+            <mat-expansion-panel formGroupName="parcela4">
                 <mat-expansion-panel-header>
                     <mat-panel-title class="title">
                         Parcela 4
@@ -730,7 +730,7 @@
             </mat-expansion-panel>
         </mat-accordion>
         <mat-accordion>
-            <mat-expansion-panel formGroupName="parcelaCinco">
+            <mat-expansion-panel formGroupName="parcela5">
                 <mat-expansion-panel-header>
                     <mat-panel-title class="title">
                         Parcela 5
@@ -907,7 +907,7 @@
             </mat-expansion-panel>
         </mat-accordion>
         <mat-accordion>
-            <mat-expansion-panel formGroupName="parcelaSeis">
+            <mat-expansion-panel formGroupName="parcela6">
                 <mat-expansion-panel-header>
                     <mat-panel-title class="title">
                         Parcela 6

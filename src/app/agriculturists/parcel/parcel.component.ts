@@ -7,6 +7,9 @@ import { Produto } from 'src/app/world/models/produto';
 import { ProdutoSimplified } from 'src/app/world/models/produto.simplified';
 import { ProdutoService } from '../produto.service';
 import { WebStorageService } from '../webstorage.service';
+import { Parcel, Prod } from './parcel';
+import { ParcelService } from './parcel.service';
+import { PostForm } from './postForm';
 
 @Component({
     selector: 'app-parcel',
@@ -15,17 +18,21 @@ import { WebStorageService } from '../webstorage.service';
 })
 export class ParcelComponent implements OnInit {
 
+    @Input() idAgr;
+
     parcelasForm: FormGroup;
 
     quantidades = [];
     @Input() produtos: ProdutoSimplified[];
 
     checkedButtons = [];
+    pedirSeloVerde: boolean;
 
     constructor(
         private produtoService: ProdutoService,
         private formBuilder: FormBuilder,
-        private webStorageService: WebStorageService
+        private webStorageService: WebStorageService,
+        private parcelService: ParcelService
     ) { }
 
     ngOnInit(): void {
@@ -43,48 +50,138 @@ export class ParcelComponent implements OnInit {
         )
 
         this.parcelasForm = this.formBuilder.group({
-            seloVerde: [false, Validators.required],
-            parcelaUm: this.formBuilder.group({
-                sementeP1: ['none', Validators.required],
-                fertilizanteP1: ['none', Validators.required],
-                maquinaP1: ['none', Validators.required],
-                pulverizadorP1: ['none', Validators.required],
-                agrotoxicoP1: ['none', Validators.required]
+            seloVerde: [this.pedirSeloVerde, Validators.required],
+            parcela1: this.formBuilder.group({
+                sementeP1: [
+                    (this.checkedButtons[0][0] == 0) ? 'none' : Math.floor(this.checkedButtons[0][0]/10).toString(),
+                    Validators.required
+                ],
+                fertilizanteP1: [
+                    (this.checkedButtons[0][1] == 0) ? 'none' : Math.floor(this.checkedButtons[0][1]/10).toString(),
+                    Validators.required
+                ],
+                maquinaP1: [
+                    (this.checkedButtons[0][2] != 0 && this.checkedButtons[0][2] < 100) ? Math.floor(this.checkedButtons[0][2]/10).toString() : 'none',
+                    Validators.required
+                ],
+                pulverizadorP1: [
+                    (this.checkedButtons[0][2] != 0 && this.checkedButtons[0][2] > 100) ? Math.floor(this.checkedButtons[0][2]/10).toString() : 'none',
+                    Validators.required
+                ],
+                agrotoxicoP1: [
+                    (this.checkedButtons[0][3] == 0) ? 'none' : Math.floor(this.checkedButtons[0][3]/10).toString(),
+                    Validators.required
+                ]
             }),
-            parcelaDois: this.formBuilder.group({
-                sementeP2: ['none', Validators.required],
-                fertilizanteP2: ['none', Validators.required],
-                maquinaP2: ['none', Validators.required],
-                pulverizadorP2: ['none', Validators.required],
-                agrotoxicoP2: ['none', Validators.required]
+            parcela2: this.formBuilder.group({
+                sementeP2: [
+                    (this.checkedButtons[1][0] == 0) ? 'none' : Math.floor(this.checkedButtons[1][0]/10).toString(),
+                    Validators.required
+                ],
+                fertilizanteP2: [
+                    (this.checkedButtons[1][1] == 0) ? 'none' : Math.floor(this.checkedButtons[1][1]/10).toString(),
+                    Validators.required
+                ],
+                maquinaP2: [
+                    (this.checkedButtons[1][2] != 0 && this.checkedButtons[1][2] < 100) ? Math.floor(this.checkedButtons[1][2]/10).toString() : 'none',
+                    Validators.required
+                ],
+                pulverizadorP2: [
+                    (this.checkedButtons[1][2] != 0 && this.checkedButtons[1][2] > 100) ? Math.floor(this.checkedButtons[1][2]/10).toString() : 'none',
+                    Validators.required
+                ],
+                agrotoxicoP2: [
+                    (this.checkedButtons[1][3] == 0) ? 'none' : Math.floor(this.checkedButtons[1][3]/10).toString(),
+                    Validators.required
+                ]
             }),
-            parcelaTres: this.formBuilder.group({
-                sementeP3: ['none', Validators.required],
-                fertilizanteP3: ['none', Validators.required],
-                maquinaP3: ['none', Validators.required],
-                pulverizadorP3: ['none', Validators.required],
-                agrotoxicoP3: ['none', Validators.required]
+            parcela3: this.formBuilder.group({
+                sementeP3: [
+                    (this.checkedButtons[2][0] == 0) ? 'none' : Math.floor(this.checkedButtons[2][0]/10).toString(),
+                    Validators.required
+                ],
+                fertilizanteP3: [
+                    (this.checkedButtons[2][1] == 0) ? 'none' : Math.floor(this.checkedButtons[2][1]/10).toString(),
+                    Validators.required
+                ],
+                maquinaP3: [
+                    (this.checkedButtons[2][2] != 0 && this.checkedButtons[2][2] < 100) ? Math.floor(this.checkedButtons[2][2]/10).toString() : 'none',
+                    Validators.required
+                ],
+                pulverizadorP3: [
+                    (this.checkedButtons[2][2] != 0 && this.checkedButtons[2][2] > 100) ? Math.floor(this.checkedButtons[2][2]/10).toString() : 'none',
+                    Validators.required
+                ],
+                agrotoxicoP3: [
+                    (this.checkedButtons[2][3] == 0) ? 'none' : Math.floor(this.checkedButtons[2][3]/10).toString(),
+                    Validators.required
+                ]
             }),
-            parcelaQuatro: this.formBuilder.group({
-                sementeP4: ['none', Validators.required],
-                fertilizanteP4: ['none', Validators.required],
-                maquinaP4: ['none', Validators.required],
-                pulverizadorP4: ['none', Validators.required],
-                agrotoxicoP4: ['none', Validators.required]
+            parcela4: this.formBuilder.group({
+                sementeP4: [
+                    (this.checkedButtons[3][0] == 0) ? 'none' : Math.floor(this.checkedButtons[3][0]/10).toString(),
+                    Validators.required
+                ],
+                fertilizanteP4: [
+                    (this.checkedButtons[3][1] == 0) ? 'none' : Math.floor(this.checkedButtons[3][1]/10).toString(),
+                    Validators.required
+                ],
+                maquinaP4: [
+                    (this.checkedButtons[3][2] != 0 && this.checkedButtons[3][2] < 100) ? Math.floor(this.checkedButtons[3][2]/10).toString() : 'none',
+                    Validators.required
+                ],
+                pulverizadorP4: [
+                    (this.checkedButtons[3][2] != 0 && this.checkedButtons[3][2] > 100) ? Math.floor(this.checkedButtons[3][2]/10).toString() : 'none',
+                    Validators.required
+                ],
+                agrotoxicoP4: [
+                    (this.checkedButtons[3][3] == 0) ? 'none' : Math.floor(this.checkedButtons[3][3]/10).toString(),
+                    Validators.required
+                ]
             }),
-            parcelaCinco: this.formBuilder.group({
-                sementeP5: ['none', Validators.required],
-                fertilizanteP5: ['none', Validators.required],
-                maquinaP5: ['none', Validators.required],
-                pulverizadorP5: ['none', Validators.required],
-                agrotoxicoP5: ['none', Validators.required]
+            parcela5: this.formBuilder.group({
+                sementeP5: [
+                    (this.checkedButtons[4][0] == 0) ? 'none' : Math.floor(this.checkedButtons[4][0]/10).toString(),
+                    Validators.required
+                ],
+                fertilizanteP5: [
+                    (this.checkedButtons[4][1] == 0) ? 'none' : Math.floor(this.checkedButtons[4][1]/10).toString(),
+                    Validators.required
+                ],
+                maquinaP5: [
+                    (this.checkedButtons[4][2] != 0 && this.checkedButtons[4][2] < 100) ? Math.floor(this.checkedButtons[4][2]/10).toString() : 'none',
+                    Validators.required
+                ],
+                pulverizadorP5: [
+                    (this.checkedButtons[4][2] != 0 && this.checkedButtons[4][2] > 100) ? Math.floor(this.checkedButtons[4][2]/10).toString() : 'none',
+                    Validators.required
+                ],
+                agrotoxicoP5: [
+                    (this.checkedButtons[4][3] == 0) ? 'none' : Math.floor(this.checkedButtons[4][3]/10).toString(),
+                    Validators.required
+                ]
             }),
-            parcelaSeis: this.formBuilder.group({
-                sementeP6: ['none', Validators.required],
-                fertilizanteP6: ['none', Validators.required],
-                maquinaP6: ['none', Validators.required],
-                pulverizadorP6: ['none', Validators.required],
-                agrotoxicoP6: ['none', Validators.required]
+            parcela6: this.formBuilder.group({
+                sementeP6: [
+                    (this.checkedButtons[5][0] == 0) ? 'none' : Math.floor(this.checkedButtons[5][0]/10).toString(),
+                    Validators.required
+                ],
+                fertilizanteP6: [
+                    (this.checkedButtons[5][1] == 0) ? 'none' : Math.floor(this.checkedButtons[5][1]/10).toString(),
+                    Validators.required
+                ],
+                maquinaP6: [
+                    (this.checkedButtons[5][2] != 0 && this.checkedButtons[5][2] < 100) ? Math.floor(this.checkedButtons[5][2]/10).toString() : 'none',
+                    Validators.required
+                ],
+                pulverizadorP6: [
+                    (this.checkedButtons[5][2] != 0 && this.checkedButtons[5][2] > 100) ? Math.floor(this.checkedButtons[5][2]/10).toString() : 'none',
+                    Validators.required
+                ],
+                agrotoxicoP6: [
+                    (this.checkedButtons[5][3] == 0) ? 'none' : Math.floor(this.checkedButtons[5][3]/10),
+                    Validators.required
+                ]
             }),
         });
     }
@@ -119,9 +216,14 @@ export class ParcelComponent implements OnInit {
                 [0, 0, 0, 0], // p5
                 [0, 0, 0, 0]  // p6
             ];
+
+        this.pedirSeloVerde = (this.webStorageService.hasBooleanData('parcelPedirSeloVerde')) ?
+            this.webStorageService.getBooleanData('parcelPedirSeloVerde') :
+            false;
         
         this.webStorageService.setData('parcelCheckedButtons', this.checkedButtons);
         this.webStorageService.setData('parcelQuantidades', this.quantidades);
+        this.webStorageService.setBooleanData('parcelPedirSeloVerde', this.pedirSeloVerde);
     }
 
     getIndiceProduto(idEmp: number, idProduto: number){
@@ -160,42 +262,45 @@ export class ParcelComponent implements OnInit {
         this.webStorageService.setData('parcelQuantidades', this.quantidades);
     }
 
-    contaQuantidadePulverizador(parcela: number, event: MatCheckboxChange){
-        //[checked]="(quantidades[9][0] + quantidades[9][1] + quantidades[9][2] == 0)"
-        if((this.quantidades[9][0] + this.quantidades[9][1] + this.quantidades[9][2]) == 0)
-            this.parcelasForm.get('parcelaUm').get('pulverizadorP1').get;
-
-        else
-        if(event.checked){
-            const idProd = +event.source.value;
-    
-            let aux = idProd*10;
-            let preco;
-            
-            if(this.quantidades[idProd-1][0] != 0) preco = 0;
-            else if(this.quantidades[idProd-1][1] != 0) preco = 1;
-            else if(this.quantidades[idProd-1][2] != 0) preco = 2;
-
-            this.quantidades[idProd-1][preco]--;
-            aux += preco;
-
-            this.checkedButtons[parcela-1][3] = aux;
-        }
-        else{
-            let idProdAntigo, precoAntigo;
-            precoAntigo = this.checkedButtons[parcela-1][3]%10;
-            idProdAntigo = Math.floor(this.checkedButtons[parcela-1][3]/10);
-
-            this.checkedButtons[parcela-1][3] = 0;
-            this.quantidades[idProdAntigo-1][precoAntigo]++;
-        }
-
-        this.webStorageService.setData('parcelCheckedButtons', this.checkedButtons);
-        this.webStorageService.setData('parcelQuantidades', this.quantidades);
+    changePedirSeloVerde(event: MatCheckboxChange){
+        this.pedirSeloVerde = event.checked;
+        this.webStorageService.setBooleanData('parcelPedirSeloVerde', this.pedirSeloVerde);
     }
 
-    finalizarJogada(){
-        let values = this.parcelasForm.getRawValue();
-        console.log(values);
+    finalizarJogada(){        
+        let parcelas: Parcel[] = [];
+        this.checkedButtons.forEach(
+            parcela => {
+
+                let produtos: Prod[] = [];
+                parcela.forEach(
+                    produto => {
+                        produtos.push({
+                            id: Math.floor(produto/10),
+                            preco: produto%10
+                        })
+                    }
+                );
+
+                const parcel: Parcel = {
+                    produtos: produtos
+                };
+
+                parcelas.push(parcel);
+            }
+        );
+
+        
+        let postForm: PostForm = {
+            parcelas: parcelas,
+            seloVerde: this.parcelasForm.getRawValue().seloVerde
+        };
+
+        this.parcelService.postAgricultiristForm(this.idAgr, postForm)
+            .subscribe(
+                () => console.log('funciona'),
+                err => console.log(err)
+            )
+
     }
 }

@@ -17,7 +17,7 @@
                 <div class="col-md-8 col-xl-7">
                     <mat-tab-group mat-align-tabs="center">
                         <mat-tab label="Parcelas">
-                            <app-parcel [produtos]="produtos" ></app-parcel>
+                            <app-parcel [produtos]="produtos" [idAgr]="idAgr"></app-parcel>
                         </mat-tab>
                         <mat-tab label="Valores dos produtos">
                             <app-table-values role='agricultor' [produtos]="produtos"></app-table-values>

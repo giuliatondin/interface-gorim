@@ -33,22 +33,6 @@ export class AgriculturistsService{
             environment.ApiUrl + '/requset/api/arquivoResumo/' + id
         );
     }
-    
-    postAgricultiristForm(
-        id: number,
-        //transferencias: array,
-        //pedidos: array
-    ){
-        const formData = new FormData();
-        formData.append("id", id.toString());
-        // formData.append("transferencias", );
-        // formData.append("pedidos", );
-
-        return this.httpClient.post(
-            API,
-            formData
-        );
-    }
 
     getInfoMundo(
         idJogo: number

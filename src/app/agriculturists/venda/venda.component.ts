@@ -36,7 +36,12 @@ export class VendaComponent implements OnInit{
     }
 
     ngOnInit(){
-        this.quantidadeProdutos = (this.webStorageService.hasData('vendaQuantidadeProdutos')) ? this.webStorageService.getData('vendaQuantidadeProdutos') : [0, 0, 0, 0];
+        console.log(this.webStorageService.hasData('vendaQuantidadeProdutos'));
+        this.quantidadeProdutos = (this.webStorageService.hasData('vendaQuantidadeProdutos')) ?
+            this.webStorageService.getData('vendaQuantidadeProdutos') :
+            [0, 0, 0, 0];
+        this.webStorageService.setData('vendaQuantidadeProdutos', this.quantidadeProdutos);
+
         this.getOrcamentos();
     }
 

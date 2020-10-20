@@ -8,10 +8,14 @@ export class WebStorageService {
         return !!this.getData(dataName);
     }
 
+    hasBooleanData(dataName: string){
+        return !!this.getBooleanData(dataName);
+    }
+
     getData(dataName: string){
         let retrievedObject = JSON.parse(window.localStorage.getItem(dataName));
         if(retrievedObject){
-            if(retrievedObject.time < new Date().getTime()){
+            if(retrievedObject.time > new Date().getTime()){
                 return retrievedObject.data as number[];
             }
     
@@ -22,7 +26,31 @@ export class WebStorageService {
         
     }
 
+    getBooleanData(dataName: string){
+        let retrievedObject = JSON.parse(window.localStorage.getItem(dataName));
+        if(retrievedObject){
+            if(retrievedObject.time > new Date().getTime()){
+                return retrievedObject.data as boolean;
+            }
+    
+            this.removeData(dataName);
+        }
+        
+        return null;
+    }
+
     setData(dataName: string, data: number[]){
+        let expire = new Date().getTime() + (60000*60*3); // 1 min em ms, 1h em min, 3h
+        let stringified = {
+            data: data,
+            time: expire
+        };
+        window.localStorage.setItem(dataName, JSON.stringify(stringified));
+    }
+
+    
+
+    setBooleanData(dataName: string, data: boolean){
         let expire = new Date().getTime() + (60000*60*3); // 1 min em ms, 1h em min, 3h
         let stringified = {
             data: data,
