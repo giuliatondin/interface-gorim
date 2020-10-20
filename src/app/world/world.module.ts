@@ -4,6 +4,8 @@ import { HeaderComponent } from './header/header.component';
 import { TransferComponent } from './transfer/transfer.component';
 import { TableValuesComponent } from './table-values/table-values.component';
 import { SideBarComponent } from './sidebar/sidebar.component';
+import { MatSelectModule } from '@angular/material/select';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
     declarations: [
@@ -13,7 +15,9 @@ import { SideBarComponent } from './sidebar/sidebar.component';
         SideBarComponent
     ],
     imports: [
-        CommonModule
+        CommonModule,
+        MatSelectModule,
+        ReactiveFormsModule
     ], 
     exports: [
         HeaderComponent,

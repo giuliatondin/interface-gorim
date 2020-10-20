@@ -1,19 +1,23 @@
 <div class="transfer__block p-3">
     <h3>Transferir dinheiro</h3>
-    <form action="">
+    <form action="" [formGroup]="transferForm" (submit)="submitTransferForm()">
         <div class="d-flex justify-content-between flex-column flex-xl-row">
-            <div class="form-group d-flex align-items-center">
-                <label class="mb-0 mr-2" for="destinatary">Para</label>
-                <select class="form-control" id="destinatary">
-                <option>Empresário 1</option>
-                <option>Empresário 2</option>
-                <option>Agricultor 3</option>
-                <option>Agricultor 4</option>
-            </select>
-            </div>
+            <mat-form-field appearance="legacy">
+                <mat-label>Para</mat-label>
+                <mat-select formControlName="destinatario">
+                    <div *ngFor="let pessoa of pessoas">
+                        <mat-option
+                        [value]="pessoa.id"
+                        *ngIf="pessoa.id != idPessoa"
+                    >
+                        {{pessoa.nome | titlecase}}
+                    </mat-option>
+                    </div>
+                </mat-select>
+            </mat-form-field>
             <div class="form-group d-flex align-items-center ml-xl-3">
-                <label class="mb-0 mr-2" for="amount">Quantia</label>
-                <input type="text" class="form-control" id="amount" placeholder="200,00">
+                <label class="mb-0 mr-2" for="quantia">Quantia</label>
+                <input formControlName="quantia" type="text" class="form-control" id="amount" placeholder="200,00">
             </div>
             <button type="submit" class="btn transfer__block--btn ml-auto">
                 <img src="../../../assets/imgs/send-icon.png" alt="" class="transfer__block--btn--img">

@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Venda } from 'src/app/entrepreneurs/venda/venda';
-import { VendaComponent } from 'src/app/agriculturists/venda/venda.component';
 import { OrderProductService } from './order-product.service';
-import { AgriculturistSimplified } from 'src/app/agriculturists/agriculturist/agriculturist.simplified';
+import { PersonSimplified } from 'src/app/world/models/person.simplified';
+
 @Component({
     selector: 'app-order-product',
     templateUrl: './order-product.component.html',
@@ -16,7 +16,7 @@ export class OrderProductComponent implements OnInit {
 
     @Input() idEmp: number;
     @Input() produtos: string[];
-    @Input() nomeAgricultores: AgriculturistSimplified[];
+    @Input() nomeAgricultores: PersonSimplified[];
 
     constructor(
         private formBuilder: FormBuilder,
@@ -83,7 +83,7 @@ export class OrderProductComponent implements OnInit {
                     this.orcamentoForm.reset();
                     alert("Something went wrong. Please, try again.");
                 }
-            )
+            );
 
     }
 

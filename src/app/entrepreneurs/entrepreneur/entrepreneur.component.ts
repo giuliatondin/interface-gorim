@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { World } from 'src/app/world/world';
 import { EntrepreunersService } from '../entrepreneurs.service';
-import { AgriculturistSimplified } from '../../agriculturists/agriculturist/agriculturist.simplified';
+import { PersonSimplified } from '../../world/models/person.simplified';
 import { Entrepreneur } from './entrepreneur';
 import { ProdutoSimplified } from 'src/app/world/models/produto.simplified';
 
@@ -22,7 +22,7 @@ export class EntrepreneurComponent implements OnInit {
     infoMundo$: Observable<World>;
     idJogo: number;
 
-    nomeAgricultores: AgriculturistSimplified[];
+    nomeAgricultores: PersonSimplified[];
     produtos: ProdutoSimplified[] = [];
 
     constructor(
@@ -45,7 +45,7 @@ export class EntrepreneurComponent implements OnInit {
 
         this.empService.getInfoAgricultores()
             .subscribe(
-                (data: AgriculturistSimplified[]) => {
+                (data: PersonSimplified[]) => {
                     this.nomeAgricultores = data;
                 }
             );
