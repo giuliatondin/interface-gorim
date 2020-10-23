@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Produto } from 'src/app/world/models/produto';
 import { ProdutoSimplified } from 'src/app/world/models/produto.simplified';
 
 import { World } from 'src/app/world/world';

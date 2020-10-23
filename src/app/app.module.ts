@@ -10,6 +10,7 @@ import { WorldModule } from './world/world.module';
 import { EntrepreneursModule } from './entrepreneurs/entrepreneurs.module';
 import { MasterModule } from './master/master.module';
 import { HomeModule } from './home/home.module';
+import { WaitingPageModule } from './waiting-page/waiting-page.module';
 
 @NgModule({
     declarations: [
@@ -21,6 +22,7 @@ import { HomeModule } from './home/home.module';
         HomeModule,
         AgriculturistsModule,
         EntrepreneursModule,
+        WaitingPageModule,
         MasterModule,
         WorldModule,
         ErrorsModule,

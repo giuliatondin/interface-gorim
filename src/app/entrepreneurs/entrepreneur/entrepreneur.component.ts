@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { World } from 'src/app/world/world';
@@ -27,6 +27,7 @@ export class EntrepreneurComponent implements OnInit {
 
     constructor(
         private activatedRoute: ActivatedRoute,
+        private router: Router,
         private empService: EntrepreunersService
     ) { }
 
@@ -62,6 +63,18 @@ export class EntrepreneurComponent implements OnInit {
                 this.produtos.push(aux);
             }
         );
+    }
+
+    finalizaJogada(){
+        this.empService.finalizaJogada(this.idEmp)
+            .subscribe(
+                () => {
+                    console.log("Finalizadooooo");
+                    this.router.navigate([this.idJogo, 'waitingPage', this.idEmp]);
+                },
+                err => console.log(err)
+            );
+        
     }
 
 }

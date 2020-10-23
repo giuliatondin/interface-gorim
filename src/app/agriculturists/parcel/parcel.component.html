@@ -1,6 +1,19 @@
-<div *ngFor="let quantidade of quantidades; let i=index">
+<div>
     <div class="row">
-        <div class="col-md-auto" *ngIf="quantidade[0] + quantidade[1] + quantidade[2] != 0"><input type="text" value="{{quantidade[0]+quantidade[1]+quantidade[2]}}" class="col-md-2" disabled><span class="pl-1">{{produtos[i].tipo | titlecase}}</span></div>
+        <div
+            class="col-md-5"
+            *ngFor="let quantidade of quantidades; let i=index"
+        >
+            <!-- <div *ngIf="quantidade[0] + quantidade[1] + quantidade[2] != 0"> -->
+                <input
+                    type="text"
+                    value="{{quantidade[0]+quantidade[1]+quantidade[2]}}"
+                    class="col-md-2"
+                    disabled
+                >
+                <span class="pl-1">{{produtos[i].tipo | titlecase}}</span>
+            <!-- </div> -->
+        </div>
     </div>
 </div>
 

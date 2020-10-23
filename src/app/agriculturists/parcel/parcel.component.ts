@@ -1,7 +1,10 @@
+import { HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatRadioChange } from '@angular/material/radio';
+import { ActivatedRoute, Router } from '@angular/router';
+import { finalize } from 'rxjs/operators';
 
 import { Produto } from 'src/app/world/models/produto';
 import { ProdutoSimplified } from 'src/app/world/models/produto.simplified';
@@ -18,7 +21,8 @@ import { PostForm } from './postForm';
 })
 export class ParcelComponent implements OnInit {
 
-    @Input() idAgr;
+    @Input() idAgr: number;
+    idJogo;
 
     parcelasForm: FormGroup;
 
@@ -28,14 +32,19 @@ export class ParcelComponent implements OnInit {
     checkedButtons = [];
     pedirSeloVerde: boolean;
 
+    percentDone: number;
+
     constructor(
         private produtoService: ProdutoService,
         private formBuilder: FormBuilder,
         private webStorageService: WebStorageService,
-        private parcelService: ParcelService
+        private parcelService: ParcelService,
+        private activatedRoute: ActivatedRoute,
+        private router: Router
     ) { }
 
     ngOnInit(): void {
+        this.idJogo = this.activatedRoute.snapshot.params.idJogo;
 
         this.iniciaArrays();
 
@@ -297,10 +306,28 @@ export class ParcelComponent implements OnInit {
         };
 
         this.parcelService.postAgricultiristForm(this.idAgr, postForm)
-            .subscribe(
-                () => console.log('funciona'),
-                err => console.log(err)
+            .pipe(
+                finalize(
+                    () => {
+                        this.router.navigate([this.idJogo, 'waitingPage', this.idAgr]);
+                    }
+                )
             )
+            .subscribe(
+                (event: HttpEvent<any>) => {
+                    if(event.type == HttpEventType.UploadProgress) {
+                        this.percentDone = Math.round(100 * event.loaded / event.total);
+                    }
+                    else if(event instanceof HttpResponse) {
+                        console.log('funciona');
+                        //this.alertService.success('Upload complete', true);
+                    }
+                },
+                err => {
+                    console.log(err);
+                    //this.alertService.danger('Upload error!', true);
+                }
+            );
 
     }
 }

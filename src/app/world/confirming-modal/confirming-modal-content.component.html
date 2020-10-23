@@ -1,0 +1,12 @@
+<h4 mat-dialog-title>{{ content.title }}</h4>
+<div mat-dialog-content>
+    {{ content.content }}
+</div>
+<!--div class="row" mat-dialog-actions><!-- align="end">
+    <button class="btn btn-warning col-md" mat-dialog-close>{{ content.btnCancelText }}</button>
+    <button class="btn btn-success col-md" [mat-dialog-close]="true" cdkFocusInitial>{{ content.btnOkText }}</button>
+</div-->
+<div mat-dialog-actions align="end">
+    <div mat-dialog-close class="btn btn-warning" mat-dialog-close="true">Cancel</div>
+    <button mat-button mat-dialog-close cdkFocusInitial>Install</button>
+</div>

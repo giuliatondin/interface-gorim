@@ -50,10 +50,26 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md" *ngFor="let pessoa of pessoas">
+                        <span>{{ pessoa.nome }}</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md" *ngFor="let finalizados of finalizadosEtapa">
+                        <div class="col-md p-1 {{ getColour(finalizados) }}">
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
                 <div class="row pb-5 align-items-center justify-content-center">
-                    <form action="">
-                        <button type="submit" class="mt-3 btn btn--primary">Terminar etapa</button>
-                    </form>
+                    <app-confirming-modal
+                        [openModalBtnText]="openModalBtnText"
+                        [openModalBtnClasses]="openModalBtnClasses"
+                        [modalTitle]="modalTitle"
+                        [modalContent]="modalContent"
+                    ></app-confirming-modal>
+                    <!--button (click)="finalizarEtapa()" class="mt-3 btn btn--primary">Terminar etapa</button-->
                 </div>
             </div>
         </div>

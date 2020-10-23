@@ -3,6 +3,7 @@ import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 
 import { World } from '../world/world';
+import { PersonSimplified } from '../world/models/person.simplified';
 
 const API = environment.ApiUrl + '/request/api/mestre';
 
@@ -42,5 +43,19 @@ export class MasterService{
         return this.httpClient.get<World>(
             API + '/infoMundo/' + idJogo
         );
+    }
+
+    verificaFinalizados(etapa: number){
+        return this.httpClient.post<boolean[]>(
+            API + '/verificaFinalizados',
+            etapa
+        )
+    }
+
+    getInfoPessoas(etapa: number){
+        return this.httpClient.post<PersonSimplified[]>(
+            API + '/infoPessoas',
+            etapa
+        )
     }
 }

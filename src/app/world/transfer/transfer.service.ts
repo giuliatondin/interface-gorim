@@ -19,8 +19,9 @@ export class TransferService{
     }
 
     getInfoPessoas(){
-        return this.httpClient.get<PersonSimplified[]>(
-            API + '/infoPessoas'
+        return this.httpClient.post<PersonSimplified[]>(
+            API + '/infoPessoas',
+            0
         );
     }
 
