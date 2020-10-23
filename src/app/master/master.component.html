@@ -64,12 +64,20 @@
                 </div>
                 <div class="row pb-5 align-items-center justify-content-center">
                     <app-confirming-modal
+                        *ngIf="hasUnfinishedPlayers()"
                         [openModalBtnText]="openModalBtnText"
                         [openModalBtnClasses]="openModalBtnClasses"
                         [modalTitle]="modalTitle"
                         [modalContent]="modalContent"
+                        (messageEvent)="receiveUserChoice($event)"
                     ></app-confirming-modal>
-                    <!--button (click)="finalizarEtapa()" class="mt-3 btn btn--primary">Terminar etapa</button-->
+                    <button
+                        *ngIf="!hasUnfinishedPlayers()"
+                        (click)="finalizarEtapa(true)"
+                        class="mt-3 btn btn--primary"
+                    >
+                        Terminar etapa
+                    </button>
                 </div>
             </div>
         </div>

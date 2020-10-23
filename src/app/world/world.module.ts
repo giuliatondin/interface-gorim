@@ -8,7 +8,7 @@ import { HeaderComponent } from './header/header.component';
 import { TransferComponent } from './transfer/transfer.component';
 import { TableValuesComponent } from './table-values/table-values.component';
 import { SideBarComponent } from './sidebar/sidebar.component';
-import { ConfirmingModalComponent } from './confirming-modal/confirming-modal.component';
+import { ConfirmingModalComponent, ConfirmingModalContentComponent } from './confirming-modal/confirming-modal.component';
 
 @NgModule({
     declarations: [
@@ -16,7 +16,8 @@ import { ConfirmingModalComponent } from './confirming-modal/confirming-modal.co
         TransferComponent,
         TableValuesComponent,
         SideBarComponent,
-        ConfirmingModalComponent
+        ConfirmingModalComponent,
+        ConfirmingModalContentComponent
     ],
     imports: [
         CommonModule,
@@ -32,6 +33,8 @@ import { ConfirmingModalComponent } from './confirming-modal/confirming-modal.co
         SideBarComponent,
         ConfirmingModalComponent
     ],
-    entryComponents: [ MatDialogModule ]
+    entryComponents: [
+        ConfirmingModalContentComponent
+    ]
 })
 export class WorldModule { }

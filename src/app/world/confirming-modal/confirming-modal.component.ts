@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { ConfirmingModalContent } from './confirming-modal-content';
@@ -17,6 +17,8 @@ export class ConfirmingModalComponent implements OnInit{
     @Input() modalConfirmBtnText: string = 'Confirmar';
     @Input() modalCancelBtnText: string = 'Cancelar';
 
+    @Output() messageEvent = new EventEmitter<boolean>();
+
     // modalConfirmBtnText="Confirmar";
     // modalCancelBtnText="Cancelar"
 
@@ -25,6 +27,10 @@ export class ConfirmingModalComponent implements OnInit{
     ) { }
 
     ngOnInit() {
+    }
+
+    sendUserChoice(userChoice: boolean){
+        this.messageEvent.emit(userChoice);
     }
 
     openModal() {
@@ -43,10 +49,9 @@ export class ConfirmingModalComponent implements OnInit{
                 result => {
                     modalResult = result;
                     console.log(modalResult);
+                    this.messageEvent.emit(modalResult as boolean);
                 }
             );
-        
-        return modalResult;
     }
 }
 

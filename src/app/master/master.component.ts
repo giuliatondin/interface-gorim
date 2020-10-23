@@ -6,7 +6,6 @@ import { World } from '../world/world';
 import { ActivatedRoute } from '@angular/router';
 import { flatMap } from 'rxjs/operators';
 import { PersonSimplified } from '../world/models/person.simplified';
-import { ConfirmingModalComponent, ConfirmingModalContentComponent } from '../world/confirming-modal/confirming-modal.component';
 
 @Component({
     selector: 'app-master',
@@ -31,12 +30,12 @@ export class MasterComponent implements OnInit {
     constructor(
         private masterService: MasterService,
         private activatedRoute: ActivatedRoute
-        //private confirmingModalComponent: ConfirmingModalComponent
     ) { }
 
     ngOnInit(): void {
         this.infoMundo$ = this.masterService.getInfoMundo(this.activatedRoute.snapshot.params.idJogo);
         this.putInMundo();
+
     }
 
     putInMundo(){
@@ -45,6 +44,13 @@ export class MasterComponent implements OnInit {
                 this.mundo = data;
                 this.verificaFinalizados();
                 this.getInfoPessoas();
+                this.masterService.verificaFinalizados(this.mundo.etapa)
+                    .subscribe(
+                        (data: boolean[]) => {
+                            this.finalizadosEtapa = data;
+                        },
+                        err => console.log(err)
+                    );
             },
             err => console.log(err)
         );
@@ -78,9 +84,25 @@ export class MasterComponent implements OnInit {
         else return 'naoFinalizado';
     }
 
-    finalizarEtapa(){
-        //this.masterService.finalizarEtapa();
-        //let confirm = this.confirmingModalComponent.openModal()
-        //console.log(confirm);
+    hasUnfinishedPlayers(){
+        let hasUnfinishedPlayers = true;
+        if(this.finalizadosEtapa){
+            this.finalizadosEtapa.forEach(
+                element =>  {
+                    if(!element) hasUnfinishedPlayers = true;
+                }
+            );
+        }
+        return hasUnfinishedPlayers;
+    }
+
+    receiveUserChoice($event: boolean){
+        this.finalizarEtapa($event);
+    }
+
+    finalizarEtapa(userChoice: boolean){
+        if(userChoice){
+            this.masterService.finalizarEtapa();
+        }
     }
 }
