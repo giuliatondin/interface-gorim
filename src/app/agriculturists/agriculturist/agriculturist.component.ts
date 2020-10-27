@@ -39,7 +39,6 @@ export class AgriculturistComponent implements OnInit {
             .subscribe(
                 produtos => {
                     this.produtos = produtos;
-                    console.log(this.produtos);
                 }
             )
     }

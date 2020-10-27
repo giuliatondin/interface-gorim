@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { Venda } from 'src/app/entrepreneurs/venda/venda';
 import { OrderProductService } from './order-product.service';
 import { PersonSimplified } from 'src/app/world/models/person.simplified';
+import { AlertService } from 'src/app/world/alert/alert.service';
 
 @Component({
     selector: 'app-order-product',
@@ -20,7 +21,8 @@ export class OrderProductComponent implements OnInit {
 
     constructor(
         private formBuilder: FormBuilder,
-        private orderProductService: OrderProductService
+        private orderProductService: OrderProductService,
+        private alertService: AlertService
     ) {
         this.idOrcamento = 0;
     }
@@ -75,13 +77,13 @@ export class OrderProductComponent implements OnInit {
                 () => {
                     this.orcamentoForm.reset();
                     this.resetForm();
-                    alert("FEITOOOOOOO!!");
+                    this.alertService.success('Orçamento enviado para o agricultor.');
                     this.idOrcamento++;
                 },
                 err => {
                     console.log(err);
                     this.orcamentoForm.reset();
-                    alert("Something went wrong. Please, try again.");
+                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
                 }
             );
 

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AlertService } from '../alert/alert.service';
 
 import { PersonSimplified } from '../models/person.simplified';
 import { Transfer } from './transfer';
@@ -19,7 +20,8 @@ export class TransferComponent implements OnInit {
 
     constructor(
         private formBuilder: FormBuilder,
-        private transferService: TransferService
+        private transferService: TransferService,
+        private alertService: AlertService
     ) { }
 
     ngOnInit(): void {
@@ -46,10 +48,13 @@ export class TransferComponent implements OnInit {
         this.transferService.postTransfer(formData)
             .subscribe(
                 () => {
-                    console.log("enviado");
+                    this.alertService.success('Transferencis enviada.');
                     this.transferForm.reset();
                 },
-                err => console.log(err)
+                err => {
+                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+                    console.log(err);
+                }
             );
     }
 

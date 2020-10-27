@@ -4,7 +4,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatRadioChange } from '@angular/material/radio';
 import { ActivatedRoute, Router } from '@angular/router';
-import { finalize } from 'rxjs/operators';
+import { interval, Subscription } from 'rxjs';
+import { finalize, flatMap } from 'rxjs/operators';
+import { AlertService } from 'src/app/world/alert/alert.service';
 
 import { Produto } from 'src/app/world/models/produto';
 import { ProdutoSimplified } from 'src/app/world/models/produto.simplified';
@@ -31,8 +33,12 @@ export class ParcelComponent implements OnInit {
 
     checkedButtons = [];
     pedirSeloVerde: boolean;
+    liberaBotao: boolean;
 
-    percentDone: number;
+    percentDone: number = 0;
+    
+    counter = interval(10 * 1000);
+    subscription: Subscription;
 
     constructor(
         private produtoService: ProdutoService,
@@ -40,11 +46,13 @@ export class ParcelComponent implements OnInit {
         private webStorageService: WebStorageService,
         private parcelService: ParcelService,
         private activatedRoute: ActivatedRoute,
-        private router: Router
+        private router: Router,
+        private alertService: AlertService
     ) { }
 
     ngOnInit(): void {
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
+        this.liberaBotao = false;
 
         this.iniciaArrays();
 
@@ -193,6 +201,8 @@ export class ParcelComponent implements OnInit {
                 ]
             }),
         });
+
+        this.verificaFimEtapa();
     }
 
     iniciaArrays(){
@@ -276,7 +286,28 @@ export class ParcelComponent implements OnInit {
         this.webStorageService.setBooleanData('parcelPedirSeloVerde', this.pedirSeloVerde);
     }
 
-    finalizarJogada(){        
+    verificaFimEtapa(){
+        
+        this.subscription = this.counter
+            .pipe(
+                flatMap(
+                    () => this.parcelService.verificaFimEtapa(1)
+                )
+            )
+            .subscribe(
+                (data: number) => {
+                    console.log(data);
+                    if(data > 2) this.liberaBotao = true;
+                    else if(data == 0){
+                        this.subscription.unsubscribe();
+                        this.finalizarJogada(true);
+                    }
+                },
+                err => console.log(err)
+            );
+    }
+
+    finalizarJogada(finishedByMaster: boolean = false){        
         let parcelas: Parcel[] = [];
         this.checkedButtons.forEach(
             parcela => {
@@ -306,26 +337,16 @@ export class ParcelComponent implements OnInit {
         };
 
         this.parcelService.postAgricultiristForm(this.idAgr, postForm)
-            .pipe(
-                finalize(
-                    () => {
-                        this.router.navigate([this.idJogo, 'waitingPage', this.idAgr]);
-                    }
-                )
-            )
             .subscribe(
-                (event: HttpEvent<any>) => {
-                    if(event.type == HttpEventType.UploadProgress) {
-                        this.percentDone = Math.round(100 * event.loaded / event.total);
-                    }
-                    else if(event instanceof HttpResponse) {
-                        console.log('funciona');
-                        //this.alertService.success('Upload complete', true);
-                    }
+                () => {
+                    if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
+                    else this.alertService.success('Jogada finalizada.', true);
+                    this.subscription.unsubscribe();
+                    this.router.navigate([this.idJogo, 'waitingPage', this.idAgr], { replaceUrl: true });
                 },
                 err => {
                     console.log(err);
-                    //this.alertService.danger('Upload error!', true);
+                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
                 }
             );
 

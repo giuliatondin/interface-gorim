@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { interval, Observable, Subscription } from 'rxjs';
 
 import { World } from 'src/app/world/world';
 import { EntrepreunersService } from '../entrepreneurs.service';
 import { PersonSimplified } from '../../world/models/person.simplified';
 import { Entrepreneur } from './entrepreneur';
 import { ProdutoSimplified } from 'src/app/world/models/produto.simplified';
+import { flatMap } from 'rxjs/operators';
+import { AlertService } from 'src/app/world/alert/alert.service';
 
 @Component({
     selector: 'app-entrepreneur',
@@ -25,13 +27,21 @@ export class EntrepreneurComponent implements OnInit {
     nomeAgricultores: PersonSimplified[];
     produtos: ProdutoSimplified[] = [];
 
+    liberaBotao: boolean;
+
+    counter: Observable<number> = interval(10 * 1000);
+    subscription: Subscription;
+
     constructor(
         private activatedRoute: ActivatedRoute,
         private router: Router,
-        private empService: EntrepreunersService
+        private empService: EntrepreunersService,
+        private alertService: AlertService
     ) { }
 
     ngOnInit(): void {
+        this.liberaBotao = false;
+
         this.idEmp = this.activatedRoute.snapshot.params.idEmp;
         this.empService.getInfo(this.idEmp)
             .subscribe(
@@ -50,6 +60,8 @@ export class EntrepreneurComponent implements OnInit {
                     this.nomeAgricultores = data;
                 }
             );
+        
+        this.verificaFimEtapa();
     }
 
     arrumaProdutos(){
@@ -65,14 +77,39 @@ export class EntrepreneurComponent implements OnInit {
         );
     }
 
-    finalizaJogada(){
+    verificaFimEtapa(){
+        this.subscription = this.counter
+            .pipe(
+                flatMap(
+                    () => this.empService.verificaFimEtapa(1)
+                )
+            )
+            .subscribe(
+                (data: number) => {
+                    console.log(data);
+                    if(data > 2) this.liberaBotao = true;
+                    else if(data == 0){
+                        this.subscription.unsubscribe();
+                        this.finalizarJogada(true);
+                    }
+                },
+                err => console.log(err)
+            );
+    }
+
+    finalizarJogada(finishedByMaster: boolean = false){
         this.empService.finalizaJogada(this.idEmp)
             .subscribe(
                 () => {
-                    console.log("Finalizadooooo");
+                    this.subscription.unsubscribe();
+                    if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
+                    else this.alertService.success('Jogada finalizada.', true);
                     this.router.navigate([this.idJogo, 'waitingPage', this.idEmp]);
                 },
-                err => console.log(err)
+                err => {
+                    console.log(err);
+                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+                }
             );
         
     }

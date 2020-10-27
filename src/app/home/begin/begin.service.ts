@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 
 import { environment } from 'src/environments/environment';
 
-const API = environment.ApiUrl + '/request/api/mestre';
+const API = environment.ApiUrl;
+const MASTER_ROUTE = '/request/api/mestre';
 
 @Injectable()
 export class BeginService{
@@ -18,7 +19,7 @@ export class BeginService{
         quantidadeJogadores: number
     ){
         return this.http.post(
-            API,
+            API + MASTER_ROUTE,
             {quantidadeJogadores}
         );
     }

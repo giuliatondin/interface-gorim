@@ -4,8 +4,9 @@ import { environment } from 'src/environments/environment';
 
 import { Venda } from 'src/app/agriculturists/venda/venda';
 
-const API = environment.ApiUrl + '/request/api/agricultor/venda/';
-const APIAdicionaOrcamento = environment.ApiUrl + '/request/api/empresario/venda/';
+const API = environment.ApiUrl;
+const AGR_ROUTE = '/request/api/agricultor/venda/';
+const ADD_ORC_ROUTE = '/request/api/empresario/venda/';
 
 @Injectable({
     providedIn: 'root'
@@ -22,7 +23,7 @@ export class VendaService {
         idAgr: number
     ){
         return this.httpClient.get<Venda[]>(
-            API + idAgr
+            API + AGR_ROUTE + idAgr
         );
     }
 
@@ -31,7 +32,7 @@ export class VendaService {
         venda: Venda
     ){
         return this.httpClient.post(
-            API + idEmp,
+            API + AGR_ROUTE + idEmp,
             venda
         )
     }
@@ -42,7 +43,7 @@ export class VendaService {
     ){
         console.log("Apagando");
         return this.httpClient.post(
-            API + 'delete/' + orcamento.idEmp + '/' + idAgr,
+            API + AGR_ROUTE + 'delete/' + orcamento.idEmp + '/' + idAgr,
             orcamento.idOrcamento
         )
     }
@@ -53,7 +54,7 @@ export class VendaService {
     ){
         console.log("Adicionando orcamento a mais");
         return this.httpClient.post(
-            APIAdicionaOrcamento + idAgr,
+            API + ADD_ORC_ROUTE + idAgr,
             orcamento
         )
     }

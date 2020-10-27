@@ -1,3 +1,4 @@
+<app-alert></app-alert>
 <div class="content pt-5 pb-5"> <!--*ngIf="(infoEmp$ | async) as emp"-->
     <div *ngIf="(infoMundo$ | async) as mundo">
         <div class="container main__block pt-2 pb-3 pl-3 pr-3">
@@ -30,7 +31,11 @@
                 <div class="col-md-4 col-xl-5">
                     <button href="/historico-empresario" target="_blank" class="btn btn--primary mb-2 col-md-12" *ngIf="mundo.rodada != 1">Abrir histórico</button>
                     <app-transfer [idPessoa]="idEmp"></app-transfer>
-                    <button class="btn btn--secondary mt-3" (click)="finalizaJogada()">Finalizar jogada</button>
+                    <button
+                        class="btn btn--secondary mt-3"
+                        (click)="finalizarJogada()"
+                        [disabled]="!liberaBotao"
+                    >Finalizar jogada</button>
                 </div>
             </div>
             

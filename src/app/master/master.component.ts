@@ -6,6 +6,7 @@ import { World } from '../world/world';
 import { ActivatedRoute } from '@angular/router';
 import { flatMap } from 'rxjs/operators';
 import { PersonSimplified } from '../world/models/person.simplified';
+import { AlertService } from '../world/alert/alert.service';
 
 @Component({
     selector: 'app-master',
@@ -29,11 +30,13 @@ export class MasterComponent implements OnInit {
 
     constructor(
         private masterService: MasterService,
-        private activatedRoute: ActivatedRoute
+        private activatedRoute: ActivatedRoute,
+        private alertService: AlertService
     ) { }
 
     ngOnInit(): void {
-        this.infoMundo$ = this.masterService.getInfoMundo(this.activatedRoute.snapshot.params.idJogo);
+        this.idJogo = this.activatedRoute.snapshot.params.idJogo;
+        this.infoMundo$ = this.masterService.getInfoMundo(this.idJogo);
         this.putInMundo();
 
     }
@@ -83,6 +86,28 @@ export class MasterComponent implements OnInit {
         if(finalizado) return 'finalizado';
         else return 'naoFinalizado';
     }
+    
+    getSituacaoEtapa(){
+        interval(10 * 1000)
+            .pipe(
+                flatMap(
+                    () => this.masterService.getSituacaoEtapa(this.mundo.etapa)
+                )
+            )
+            .subscribe(
+                (data: number) => {
+                    console.log(data);
+                    if(data = 2){
+                        this.masterService.changeFlagFimEtapa()
+                            .subscribe(
+                                () => this.alertService.info('Todos os jogadores começaram a etapa.'),
+                                err => console.log(err)
+                            )
+                    }
+                },
+                err => console.log(err)
+            );
+    }
 
     hasUnfinishedPlayers(){
         let hasUnfinishedPlayers = true;
@@ -102,7 +127,18 @@ export class MasterComponent implements OnInit {
 
     finalizarEtapa(userChoice: boolean){
         if(userChoice){
-            this.masterService.finalizarEtapa();
+            this.masterService.finalizarEtapa(this.idJogo)
+                .subscribe(
+                    () => {
+                        this.alertService.success('Etapa terminada.');
+                        this.infoMundo$ = this.masterService.getInfoMundo(this.idJogo);
+                        this.putInMundo();
+                    },
+                    err => {
+                        this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+                        console.log(err);
+                    }
+                )
         }
     }
 }

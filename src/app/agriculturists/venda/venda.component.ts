@@ -8,6 +8,7 @@ import { Venda } from './venda';
 import { VendaService } from './venda.service';
 import { ProdutoService } from '../produto.service';
 import { WebStorageService } from '../webstorage.service';
+import { AlertService } from 'src/app/world/alert/alert.service';
 
 @Component({
     selector: 'app-vendacard',
@@ -30,7 +31,8 @@ export class VendaComponent implements OnInit{
     constructor(
         private vendaService: VendaService,
         private produtoService: ProdutoService,
-        private webStorageService: WebStorageService
+        private webStorageService: WebStorageService,
+        private alertService: AlertService
     ){
         //
     }
@@ -96,7 +98,6 @@ export class VendaComponent implements OnInit{
                                             () => {
                                                 // if(quantidadePossivel > 0) this.orcamentos(orcamentoDivididoCompravel)
                                                 if(quantidadePossivel > 0){
-                                                    console.log("Entrou no if de quantidadePoss > 0");
                                                     let orcamentoDivididoCompravel: Venda = {
                                                         nomeAgr: orc.nomeAgr,
                                                         idAgr: orc.idAgr,
@@ -142,10 +143,7 @@ export class VendaComponent implements OnInit{
             )
             .subscribe(
                 (data: Venda[]) => {
-                    //this.orcamentos = data;
-
                     this.arrumaOverPurchases(data);
-
                 }
             );
     }
@@ -165,19 +163,26 @@ export class VendaComponent implements OnInit{
                                 if(venda.sucesso){
                                     this.quantidadeProdutos[this.getIndiceProduto(venda.idEmp, venda.idProduto)] += venda.quantidade;
                                     this.webStorageService.setData('vendaQuantidadeProdutos', this.quantidadeProdutos);
+                                    this.alertService.success('Produto comprado.');
                                 }
+                                else this.alertService.warning('Produto cancelado.');
                                 this.vendaService.getOrcamentos(this.idAgr)
                                     .subscribe(
                                         (data: Venda[]) => {
-                                            // this.orcamentos = data;
                                             this.arrumaOverPurchases(data);
                                         }
                                     );
                             },
-                            err => console.log(err)
+                            err => {
+                                this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+                                console.log(err);
+                            }
                         )
                 },
-                err => console.log(err)
+                err => {
+                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+                    console.log(err);
+                }
             );
         if (resposta) this.sendProdutoSibilingComponent(venda);
     }

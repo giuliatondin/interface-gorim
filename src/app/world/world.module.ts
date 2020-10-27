@@ -9,6 +9,7 @@ import { TransferComponent } from './transfer/transfer.component';
 import { TableValuesComponent } from './table-values/table-values.component';
 import { SideBarComponent } from './sidebar/sidebar.component';
 import { ConfirmingModalComponent, ConfirmingModalContentComponent } from './confirming-modal/confirming-modal.component';
+import { AlertComponent } from './alert/alert.component';
 
 @NgModule({
     declarations: [
@@ -17,7 +18,8 @@ import { ConfirmingModalComponent, ConfirmingModalContentComponent } from './con
         TableValuesComponent,
         SideBarComponent,
         ConfirmingModalComponent,
-        ConfirmingModalContentComponent
+        ConfirmingModalContentComponent,
+        AlertComponent
     ],
     imports: [
         CommonModule,
@@ -31,7 +33,8 @@ import { ConfirmingModalComponent, ConfirmingModalContentComponent } from './con
         TransferComponent,
         TableValuesComponent,
         SideBarComponent,
-        ConfirmingModalComponent
+        ConfirmingModalComponent,
+        AlertComponent
     ],
     entryComponents: [
         ConfirmingModalContentComponent

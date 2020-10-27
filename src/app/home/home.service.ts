@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 
 import { environment } from 'src/environments/environment';
 
-const API = environment.ApiUrl + '/request/api/mestre';
+const API = environment.ApiUrl;
+const MASTER_ROUTE = '/request/api/mestre';
 
 @Injectable()
 export class HomeService{
@@ -21,13 +22,9 @@ export class HomeService{
         //formData.append("quantidadeJogadores", quantidadeJogadores.toString());
         console.log("Aqui entra.");
         return this.httpClient.post(
-            API,
+            API + MASTER_ROUTE,
             {quantidadeJogadores}
         );
-    }
-
-    teste(){
-        console.log("achou!");
     }
     
 }

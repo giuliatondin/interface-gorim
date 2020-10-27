@@ -9,6 +9,7 @@ import { AgriculturistHistoryComponent } from './agriculturists/agriculturist-hi
 import { EntrepreneurHistoryComponent } from './entrepreneurs/entrepreneur-history/entrepreneur-history.component';
 import { MasterComponent } from './master/master.component';
 import { WaitingPageComponent } from './waiting-page/waiting-page.component';
+import { AlternativeSecondStagePageComponent } from './alternative-second-stage-page/alertnative-second-stage-page.component';
 
 const routes: Routes = [
     {
@@ -39,6 +40,10 @@ const routes: Routes = [
     {
         path: ':idJogo/waitingPage/:idPessoa', //history-entrepreneur
         component: WaitingPageComponent
+    },
+    {
+        path: ':idJogo/segundaEtapa/:idPessoa', //alternative-second-stage-page
+        component: AlternativeSecondStagePageComponent
     },
     {
         path: '**',

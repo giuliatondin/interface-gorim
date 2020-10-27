@@ -5,7 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import { World } from '../world/world';
 import { PersonSimplified } from '../world/models/person.simplified';
 
-const API = environment.ApiUrl + '/request/api/mestre';
+const API = environment.ApiUrl;
+const MASTER_ROUTE = '/request/api/mestre';
 
 @Injectable({
     providedIn: 'root'
@@ -18,22 +19,23 @@ export class MasterService{
         //
     }
 
-    finalizarEtapa(){
-        this.httpClient.post(
-            API + '/finalizarEtapa',
+    finalizarEtapa(idJogo: number){
+        console.log("entra " + idJogo);
+        return this.httpClient.post(
+            API + MASTER_ROUTE + '/finalizarEtapa',
             null
         );
     }
 
     getEntrepreuners(){
         return this.httpClient.get(
-            API + '/empresarios'
+            API + MASTER_ROUTE + '/empresarios'
         );
     }
 
     getAgriculturists(){
         return this.httpClient.get(
-            API + '/agricultores'
+            API + MASTER_ROUTE + '/agricultores'
         );
     }
 
@@ -41,21 +43,34 @@ export class MasterService{
         idJogo: number
     ){
         return this.httpClient.get<World>(
-            API + '/infoMundo/' + idJogo
+            API + MASTER_ROUTE + '/infoMundo/' + idJogo
         );
     }
 
     verificaFinalizados(etapa: number){
         return this.httpClient.post<boolean[]>(
-            API + '/verificaFinalizados',
+            API + MASTER_ROUTE + '/verificaFinalizados',
             etapa
         )
     }
 
     getInfoPessoas(etapa: number){
         return this.httpClient.post<PersonSimplified[]>(
-            API + '/infoPessoas',
+            API + MASTER_ROUTE + '/infoPessoasByEtapa',
             etapa
         )
+    }
+
+    getSituacaoEtapa(etapa: number){
+        return this.httpClient.get(
+            API + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
+        );
+    }
+
+    changeFlagFimEtapa(){
+        return this.httpClient.post(
+            API + MASTER_ROUTE + '/changeFlagFimEtapa/',
+            null
+        );
     }
 }

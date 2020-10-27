@@ -1097,5 +1097,9 @@
             </mat-expansion-panel>
         </mat-accordion>
     </div>
-    <button class="btn btn--secondary mt-3" type="submit" >Finalizar jogada</button>
+    <button
+        class="btn btn--secondary mt-3"
+        type="submit"
+        [disabled]="!liberaBotao"
+    >Finalizar jogada</button>
 </form>

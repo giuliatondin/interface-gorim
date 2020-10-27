@@ -1,3 +1,4 @@
+<app-alert></app-alert>
 <div class="content pt-5 pb-5" *ngIf="(infoAgr$ | async) as agr">
     <div *ngIf="(infoMundo$ | async) as mundo">
         <div class="container main__block pt-2 pb-3 pl-3 pr-3">
@@ -17,7 +18,10 @@
                 <div class="col-md-8 col-xl-7">
                     <mat-tab-group mat-align-tabs="center">
                         <mat-tab label="Parcelas">
-                            <app-parcel [produtos]="produtos" [idAgr]="idAgr"></app-parcel>
+                            <app-parcel
+                                [produtos]="produtos"
+                                [idAgr]="idAgr"
+                            ></app-parcel>
                         </mat-tab>
                         <mat-tab label="Valores dos produtos">
                             <app-table-values role='agricultor' [produtos]="produtos"></app-table-values>

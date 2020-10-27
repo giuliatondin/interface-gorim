@@ -6,8 +6,10 @@ import { Entrepreneur } from './entrepreneur/entrepreneur';
 import { World } from '../world/world';
 import { PersonSimplified } from '../world/models/person.simplified';
 
-const API = environment.ApiUrl + '/request/api/empresario';
-const APIMundo = environment.ApiUrl + '/request/api/mestre';
+const API = environment.ApiUrl;
+const EMP_ROUTE = '/request/api/empresario';
+const MASTER_ROUTE = '/request/api/mestre';
+const HISTORY_ROUTE = '/request/api/arquivoResumo/';
 
 @Injectable({
     providedIn: 'root'
@@ -20,20 +22,11 @@ export class EntrepreunersService{
         //
     }
 
-    finalizaJogada(
-        idEmp: number
-    ){
-        return this.httpClient.post(
-            API + '/' + idEmp,
-            {idEmp}
-        )
-    }
-
     getHitory(
         id: number
     ){
         return this.httpClient.get(
-            environment.ApiUrl + '/request/api/arquivoResumo/' + id
+            API + HISTORY_ROUTE + id
         );
     }
 
@@ -41,7 +34,7 @@ export class EntrepreunersService{
         id: number
     ){
         return this.httpClient.get<Entrepreneur>(
-            API + "/" + id
+            API + EMP_ROUTE + '/' + id
         );
     }
 
@@ -49,14 +42,29 @@ export class EntrepreunersService{
         idJogo: number
     ){
         return this.httpClient.get<World>(
-            APIMundo + '/infoMundo/' + idJogo
+            API + MASTER_ROUTE + '/infoMundo/' + idJogo
         );
     }
 
     getInfoAgricultores(){
         return this.httpClient.post<PersonSimplified[]>(
-            APIMundo +'/infoPessoasByClasse',
+            API + MASTER_ROUTE +'/infoPessoasByClasse',
             2
         );
+    }
+    
+    verificaFimEtapa(etapa: number){
+        return this.httpClient.get(
+            API + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
+        );
+    }
+
+    finalizaJogada(
+        idEmp: number
+    ){
+        return this.httpClient.post(
+            API + EMP_ROUTE + '/' + idEmp,
+            {idEmp}
+        )
     }
 }

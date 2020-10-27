@@ -11,6 +11,7 @@ import { EntrepreneursModule } from './entrepreneurs/entrepreneurs.module';
 import { MasterModule } from './master/master.module';
 import { HomeModule } from './home/home.module';
 import { WaitingPageModule } from './waiting-page/waiting-page.module';
+import { AletrnativeSecondStagePageModule } from './alternative-second-stage-page/alertnative-second-stage-page.module';
 
 @NgModule({
     declarations: [
@@ -23,6 +24,7 @@ import { WaitingPageModule } from './waiting-page/waiting-page.module';
         AgriculturistsModule,
         EntrepreneursModule,
         WaitingPageModule,
+        AletrnativeSecondStagePageModule,
         MasterModule,
         WorldModule,
         ErrorsModule,
