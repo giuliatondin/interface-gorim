@@ -19,7 +19,7 @@ export class WebStorageService {
                 return retrievedObject.data as number[];
             }
     
-            this.removeData(dataName);
+            this.removeData([dataName]);
         }
         
         return null;
@@ -33,7 +33,7 @@ export class WebStorageService {
                 return retrievedObject.data as boolean;
             }
     
-            this.removeData(dataName);
+            this.removeData([dataName]);
         }
         
         return null;
@@ -59,7 +59,11 @@ export class WebStorageService {
         window.localStorage.setItem(dataName, JSON.stringify(stringified));
     }
 
-    removeData(dataName: string){
-        window.localStorage.removeItem(dataName);
+    removeData(dataNames: string[]){
+        dataNames.forEach(
+            dataName => {
+                window.localStorage.removeItem(dataName);
+            }
+        );
     }
 }

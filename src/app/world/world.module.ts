@@ -10,6 +10,7 @@ import { TableValuesComponent } from './table-values/table-values.component';
 import { SideBarComponent } from './sidebar/sidebar.component';
 import { ConfirmingModalComponent, ConfirmingModalContentComponent } from './confirming-modal/confirming-modal.component';
 import { AlertComponent } from './alert/alert.component';
+import { InLineAlertComponent } from './inline-alert/inline-alert.component';
 
 @NgModule({
     declarations: [
@@ -19,7 +20,8 @@ import { AlertComponent } from './alert/alert.component';
         SideBarComponent,
         ConfirmingModalComponent,
         ConfirmingModalContentComponent,
-        AlertComponent
+        AlertComponent,
+        InLineAlertComponent
     ],
     imports: [
         CommonModule,
@@ -34,7 +36,8 @@ import { AlertComponent } from './alert/alert.component';
         TableValuesComponent,
         SideBarComponent,
         ConfirmingModalComponent,
-        AlertComponent
+        AlertComponent,
+        InLineAlertComponent
     ],
     entryComponents: [
         ConfirmingModalContentComponent

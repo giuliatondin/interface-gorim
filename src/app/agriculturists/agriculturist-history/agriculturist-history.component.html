@@ -1,15 +1,134 @@
-<div class="history content pt-5 pb-5">
+<div class="history content pt-5 pb-5" *ngIf="(history$ | async) as history">
     <div class="container main__block pt-2 pb-3 pl-3 pr-3">
         <div class="mb-3">
-            <h2 class="text-center pt-2 pb-3">Histórico [nome jogador] </h2>
-            <mat-accordion>
+            <h2 class="text-center pt-2 pb-3">Histórico {{ history.nome }} </h2>
+            <mat-accordion *ngFor="let rodada of history.rodadas">
                 <mat-expansion-panel>
                     <mat-expansion-panel-header>
                         <mat-panel-title class="title">
-                            Rodada 1
+                            Rodada {{ rodada.rodada }}
                         </mat-panel-title>
                     </mat-expansion-panel-header>
-                    <app-history-list></app-history-list>
+                    <div class="row align-items-center">
+                        <div class="col-md-3 mb-3">
+                            <div class="history-list-info">Saldo Anterior: D${{ rodada.saldoAnterior }}</div>
+                        </div>
+                    </div>
+                    <h3><span style="color: lightgreen;">Créditos</span></h3>
+                    <div class="row align-items-center">
+                        <div class="col-md-3 mb-3" *ngIf="rodada.transferencias.recebido">
+                            <div class="row" *ngFor="let recebida of rodada.transferencias.recebido">
+                                <div class="col-md-12">
+                                    <p>Transferencias Recebidas</p>
+                                </div>
+                                <div class="col-md-12 text-left">
+                                    - Recebido de: {{ recebida.nome }} - D${{ recebida.valor }}.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="history-list-info">Produtividade: D${{ rodada.produtividade }}</div>
+                        </div>
+                    </div>
+                    <h3><span style="color: lightsalmon;">Débitos</span></h3>
+                    <div class="row align-items-center">
+                        <div class="col-md-3 mb-3" *ngIf="rodada.transferencias.enviado">
+                            <div class="row" *ngFor="let enviada of rodada.transferencias.enviado">
+                                <div class="col-md-12">
+                                    <p>Transferencias Enviadas</p>
+                                </div>
+                                <div class="col-md-12 text-left">
+                                    - Enviado para: {{ enviada.nome }} - D${{ enviada.valor }}.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="history-list-info">Gastos: D${{ rodada.gastos }}</div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="history-list-info">Imposto: D${{ rodada.imposto }}</div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="history-list-info" *ngIf="rodada.multa">Multa: D${{ rodada.multa }}</div>
+                        </div>
+                    </div>
+                    <h3><span style="color: grey;">Info Pessoal</span></h3>
+                    <div class="row align-items-center">
+                        <div class="col-md-3 mb-3">
+                            <div class="history-list-info">Saldo Atual: D${{ rodada.saldoAtual }}</div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="history-list-info">Poluição Pessoal: {{ rodada.poluicaoPessoal }}</div>
+                        </div>
+                    </div>
+                    <h3><span style="color: grey;">Info Mundo</span></h3>
+                    <div class="row" *ngIf="rodada.acoesUtilizadas.size > 0">
+                        <div class="row">
+                            <div class="col-md-12 mb-3 ml-3">
+                                Ações Ambientais utilizadas pelo Prefeito:
+                            </div>
+                            <div class="col-md-3" *ngFor="let acao of rodada.acoesUtilizadas">
+                                {{ acao }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-md-3 mb-3">
+                            <div class="history-list-info">Poluição Causada no Mundo: {{ rodada.poluicaoCausadaMundo }}%</div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="history-list-info">Poluição Mundial: {{ rodada.poluicaoMundial }}%</div>
+                        </div>
+                    </div>
+                    <div class="history-list" *ngFor="let parcela of rodada.parcelas; let $i=index">
+                        <hr>
+                        <h3>Parcela {{ $i+1 }}</h3>
+                        <div class="row align-items-center">
+                            <div class="col-md-3 mb-3">
+                                <div class="history-list-info" *ngIf="parcela.semente; else semente">
+                                    Semente: {{ parcela.semente | titlecase }}.
+                                </div>
+                                <ng-template #semente class="history-list-info" >
+                                    Semente: nenhuma.
+                                </ng-template>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="history-list-info" *ngIf="parcela.fertilizante; else fertilizante">
+                                    Fertilizante: {{ parcela.fertilizante | titlecase }}.
+                                </div>
+                                <ng-template #fertilizante class="history-list-info" >
+                                    Fertilizante: nenhum.
+                                </ng-template>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div *ngIf="parcela.maqAgr; else maqAgr">
+                                    <div class="history-list-info" *ngIf="isMaquina(parcela.maqAgr); else agrotoxico">
+                                        Máquina: {{ parcela.maqAgr | titlecase }}.
+                                    </div>
+                                    <ng-template #agrotoxico class="history-list-info">
+                                        Agrotóxico: {{ parcela.maqAgr | titlecase }}.
+                                    </ng-template>
+                                </div>
+                                <ng-template #maqAgr>
+                                    <div class="history-list-info">Máquina/Agrotóxico: nenhum.</div>
+                                </ng-template>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="history-list-info" *ngIf="parcela.pulverizador; else pulverizador">Pulverizador: Sim.</div>
+                                <ng-template #pulverizador>
+                                    <div class="history-list-info">Pulverizador: Não.</div>
+                                </ng-template>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="history-list-info" *ngIf="parcela.seloVerde; else seloVerde">
+                                    Selo verde: Sim.
+                                </div>
+                                <ng-template #seloVerde class="history-list-info">
+                                    Selo Verde: Não.
+                                </ng-template>
+                            </div>
+                        </div>
+                    </div>
                 </mat-expansion-panel>
             </mat-accordion>
         </div>

@@ -9,7 +9,6 @@ import { PersonSimplified } from '../world/models/person.simplified';
 const API = environment.ApiUrl;
 const EMP_ROUTE = '/request/api/empresario';
 const MASTER_ROUTE = '/request/api/mestre';
-const HISTORY_ROUTE = '/request/api/arquivoResumo/';
 
 @Injectable({
     providedIn: 'root'
@@ -20,14 +19,6 @@ export class EntrepreunersService{
         private httpClient: HttpClient
     ){
         //
-    }
-
-    getHitory(
-        id: number
-    ){
-        return this.httpClient.get(
-            API + HISTORY_ROUTE + id
-        );
     }
 
     getInfo(

@@ -9,7 +9,6 @@ import { ProdutoSimplified } from '../world/models/produto.simplified';
 const API = environment.ApiUrl;
 const AGR_ROUTE = '/request/api/agricultor';
 const MASTER_ROUTE = '/request/api/mestre';
-const HISTORY_ROUTE = '/requset/api/arquivoResumo/';
 
 @Injectable({
     providedIn: 'root'
@@ -25,14 +24,6 @@ export class AgriculturistsService{
     getInfo(id: number){
         return this.httpClient.get<Agriculturist>(
             API + AGR_ROUTE + '/' + id
-        );
-    }
-
-    getHistory(
-        id: number
-    ){
-        return this.httpClient.get(
-            API + HISTORY_ROUTE + id
         );
     }
 

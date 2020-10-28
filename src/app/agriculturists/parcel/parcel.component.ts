@@ -60,7 +60,7 @@ export class ParcelComponent implements OnInit {
             (produto: Produto) => {
                 if(produto.nome != ""){
                     this.quantidades[produto.id-1][produto.preco] += produto.quantidade;
-                    this.webStorageService.setData('parcelQuantidades', this.quantidades);
+                    this.webStorageService.setData('agr'+ this.idAgr + 'ParcelQuantidades', this.quantidades);
                 }
             },
             err => console.log(err)
@@ -206,8 +206,8 @@ export class ParcelComponent implements OnInit {
     }
 
     iniciaArrays(){
-        this.quantidades = (this.webStorageService.hasData('parcelQuantidades')) ?
-            this.webStorageService.getData('parcelQuantidades') :
+        this.quantidades = (this.webStorageService.hasData('agr'+ this.idAgr + 'ParcelQuantidades')) ?
+            this.webStorageService.getData('agr'+ this.idAgr + 'ParcelQuantidades') :
             [
                 //  [b, m, a]
                     [0, 0, 0], // hortalica
@@ -225,8 +225,8 @@ export class ParcelComponent implements OnInit {
                     [0, 0, 0]  // a super premium
             ];
         
-        this.checkedButtons = (this.webStorageService.hasData('parcelCheckedButtons')) ?
-            this.webStorageService.getData('parcelCheckedButtons') :
+        this.checkedButtons = (this.webStorageService.hasData('agr'+ this.idAgr + 'ParcelCheckedButtons')) ?
+            this.webStorageService.getData('agr'+ this.idAgr + 'ParcelCheckedButtons') :
             [
                 [0, 0, 0, 0], // p1
                 [0, 0, 0, 0], // p2
@@ -236,13 +236,13 @@ export class ParcelComponent implements OnInit {
                 [0, 0, 0, 0]  // p6
             ];
 
-        this.pedirSeloVerde = (this.webStorageService.hasBooleanData('parcelPedirSeloVerde')) ?
-            this.webStorageService.getBooleanData('parcelPedirSeloVerde') :
+        this.pedirSeloVerde = (this.webStorageService.hasBooleanData('agr'+ this.idAgr + 'ParcelPedirSeloVerde')) ?
+            this.webStorageService.getBooleanData('agr'+ this.idAgr + 'ParcelPedirSeloVerde') :
             false;
         
-        this.webStorageService.setData('parcelCheckedButtons', this.checkedButtons);
-        this.webStorageService.setData('parcelQuantidades', this.quantidades);
-        this.webStorageService.setBooleanData('parcelPedirSeloVerde', this.pedirSeloVerde);
+        this.webStorageService.setData('agr'+ this.idAgr + 'ParcelCheckedButtons', this.checkedButtons);
+        this.webStorageService.setData('agr'+ this.idAgr + 'ParcelQuantidades', this.quantidades);
+        this.webStorageService.setBooleanData('agr'+ this.idAgr + 'ParcelPedirSeloVerde', this.pedirSeloVerde);
     }
 
     getIndiceProduto(idEmp: number, idProduto: number){
@@ -277,13 +277,13 @@ export class ParcelComponent implements OnInit {
             this.checkedButtons[parcela-1][indice] = aux;
         }
 
-        this.webStorageService.setData('parcelCheckedButtons', this.checkedButtons);
-        this.webStorageService.setData('parcelQuantidades', this.quantidades);
+        this.webStorageService.setData('agr'+ this.idAgr + 'ParcelCheckedButtons', this.checkedButtons);
+        this.webStorageService.setData('agr'+ this.idAgr + 'ParcelQuantidades', this.quantidades);
     }
 
     changePedirSeloVerde(event: MatCheckboxChange){
         this.pedirSeloVerde = event.checked;
-        this.webStorageService.setBooleanData('parcelPedirSeloVerde', this.pedirSeloVerde);
+        this.webStorageService.setBooleanData('agr'+ this.idAgr + 'ParcelPedirSeloVerde', this.pedirSeloVerde);
     }
 
     verificaFimEtapa(){
@@ -342,6 +342,12 @@ export class ParcelComponent implements OnInit {
                     if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
                     else this.alertService.success('Jogada finalizada.', true);
                     this.subscription.unsubscribe();
+                    this.webStorageService.removeData([
+                        'agr'+ this.idAgr + 'ParcelCheckedButtons',
+                        'agr'+ this.idAgr + 'VendaQuantidadeProdutos',
+                        'agr'+ this.idAgr + 'ParcelPedirSeloVerde',
+                        'agr'+ this.idAgr + 'ParcelQuantidades'
+                    ]);
                     this.router.navigate([this.idJogo, 'waitingPage', this.idAgr], { replaceUrl: true });
                 },
                 err => {

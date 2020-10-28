@@ -22,7 +22,7 @@ const routes: Routes = [
         component: AgriculturistComponent
     },
     {
-        path: 'historico-agricultor', //history-agriculturist
+        path: 'historico-agricultor/:idAgr', //history-agriculturist
         component: AgriculturistHistoryComponent
     },
     {
@@ -30,7 +30,7 @@ const routes: Routes = [
         component: EntrepreneurComponent
     },
     {
-        path: 'historico-empresario', //history-entrepreneur
+        path: 'historico-empresario/:idEmp', //history-entrepreneur
         component: EntrepreneurHistoryComponent
     },
     {

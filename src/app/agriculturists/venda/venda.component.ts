@@ -38,11 +38,11 @@ export class VendaComponent implements OnInit{
     }
 
     ngOnInit(){
-        console.log(this.webStorageService.hasData('vendaQuantidadeProdutos'));
-        this.quantidadeProdutos = (this.webStorageService.hasData('vendaQuantidadeProdutos')) ?
-            this.webStorageService.getData('vendaQuantidadeProdutos') :
+        console.log(this.webStorageService.hasData('agr'+ this.idAgr + 'VendaQuantidadeProdutos'));
+        this.quantidadeProdutos = (this.webStorageService.hasData('agr'+ this.idAgr + 'VendaQuantidadeProdutos')) ?
+            this.webStorageService.getData('agr'+ this.idAgr + 'VendaQuantidadeProdutos') :
             [0, 0, 0, 0];
-        this.webStorageService.setData('vendaQuantidadeProdutos', this.quantidadeProdutos);
+        this.webStorageService.setData('agr'+ this.idAgr + 'VendaQuantidadeProdutos', this.quantidadeProdutos);
 
         this.getOrcamentos();
     }
@@ -162,7 +162,7 @@ export class VendaComponent implements OnInit{
                             () => {
                                 if(venda.sucesso){
                                     this.quantidadeProdutos[this.getIndiceProduto(venda.idEmp, venda.idProduto)] += venda.quantidade;
-                                    this.webStorageService.setData('vendaQuantidadeProdutos', this.quantidadeProdutos);
+                                    this.webStorageService.setData('agr'+ this.idAgr + 'VendaQuantidadeProdutos', this.quantidadeProdutos);
                                     this.alertService.success('Produto comprado.');
                                 }
                                 else this.alertService.warning('Produto cancelado.');

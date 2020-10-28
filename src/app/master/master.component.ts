@@ -22,6 +22,8 @@ export class MasterComponent implements OnInit {
     finalizadosEtapa: boolean[];
     pessoas: PersonSimplified[];
 
+    apareceBotao: boolean = false;
+
     // coisas do modal
     openModalBtnText="Terminar etapa";
     openModalBtnClasses="mt-3 btn btn--primary";
@@ -97,7 +99,11 @@ export class MasterComponent implements OnInit {
             .subscribe(
                 (data: number) => {
                     console.log(data);
-                    if(data = 2){
+                    if(data == 0){
+                        this.apareceBotao = false;
+                    }
+                    else if(data = 2){
+                        this.apareceBotao = true;
                         this.masterService.changeFlagFimEtapa()
                             .subscribe(
                                 () => this.alertService.info('Todos os jogadores começaram a etapa.'),
