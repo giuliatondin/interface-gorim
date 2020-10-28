@@ -1,0 +1,31 @@
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
+import { AldermanHistory } from './alderman-history';
+import { AldermanHistoryService } from './alderman-history.service';
+
+@Component({
+    selector: 'app-alderman-history',
+    templateUrl: './alderman-history.component.html',
+    styleUrls: ['./alderman-history.component.scss']
+})
+export class AldermanHistoryComponent implements OnInit {
+
+    idVer: number;
+    history$: Observable<AldermanHistory>;
+
+    constructor(
+        private activatedRoute: ActivatedRoute,
+        private empHistoryService: AldermanHistoryService
+    ) { }
+
+    ngOnInit(): void {
+        this.idVer = this.activatedRoute.snapshot.params.idEmp;
+        this.getHistory();
+    }
+
+    getHistory(){
+        this.history$ = this.empHistoryService.getHitory(this.idVer);
+    }
+
+}

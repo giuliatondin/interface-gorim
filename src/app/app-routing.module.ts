@@ -10,6 +10,12 @@ import { EntrepreneurHistoryComponent } from './entrepreneurs/entrepreneur-histo
 import { MasterComponent } from './master/master.component';
 import { WaitingPageComponent } from './waiting-page/waiting-page.component';
 import { AlternativeSecondStagePageComponent } from './alternative-second-stage-page/alertnative-second-stage-page.component';
+import { SupervisorComponent } from './supervisor/supervisor.component';
+import { SupervisorHistoryComponent } from './supervisor/supervisor-history/supervisor-history.component';
+import { MayorComponent } from './mayor/mayor.component';
+import { MayorHistoryComponent } from './mayor/mayor-history/mayor-history.component';
+import { AldermanComponent } from './alderman/alderman.component';
+import { AldermanHistoryComponent } from './alderman/alderman-history/alderman-history.component';
 
 const routes: Routes = [
     {
@@ -22,7 +28,7 @@ const routes: Routes = [
         component: AgriculturistComponent
     },
     {
-        path: 'historico-agricultor/:idAgr', //history-agriculturist
+        path: ':idJogo/historico-agricultor/:idAgr', //history-agriculturist
         component: AgriculturistHistoryComponent
     },
     {
@@ -30,8 +36,32 @@ const routes: Routes = [
         component: EntrepreneurComponent
     },
     {
-        path: 'historico-empresario/:idEmp', //history-entrepreneur
+        path: ':idJogo/historico-empresario/:idEmp', //history-entrepreneur
         component: EntrepreneurHistoryComponent
+    },
+    {
+        path: ':idJogo/fiscal/:idFis', //supervisor 
+        component: SupervisorComponent
+    },
+    {
+        path: ':idJogo/historico-fiscal/:idFis', //history-supervisor
+        component: SupervisorHistoryComponent
+    },
+    {
+        path: ':idJogo/prefeito/:idPref', //mayor 
+        component: MayorComponent
+    },
+    {
+        path: ':idJogo/historico-prefeito/:idPref', //history-mayor
+        component: MayorHistoryComponent
+    },
+    {
+        path: ':idJogo/vereador/:idVer', //alderman 
+        component: AldermanComponent
+    },
+    {
+        path: ':idJogo/historico-vereador/:idVer', //history-alderman
+        component: AldermanHistoryComponent
     },
     {
         path: ':idJogo/mestre', //master

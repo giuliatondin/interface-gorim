@@ -12,7 +12,6 @@ import { AgriculturistComponent } from './agriculturist/agriculturist.component'
 import { ParcelComponent } from './parcel/parcel.component';
 import { WorldModule } from '../world/world.module';
 import { AgriculturistHistoryComponent } from './agriculturist-history/agriculturist-history.component';
-import { HistoryListComponent } from './agriculturist-history/history-list/history-list.component';
 import { VendaComponent } from '../agriculturists/venda/venda.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProdutoService } from './produto.service';
@@ -22,7 +21,6 @@ import { ProdutoService } from './produto.service';
         AgriculturistComponent,
         ParcelComponent,
         AgriculturistHistoryComponent,
-        HistoryListComponent,
         VendaComponent
     ],
     exports: [

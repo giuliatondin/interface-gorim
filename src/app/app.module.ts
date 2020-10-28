@@ -8,10 +8,14 @@ import { AgriculturistsModule } from './agriculturists/agriculturists.module';
 import { ErrorsModule } from './errors/errors.module';
 import { WorldModule } from './world/world.module';
 import { EntrepreneursModule } from './entrepreneurs/entrepreneurs.module';
+import { SupervisorModule } from './supervisor/supervisor.module';
+import { MayorModule } from './mayor/mayor.module';
+import { AldermanModule } from './alderman/alderman.module';
 import { MasterModule } from './master/master.module';
 import { HomeModule } from './home/home.module';
 import { WaitingPageModule } from './waiting-page/waiting-page.module';
 import { AletrnativeSecondStagePageModule } from './alternative-second-stage-page/alertnative-second-stage-page.module';
+
 
 @NgModule({
     declarations: [
@@ -23,6 +27,9 @@ import { AletrnativeSecondStagePageModule } from './alternative-second-stage-pag
         HomeModule,
         AgriculturistsModule,
         EntrepreneursModule,
+        SupervisorModule,
+        MayorModule,
+        AldermanModule,
         WaitingPageModule,
         AletrnativeSecondStagePageModule,
         MasterModule,

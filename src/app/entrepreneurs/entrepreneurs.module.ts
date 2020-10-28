@@ -10,7 +10,6 @@ import { AppComponent } from '../app.component';
 import { EntrepreneurComponent } from './entrepreneur/entrepreneur.component';
 import { OrderProductComponent } from './order-product/order-product.component';
 import { EntrepreneurHistoryComponent } from './entrepreneur-history/entrepreneur-history.component';
-import { HistoryListComponent } from './entrepreneur-history/history-list/history-list.component';
 import { VendaComponent } from './venda/venda.component';
 
 @NgModule({
@@ -18,7 +17,6 @@ import { VendaComponent } from './venda/venda.component';
         EntrepreneurComponent,
         OrderProductComponent,
         EntrepreneurHistoryComponent,
-        HistoryListComponent,
         VendaComponent
     ],
     imports: [
