@@ -1,0 +1,16 @@
+<div class="h-100 d-inline-block w-100 border border-dark rounded p-1 container">
+    <h3>Finalizados Etapa</h3>
+    <div class="container" *ngFor="let pessoa of pessoas; let i=index">
+        <hr>
+        <div class="row">
+            <!--small><span class="p-1 {{ getColour(finalizados) }}"></span>{{ pessoa.nome }}</small-->
+            <div class="col-md-auto">
+                <span class="pr-4 {{ getColour(finalizadosEtapa[i]) }}"></span>
+            </div>
+            <div class="col-md-auto">
+                <small>{{ pessoa.nome }}</small>
+            </div>
+                    
+        </div>
+    </div>
+</div>

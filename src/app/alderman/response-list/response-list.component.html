@@ -1,0 +1,17 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 col-md-6" *ngFor="let response of responses">
+            <div class="card">
+                <div class="card-body {{ getColour(response.aceito) }}">
+                    <div *ngIf="isTaxSugestion(response); else acaoAmbiental">
+                        <h4 class="card-text">Tipo {{ response.imposto.tipo }}</h4>
+                        <p class="card-text">Mudar para taxa: <b>{{ response.imposto.taxa }}</b></p>
+                    </div>
+                    <ng-template #acaoAmbiental>
+                        <p class="card-text">Aplicar Ação Ambiental de {{ response.acaoAmbiental }}</p>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

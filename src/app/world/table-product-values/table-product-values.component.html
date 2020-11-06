@@ -1,0 +1,103 @@
+<div class="tableValues pt-3" *ngIf="sementes.length > 0">
+    <div class="pb-3">
+        <h3>Sementes</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th scope="col">Tipo</th>
+                        <th scope="col" class="type" *ngIf="role === 'empresario'">Baixo</th>
+                        <th scope="col">Médio</th>
+                        <th scope="col" class="type" *ngIf="role === 'empresario'">Alto</th>
+                    </tr>
+                </thead>
+                <tbody  *ngFor="let produto of sementes">
+                    <tr>
+                        <th scope="row">{{ produto.tipo | titlecase }}</th>
+                        <td *ngIf="role === 'empresario'">D$ {{ produto.custo-5 }}</td>
+                        <td>D$ {{ produto.custo }}</td>
+                        <td *ngIf="role === 'empresario'">D$ {{ produto.custo+5 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="tableValues pt-3" *ngIf="fertilizantes.length > 0">
+    <div class="pb-3">
+        <h3>Fertilizantes</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th scope="col">Tipo</th>
+                        <th scope="col" class="type" *ngIf="role === 'empresario'">Baixo</th>
+                        <th scope="col">Médio</th>
+                        <th scope="col" class="type" *ngIf="role === 'empresario'">Alto</th>
+                    </tr>
+                </thead>
+                <tbody  *ngFor="let produto of fertilizantes">
+                    <tr>
+                        <th scope="row">{{ produto.tipo | titlecase }}</th>
+                        <td *ngIf="role === 'empresario'">D$ {{ produto.custo-5 }}</td>
+                        <td>D$ {{ produto.custo }}</td>
+                        <td *ngIf="role === 'empresario'">D$ {{ produto.custo+5 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="tableValues pt-3" *ngIf="maquinas.length > 0">
+    <div class="pb-3">
+        <h3>Máquinas</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th scope="col">Tipo</th>
+                        <th scope="col" class="type" *ngIf="role === 'empresario'">Baixo</th>
+                        <th scope="col">Médio</th>
+                        <th scope="col" class="type" *ngIf="role === 'empresario'">Alto</th>
+                    </tr>
+                </thead>
+                <tbody  *ngFor="let produto of maquinas">
+                    <tr>
+                        <th scope="row">{{ produto.tipo | titlecase }}</th>
+                        <td *ngIf="role === 'empresario'">D$ {{ produto.custo-5 }}</td>
+                        <td>D$ {{ produto.custo }}</td>
+                        <td *ngIf="role === 'empresario'">D$ {{ produto.custo+5 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="tableValues pt-3" *ngIf="agrotoxicos.length > 0">
+    <div class="pb-3">
+        <h3>Agrotoxicos</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th scope="col">Tipo</th>
+                        <th scope="col" class="type" *ngIf="role === 'empresario'">Baixo</th>
+                        <th scope="col">Médio</th>
+                        <th scope="col" class="type" *ngIf="role === 'empresario'">Alto</th>
+                    </tr>
+                </thead>
+                <tbody  *ngFor="let produto of agrotoxicos">
+                    <tr>
+                        <th scope="row">{{ produto.tipo | titlecase }}</th>
+                        <td *ngIf="role === 'empresario'">D$ {{ produto.custo-5 }}</td>
+                        <td>D$ {{ produto.custo }}</td>
+                        <td *ngIf="role === 'empresario'">D$ {{ produto.custo+5 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

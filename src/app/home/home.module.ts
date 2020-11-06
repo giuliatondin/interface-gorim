@@ -5,6 +5,7 @@ import { HomeComponent } from './home.component';
 import { BeginModule } from './begin/begin.module';
 import { ContinueModule } from './continue/continue.module';
 import { HomeService } from './home.service';
+import { WorldModule } from '../world/world.module';
 
 @NgModule({
     declarations: [
@@ -13,7 +14,8 @@ import { HomeService } from './home.service';
     imports: [
         CommonModule,
         BeginModule,
-        ContinueModule
+        ContinueModule,
+        WorldModule
     ],
     exports: [
         HomeComponent

@@ -4,16 +4,41 @@ export interface SupervisorHistory {
 }
 
 export interface Turn {
-    produtividade: number;
+    rodada: number;
+    etapas: Stage[];
+}
+
+export interface Stage {
+    etapa: number;
     saldoAnterior: number;
-    imposto: number;
-    multa: number;
     saldoAtual: number;
-    poluicaoCausadaMundo: number;
-    poluicaoPessoal: number;
     poluicaoMundial: number;
     transferencias: Transfers;
-    acoesUtilizadas: string[];
+    empresarios: Entrepreneur[];
+    agricultores: Agriculturist[];
+}
+
+export interface Entrepreneur {
+    produtividade: number;
+    poluicao: number;
+    nome: string;
+    multa: number; //somente segunda etapa
+}
+
+export interface Agriculturist {
+    poluicaoMedia: number;
+    nome: string;
+    multa: number; //somente segunda etapa
+    produtividade: number;
+    parcelas: Parcel[];
+}
+
+export interface Parcel {
+    semente: string;
+    pulverizador: boolean;
+    fertilizante: string;
+    maqAgr: string;
+    seloVerde: boolean;
 }
 
 export interface Transfers {

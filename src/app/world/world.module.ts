@@ -6,7 +6,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 
 import { HeaderComponent } from './header/header.component';
 import { TransferComponent } from './transfer/transfer.component';
-import { TableValuesComponent } from './table-values/table-values.component';
+import { TableProductValuesComponent } from './table-product-values/table-product-values.component';
 import { SideBarComponent } from './sidebar/sidebar.component';
 import { ConfirmingModalComponent, ConfirmingModalContentComponent } from './confirming-modal/confirming-modal.component';
 import { AlertComponent } from './alert/alert.component';
@@ -16,7 +16,7 @@ import { InLineAlertComponent } from './inline-alert/inline-alert.component';
     declarations: [
         HeaderComponent,
         TransferComponent,
-        TableValuesComponent,
+        TableProductValuesComponent,
         SideBarComponent,
         ConfirmingModalComponent,
         ConfirmingModalContentComponent,
@@ -33,7 +33,7 @@ import { InLineAlertComponent } from './inline-alert/inline-alert.component';
     exports: [
         HeaderComponent,
         TransferComponent,
-        TableValuesComponent,
+        TableProductValuesComponent,
         SideBarComponent,
         ConfirmingModalComponent,
         AlertComponent,

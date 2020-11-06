@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 import { MasterComponent } from './master.component';
 import { LeftsideBarComponent } from './leftside-bar/leftside-bar.component';
 import { WorldModule } from '../world/world.module';
+import { RightSideBarComponent } from './rightside-bar/rightside-bar.component';
 
 
 
 @NgModule({
     declarations: [
         MasterComponent,
-        LeftsideBarComponent
+        LeftsideBarComponent,
+        RightSideBarComponent
     ],
     imports: [
         CommonModule,

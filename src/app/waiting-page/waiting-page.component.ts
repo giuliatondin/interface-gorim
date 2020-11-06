@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { interval, Observable, Subscription } from 'rxjs';
-//import { Observable } from 'rxjs';
-//import { interval, Observable } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
-import { PersonSimplified } from '../world/models/person.simplified';
 import { World } from '../world/world';
 import { WaitingPageService } from './waiting-page.service';
 
@@ -34,14 +31,16 @@ export class WaitingPageComponent implements OnInit{
             .subscribe(
                 (data: World) => {
                     this.infoMundo = data;
+                    console.log(data);
                     this.verificaFimEtapa();
                 },
                 err => console.log(err)
-            )
+            );
     }
 
     verificaFimEtapa(){
         this.infoMundo.etapa = (this.idPessoa <= this.infoMundo.quantidadeJogadores) ? 1 : 2;
+        console.log(this.infoMundo.etapa);
         this.subscription = this.counter
             .pipe(
                 flatMap(
@@ -58,15 +57,13 @@ export class WaitingPageComponent implements OnInit{
                                     if(idProximaEtapa == 0){
                                         this.subscription.unsubscribe();
                                         this.router.navigate([this.idJogo, 'segundaEtapa', this.idPessoa]);
-                                        console.log('Indo para ' + this.idJogo + 'segundaEtapa' + this.idPessoa);
                                     }
                                     else {
                                         let id = Math.floor(idProximaEtapa/10);
                                         let papel = (idProximaEtapa%10 == 0) ? 'fiscalAmbiental' : (idProximaEtapa%10 == 1) ? 'prefeito' : 'vereador';
 
                                         this.subscription.unsubscribe();
-                                        //this.router.navigate([this.idJogo, papel, id]);
-                                        console.log('Indo para ' + this.idJogo + '/' + papel + '/' + id);
+                                        this.router.navigate([this.idJogo, papel, id]);
                                     }
                                 }
                             );

@@ -1,7 +1,7 @@
 <div class="history content pt-5 pb-5" *ngIf="(history$ | async) as history">
     <div class="container main__block pt-2 pb-3 pl-3 pr-3">
         <div class="mb-3">
-            <h2 class="text-center pt-2 pb-3">Histórico {{ history.nome }} </h2>
+            <h2 class="text-center pt-2 pb-3">Histórico {{ history.nome }} (Fiscal) </h2>
             <mat-accordion *ngFor="let rodada of history.rodadas">
                 <mat-expansion-panel>
                     <mat-expansion-panel-header>
@@ -9,74 +9,117 @@
                             Rodada {{ rodada.rodada }}
                         </mat-panel-title>
                     </mat-expansion-panel-header>
-                    <div class="row align-items-center">
-                        <div class="col-md-3 mb-3">
-                            <div class="history-list-info">Saldo Anterior: D${{ rodada.saldoAnterior }}</div>
-                        </div>
-                    </div>
-                    <h3><span style="color: lightgreen;">Créditos</span></h3>
-                    <div class="row align-items-center">
-                        <div class="col-md-3 mb-3" *ngIf="rodada.transferencias.recebido">
-                            <div class="row" *ngFor="let recebida of rodada.transferencias.recebido">
-                                <div class="col-md-12">
-                                    <p>Transferencias Recebidas</p>
-                                </div>
-                                <div class="col-md-12 text-left">
-                                    - Recebido de: {{ recebida.nome }} - D${{ recebida.valor }}.
+                    <mat-accordion *ngFor="let etapa of rodada.etapas">
+                        <mat-expansion-panel>
+                            <mat-expansion-panel-header>
+                                <mat-panel-title class="title">
+                                    Etapa {{ etapa.etapa }}
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div class="row align-items-center">
+                                <div class="col-md-3 mb-3">
+                                    <div class="history-list-info">Saldo Anterior: D${{ etapa.saldoAnterior }}</div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="history-list-info">Produtividade: D${{ rodada.produtividade }}</div>
-                        </div>
-                    </div>
-                    <h3><span style="color: lightsalmon;">Débitos</span></h3>
-                    <div class="row align-items-center">
-                        <div class="col-md-3 mb-3" *ngIf="rodada.transferencias.enviado">
-                            <div class="row" *ngFor="let enviada of rodada.transferencias.enviado">
-                                <div class="col-md-12">
-                                    <p>Transferencias Enviadas</p>
+                            <div class="row align-items-center">
+                                <div class="col-md-3 mb-3" *ngIf="etapa.transferencias.recebido">
+                                    <div class="row" *ngFor="let recebida of etapa.transferencias.recebido">
+                                        <div class="col-md-12">
+                                            <p>Transferencias Recebidas</p>
+                                        </div>
+                                        <div class="col-md-12 text-left">
+                                            - Recebido de: {{ recebida.nome }} - D${{ recebida.valor }}.
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-12 text-left">
-                                    - Enviado para: {{ enviada.nome }} - D${{ enviada.valor }}.
+                                <div class="col-md-3 mb-3" *ngIf="etapa.transferencias.enviado">
+                                    <div class="row" *ngFor="let enviada of etapa.transferencias.enviado">
+                                        <div class="col-md-12">
+                                            <p>Transferencias Enviadas</p>
+                                        </div>
+                                        <div class="col-md-12 text-left">
+                                            - Enviado para: {{ enviada.nome }} - D${{ enviada.valor }}.
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="history-list-info">Imposto: D${{ rodada.imposto }}</div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="history-list-info" *ngIf="rodada.multa">Multa: D${{ rodada.multa }}</div>
-                        </div>
-                    </div>
-                    <h3><span style="color: grey;">Info Pessoal</span></h3>
-                    <div class="row align-items-center">
-                        <div class="col-md-3 mb-3">
-                            <div class="history-list-info">Saldo Atual: D${{ rodada.saldoAtual }}</div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="history-list-info">Poluição Pessoal: {{ rodada.poluicaoPessoal }}</div>
-                        </div>
-                    </div>
-                    <h3><span style="color: grey;">Info Mundo</span></h3>
-                    <div class="row" *ngIf="rodada.acoesUtilizadas.size > 0">
-                        <div class="row">
-                            <div class="col-md-12 mb-3 ml-3">
-                                <p>Ações Ambientais utilizadas pelo Prefeito:</p>
+                            <h3><span style="color: grey;">Info Pessoal</span></h3>
+                            <div class="row align-items-center">
+                                <div class="col-md-3 mb-3">
+                                    <div class="history-list-info">Saldo Atual: D${{ etapa.saldoAtual }}</div>
+                                </div>
                             </div>
-                            <div class="col-md-3" *ngFor="let acao of rodada.acoesUtilizadas">
-                                {{ acao }}
+                            <h3><span style="color: grey;">Info Mundo</span></h3>
+                            <div class="row align-items-center">
+                                <div class="col-md-3 mb-3">
+                                    <div class="history-list-info">Poluição Mundial: {{ etapa.poluicaoMundial }}%</div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="row align-items-center">
-                        <div class="col-md-3 mb-3">
-                            <div class="history-list-info">Poluição Causada no Mundo: {{ rodada.poluicaoCausadaMundo }}%</div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="history-list-info">Poluição Mundial: {{ rodada.poluicaoMundial }}%</div>
-                        </div>
-                    </div>
+                            <hr>
+                            <h3><span style="color: grey;">Empresários</span></h3>
+                            <div class="container" *ngFor="let empresario of etapa.empresarios">
+                                <div class="row align-items-center">
+                                    <div class="col-md-12 mb-12">
+                                        <div class="history-list-info"><h4>Nome: {{ empresario.nome }}</h4></div>
+                                    </div>
+                                </div>
+                                <div class="row align-items-center">
+                                    <div class="col-md-4 mb-4">
+                                        <div class="history-list-info">Produtividade: {{ empresario.produtividade }}</div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="history-list-info">Poluição: {{ empresario.poluicao }}</div>
+                                    </div>
+                                    <div class="col-md-4 mb-4" *ngIf="etapa.etapa == 2">
+                                        <div class="history-list-info">Multa aplicada: {{ empresario.multa }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <h3><span style="color: grey;">Agricultores</span></h3>
+                            <div class="container" *ngFor="let agricultor of etapa.agricultores">
+                                <div class="row align-items-center">
+                                    <div class="col-md-12 mb-12">
+                                        <div class="history-list-info"><h4>Nome: {{ agricultor.nome }}</h4></div>
+                                    </div>
+                                </div>
+                                <div class="row align-items-center">
+                                    <div class="col-md-4 mb-4">
+                                        <div class="history-list-info">Produtividade: {{ agricultor.produtividade }}</div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="history-list-info">Poluição: {{ agricultor.poluicaoMedia }}</div>
+                                    </div>
+                                    <div class="col-md-4 mb-4" *ngIf="etapa.etapa == 2">
+                                        <div class="history-list-info">Multa aplicada: {{ agricultor.multa }}</div>
+                                    </div>
+                                </div>
+                                <h5><span style="color: lightblue;">Parcelas</span></h5>
+                                <div class="row align-items-center">
+                                    <div class="col-md-4 mb-4" *ngFor="let parcela of agricultor.parcelas; let i=index">
+                                        <div class="history-list-info">
+                                            Parcela: {{ i+1 }}
+                                        </div><br>
+                                        <div class="history-list-info">
+                                            Selo Verde: <span *ngIf="parcela.seloVerde; else seloVerde">Sim</span><ng-template #seloVerde>Não</ng-template>
+                                        </div><br>
+                                        <div class="history-list-info" *ngIf="parcela.semente">
+                                            Semente: {{parcela.semente}}
+                                        </div><br>
+                                        <div class="history-list-info" *ngIf="parcela.fertilizante">
+                                            Fertilizante: {{parcela.fertilizante}}
+                                        </div><br>
+                                        <div class="history-list-info" *ngIf="parcela.maqAgr">
+                                            <span *ngIf="isMaquina(parcela.maqAgr); else agrotoxico">Máquina:</span><ng-template #agrotoxico>Agrotóxico:</ng-template> {{parcela.agrMaq}}
+                                        </div><br>
+                                        <div class="history-list-info" *ngIf="parcela.pulverizador">
+                                            Pulverizador: Sim
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-expansion-panel>
+                    </mat-accordion>
                 </mat-expansion-panel>
             </mat-accordion>
         </div>

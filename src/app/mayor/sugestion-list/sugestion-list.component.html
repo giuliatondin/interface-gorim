@@ -1,0 +1,19 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 col-md-6" *ngFor="let sugestion of sugestions">
+            <div class="card">
+                <div class="card-body">
+                    <div *ngIf="isTaxSugestion(sugestion); else acaoAmbiental">
+                        <h4 class="card-text">Tipo {{ sugestion.imposto.tipo }}</h4>
+                        <p class="card-text">Mudar para taxa: <b>{{ sugestion.imposto.taxa }}</b></p>
+                    </div>
+                    <ng-template #acaoAmbiental>
+                        <p class="card-text">Aplicar Ação Ambiental de {{ sugestion.acaoAmbiental }}</p>
+                    </ng-template>
+                    <a class="btn btn-warning" (click)="sendResponse(sugestion, false)" >Negar</a>
+                    <a class="btn btn-success" (click)="sendResponse(sugestion, true)" >Aceitar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

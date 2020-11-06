@@ -5,4 +5,5 @@ export interface World{
     produtividadeMundo: number;
     idJogo: string;
     quantidadeJogadores: number;
+    eleitos: string[];
 }

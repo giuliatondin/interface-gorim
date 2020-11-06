@@ -1,10 +1,10 @@
 <div class="master content pt-5 pb-5" *ngIf="(infoMundo$ | async) as mundo">
     <div class="container main__block pt-3 pb-5 pl-3 pr-3">
         <div class="row">
-            <div class="col-2">
+            <div class="col-md-3">
                 <app-leftsidebar></app-leftsidebar>
             </div>
-            <div class="col-10">
+            <div class="col-md-6">
                 <div class="row pb-5">
                     <div class="col-12">
                         <div class="d-flex flex-column align-items-center justify-content-center pt-3 pb-3">
@@ -13,10 +13,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="row pb-5">
+                <div class="row pb-6">
                     <div class="container">
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-6 text-right"><p>Rodada</p></div>
                                     <div class="col-6 text-left"><p>{{ mundo.rodada }}</p></div>
@@ -31,7 +31,7 @@
                                 </div>
                             </div>
     
-                            <div class="col-6">
+                            <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-6 text-right"><p>Quantidade de Jogadores</p></div>
                                     <div class="col-6 text-left"><p>{{ mundo.quantidadeJogadores }}</p></div>
@@ -48,23 +48,15 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md" *ngFor="let pessoa of pessoas">
-                        <span>{{ pessoa.nome }}</span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md" *ngFor="let finalizados of finalizadosEtapa">
-                        <div class="col-md p-1 {{ getColour(finalizados) }}">
-                            <span></span>
+                        <div class="row">
+                            <div class="col-md-12"><h4>Eleitos</h4></div>
+                            <div class="col-md-2" *ngFor="let eleito of mundo.eleitos">{{eleito}}</div>
                         </div>
                     </div>
                 </div>
                 <div class="row pb-5 align-items-center justify-content-center"> <!-- *ngIf="apareceBotao"-->
                     <app-confirming-modal
-                        *ngIf="hasUnfinishedPlayers()"
+                        *ngIf="hasUnfinishedPlayers"
                         [openModalBtnText]="openModalBtnText"
                         [openModalBtnClasses]="openModalBtnClasses"
                         [modalTitle]="modalTitle"
@@ -72,13 +64,18 @@
                         (messageEvent)="receiveUserChoice($event)"
                     ></app-confirming-modal>
                     <button
-                        *ngIf="!hasUnfinishedPlayers()"
+                        *ngIf="!hasUnfinishedPlayers"
                         (click)="finalizarEtapa(true)"
                         class="mt-3 btn btn--primary"
                     >
                         Terminar etapa
                     </button>
                 </div>
+            </div>
+            <div class="col-md-3">
+                <app-rightsidebar
+                    [etapa]="mundo.etapa"
+                ></app-rightsidebar>
             </div>
         </div>
     </div>

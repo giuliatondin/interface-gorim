@@ -11,7 +11,7 @@ export class HeaderComponent implements OnInit {
     @Input() dinheiros: number;
     @Input() rodada: number;
     @Input() poluicaoMundo: number;
-
+    @Input() saldo: string = "Dinheiros";
 
     constructor() { }
 

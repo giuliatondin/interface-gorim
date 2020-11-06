@@ -4,10 +4,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AgriculturistsModule } from './agriculturists/agriculturists.module';
+import { AgriculturistModule } from './agriculturist/agriculturist.module';
 import { ErrorsModule } from './errors/errors.module';
 import { WorldModule } from './world/world.module';
-import { EntrepreneursModule } from './entrepreneurs/entrepreneurs.module';
+import { EntrepreneurModule } from './entrepreneur/entrepreneur.module';
 import { SupervisorModule } from './supervisor/supervisor.module';
 import { MayorModule } from './mayor/mayor.module';
 import { AldermanModule } from './alderman/alderman.module';
@@ -25,8 +25,8 @@ import { AletrnativeSecondStagePageModule } from './alternative-second-stage-pag
         BrowserModule,
         AppRoutingModule,
         HomeModule,
-        AgriculturistsModule,
-        EntrepreneursModule,
+        AgriculturistModule,
+        EntrepreneurModule,
         SupervisorModule,
         MayorModule,
         AldermanModule,

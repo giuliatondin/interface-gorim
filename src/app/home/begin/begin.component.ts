@@ -1,6 +1,7 @@
 import { Component, OnInit/*, ViewChild, ElementRef*/ } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AlertService } from 'src/app/world/alert/alert.service';
 
 import { BeginService } from './begin.service';
 
@@ -12,16 +13,14 @@ import { BeginService } from './begin.service';
 export class BeginComponent implements OnInit{
 
     beginForm: FormGroup;
-    //@ViewChild('quantidadeJogadores') quantidadeJogadoresInput: ElementRef<HTMLInputElement>;
 
     constructor(
         private formBuilder: FormBuilder,
         private router: Router,
         private beginService: BeginService,
-        private route: ActivatedRoute
-    ){
-        //
-    }
+        private route: ActivatedRoute,
+        private alertService: AlertService
+    ){ }
 
     ngOnInit(): void {
         this.beginForm = this.formBuilder.group({
@@ -48,7 +47,7 @@ export class BeginComponent implements OnInit{
                 err => {
                     console.log(err);
                     this.beginForm.reset();
-                    alert("Something went wrong. Please, try again.");
+                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
                 }
             )
     }

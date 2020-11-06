@@ -19,8 +19,7 @@ export class MasterComponent implements OnInit {
     mundo: World;
     idJogo: number;
 
-    finalizadosEtapa: boolean[];
-    pessoas: PersonSimplified[];
+    hasUnfinishedPlayers: boolean;
 
     apareceBotao: boolean = false;
 
@@ -38,6 +37,7 @@ export class MasterComponent implements OnInit {
 
     ngOnInit(): void {
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
+        this.hasUnfinishedPlayers = true;
         this.infoMundo$ = this.masterService.getInfoMundo(this.idJogo);
         this.putInMundo();
 
@@ -47,46 +47,10 @@ export class MasterComponent implements OnInit {
         this.infoMundo$.subscribe(
             (data: World) => {
                 this.mundo = data;
-                this.verificaFinalizados();
-                this.getInfoPessoas();
-                this.masterService.verificaFinalizados(this.mundo.etapa)
-                    .subscribe(
-                        (data: boolean[]) => {
-                            this.finalizadosEtapa = data;
-                        },
-                        err => console.log(err)
-                    );
+                this.getSituacaoEtapa();
             },
             err => console.log(err)
         );
-    }
-
-    verificaFinalizados(){
-        interval(10 * 1000)
-            .pipe(
-                flatMap(() => this.masterService.verificaFinalizados(this.mundo.etapa))
-            )
-            .subscribe(
-                (data: boolean[]) => {
-                    this.finalizadosEtapa = data;
-                },
-                err => console.log(err)
-            );
-    }
-
-    getInfoPessoas(){
-        this.masterService.getInfoPessoas(this.mundo.etapa)
-            .subscribe(
-                (data: PersonSimplified[]) => {
-                    this.pessoas = data;
-                },
-                err => console.log(err)
-            )
-    }
-
-    getColour(finalizado: boolean){
-        if(finalizado) return 'finalizado';
-        else return 'naoFinalizado';
     }
     
     getSituacaoEtapa(){
@@ -98,33 +62,23 @@ export class MasterComponent implements OnInit {
             )
             .subscribe(
                 (data: number) => {
-                    console.log(data);
                     if(data == 0){
                         this.apareceBotao = false;
                     }
-                    else if(data = 2){
+                    else if(data == 2){
                         this.apareceBotao = true;
                         this.masterService.changeFlagFimEtapa()
                             .subscribe(
                                 () => this.alertService.info('Todos os jogadores começaram a etapa.'),
                                 err => console.log(err)
-                            )
+                            );
+                    }
+                    else if(data == 3){
+                        this.hasUnfinishedPlayers = false;
                     }
                 },
                 err => console.log(err)
             );
-    }
-
-    hasUnfinishedPlayers(){
-        let hasUnfinishedPlayers = true;
-        if(this.finalizadosEtapa){
-            this.finalizadosEtapa.forEach(
-                element =>  {
-                    if(!element) hasUnfinishedPlayers = true;
-                }
-            );
-        }
-        return hasUnfinishedPlayers;
     }
 
     receiveUserChoice($event: boolean){
@@ -137,6 +91,7 @@ export class MasterComponent implements OnInit {
                 .subscribe(
                     () => {
                         this.alertService.success('Etapa terminada.');
+                        this.hasUnfinishedPlayers = true;
                         this.infoMundo$ = this.masterService.getInfoMundo(this.idJogo);
                         this.putInMundo();
                     },

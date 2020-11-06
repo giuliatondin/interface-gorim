@@ -16,16 +16,21 @@ export class MayorHistoryComponent implements OnInit {
 
     constructor(
         private activatedRoute: ActivatedRoute,
-        private empHistoryService: MayorHistoryService
+        private prefHistoryService: MayorHistoryService
     ) { }
 
     ngOnInit(): void {
-        this.idPref = this.activatedRoute.snapshot.params.idEmp;
+        this.idPref = this.activatedRoute.snapshot.params.idPref;
         this.getHistory();
     }
 
     getHistory(){
-        this.history$ = this.empHistoryService.getHitory(this.idPref);
+        this.history$ = this.prefHistoryService.getHitory(this.idPref);
+    }
+
+    isMaquina(produto: string){
+        if(produto.includes("comum") || produto.includes("premium")) return false;
+        return true;
     }
 
 }

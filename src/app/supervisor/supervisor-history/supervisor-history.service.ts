@@ -4,7 +4,7 @@ import { environment } from 'src/environments/environment';
 import { SupervisorHistory } from './supervisor-history';
 
 const API = environment.ApiUrl;
-const HISTORY_ROUTE = '/request/api/arquivoResumo/';
+const HISTORY_ROUTE = '/request/api/arquivoResumo';
 
 @Injectable({
     providedIn: 'root'
@@ -19,7 +19,7 @@ export class SupervisorHistoryService{
         id: number
     ){
         return this.httpClient.get<SupervisorHistory>(
-            API + HISTORY_ROUTE + id
+            API + HISTORY_ROUTE + '/' + id
         );
     }
 }

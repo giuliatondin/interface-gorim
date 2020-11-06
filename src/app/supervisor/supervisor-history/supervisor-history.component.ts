@@ -16,16 +16,21 @@ export class SupervisorHistoryComponent implements OnInit {
 
     constructor(
         private activatedRoute: ActivatedRoute,
-        private empHistoryService: SupervisorHistoryService
+        private fisHistoryService: SupervisorHistoryService
     ) { }
 
     ngOnInit(): void {
-        this.idFis = this.activatedRoute.snapshot.params.idEmp;
+        this.idFis = this.activatedRoute.snapshot.params.idFis;
         this.getHistory();
     }
 
     getHistory(){
-        this.history$ = this.empHistoryService.getHitory(this.idFis);
+        this.history$ = this.fisHistoryService.getHitory(this.idFis);
+    }
+
+    isMaquina(produto: string){
+        if(produto.includes("comum") || produto.includes("premium")) return false;
+        return true;
     }
 
 }
