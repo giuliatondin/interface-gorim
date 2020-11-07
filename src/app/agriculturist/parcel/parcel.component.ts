@@ -307,8 +307,18 @@ export class ParcelComponent implements OnInit {
             );
     }
 
+    hasUnsetProducts(){
+        this.quantidades.forEach(
+            produto => {
+                if(produto[0] + produto[1] + produto[2] > 0) return true;
+            }
+        );
+        return false;
+    }
+
     finalizarJogada(finishedByMaster: boolean = false){        
-        let parcelas: Parcel[] = [];
+        if(!this.hasUnsetProducts()){
+            let parcelas: Parcel[] = [];
         this.checkedButtons.forEach(
             parcela => {
 
@@ -355,6 +365,10 @@ export class ParcelComponent implements OnInit {
                     this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
                 }
             );
+        }
+        else {
+            this.alertService.warning('Não é possível terminar a jogada pois ainda há produtos a serem colocados nas parcelas.');
+        }
 
     }
 }

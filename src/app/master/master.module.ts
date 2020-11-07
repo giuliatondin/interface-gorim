@@ -4,6 +4,8 @@ import { MasterComponent } from './master.component';
 import { LeftsideBarComponent } from './leftside-bar/leftside-bar.component';
 import { WorldModule } from '../world/world.module';
 import { RightSideBarComponent } from './rightside-bar/rightside-bar.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 
 
@@ -15,7 +17,9 @@ import { RightSideBarComponent } from './rightside-bar/rightside-bar.component';
     ],
     imports: [
         CommonModule,
-        WorldModule
+        WorldModule,
+        MatDialogModule,
+        MatButtonModule
     ],
     exports: [
         MasterComponent

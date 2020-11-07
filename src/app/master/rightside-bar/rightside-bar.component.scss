@@ -1,5 +1,9 @@
 @import '../../../styles.scss';
 
+.scrollingBar {
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
 .finalizado {
     background-color: green;
 }

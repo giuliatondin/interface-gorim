@@ -1,17 +1,12 @@
-<!-- <div class="modal-header">
-    <h4 class="modal-title">{{ title }}</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modalRef.hide()">
-        <span aria-hidden="true">×</span>
-    </button>
+<div id="modal-content-wrapper">
+    <header class="text-center" id="modal-header">
+        <h1 id="modal-title">{{ content.modalTitle }}</h1>
+    </header>
+    <section class="text-center" id="modal-body">
+        <p>{{ content.modalContent }}</p>
+    </section>
+    <footer class="text-center" id="modal-footer">
+        <button mat-raised-button class="btn btn-warning" id="modal-cancel-button" (click)="action(false)">{{ content.modalCancelBtnText }}</button>
+        <button mat-raised-button class="btn btn-success" id="modal-action-button" (click)="action(true)">{{ content.modalConfirmBtnText }}</button>
+    </footer>
 </div>
-
-<div class="modal-body">
-    {{ content }}
-</div>
-
-<div class="modal-footer">
-    <button type="button" class="btn btn-warning" (click)="decline()">{{ btnCancelText }}</button>
-    <button type="button" class="btn btn-success" (click)="accept()">{{ btnOkText }}</button>
-</div> -->
-
-<button [class]="openModalBtnClasses" (click)="openModal()">{{ openModalBtnText }}</button>

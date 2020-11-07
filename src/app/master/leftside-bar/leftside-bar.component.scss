@@ -1,1 +1,6 @@
 @import "../../../styles.scss";
+
+.scrollingBar {
+    overflow-y: scroll;
+    overflow-x: hidden;
+}

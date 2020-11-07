@@ -7,6 +7,11 @@ import { ActivatedRoute } from '@angular/router';
 import { flatMap } from 'rxjs/operators';
 import { PersonSimplified } from '../world/models/person.simplified';
 import { AlertService } from '../world/alert/alert.service';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { ConfirmingModalComponent } from '../world/confirming-modal/confirming-modal.component';
+import { ConfirmingModalService } from '../world/confirming-modal/confirming-modal.service';
+import { ConfirmingModal } from '../world/confirming-modal/confirming-modal';
+import { ResponseModalService } from '../world/confirming-modal/response-modal.service';
 
 @Component({
     selector: 'app-master',
@@ -32,7 +37,9 @@ export class MasterComponent implements OnInit {
     constructor(
         private masterService: MasterService,
         private activatedRoute: ActivatedRoute,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private confirmingModalService: ConfirmingModalService,
+        private responseModalService: ResponseModalService
     ) { }
 
     ngOnInit(): void {
@@ -41,6 +48,12 @@ export class MasterComponent implements OnInit {
         this.infoMundo$ = this.masterService.getInfoMundo(this.idJogo);
         this.putInMundo();
 
+        this.responseModalService.sharedResponse.subscribe(
+            (response: boolean) => {
+                if(response != null) this.finalizarEtapa(response);
+            },
+            err => console.log(err)
+        );
     }
 
     putInMundo(){
@@ -85,7 +98,20 @@ export class MasterComponent implements OnInit {
         this.finalizarEtapa($event);
     }
 
+    openModal(){
+        const confirmingModal: ConfirmingModal = {
+            modalTitle: 'Encerrar etapa',
+            modalContent: 'Parece que ainda há jogadores que não terminaram a jogada. Deseja encerrar a etapa mesmo assim?',
+            modalConfirmBtnText: 'Sim',
+            modalCancelBtnText: 'Não'
+        };
+        this.confirmingModalService.openModal(confirmingModal, 'master-modal');
+    }
+
     finalizarEtapa(userChoice: boolean){
+        if(userChoice) console.log("true");
+        else console.log("false");
+
         if(userChoice){
             this.masterService.finalizarEtapa(this.idJogo)
                 .subscribe(
@@ -99,7 +125,7 @@ export class MasterComponent implements OnInit {
                         this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
                         console.log(err);
                     }
-                )
+                );
         }
     }
 }

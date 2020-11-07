@@ -1,14 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatSelectModule } from '@angular/material/select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 import { HeaderComponent } from './header/header.component';
 import { TransferComponent } from './transfer/transfer.component';
 import { TableProductValuesComponent } from './table-product-values/table-product-values.component';
 import { SideBarComponent } from './sidebar/sidebar.component';
-import { ConfirmingModalComponent, ConfirmingModalContentComponent } from './confirming-modal/confirming-modal.component';
+import { ConfirmingModalComponent } from './confirming-modal/confirming-modal.component';
 import { AlertComponent } from './alert/alert.component';
 import { InLineAlertComponent } from './inline-alert/inline-alert.component';
 
@@ -19,7 +20,6 @@ import { InLineAlertComponent } from './inline-alert/inline-alert.component';
         TableProductValuesComponent,
         SideBarComponent,
         ConfirmingModalComponent,
-        ConfirmingModalContentComponent,
         AlertComponent,
         InLineAlertComponent
     ],
@@ -28,6 +28,7 @@ import { InLineAlertComponent } from './inline-alert/inline-alert.component';
         MatSelectModule,
         ReactiveFormsModule,
         MatDialogModule,
+        MatButtonModule,
         FormsModule
     ], 
     exports: [
@@ -40,7 +41,7 @@ import { InLineAlertComponent } from './inline-alert/inline-alert.component';
         InLineAlertComponent
     ],
     entryComponents: [
-        ConfirmingModalContentComponent
+        ConfirmingModalComponent
     ]
 })
 export class WorldModule { }
