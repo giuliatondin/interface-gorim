@@ -7,7 +7,7 @@ import { Produto } from 'src/app/world/models/produto';
 import { Venda } from './venda';
 import { VendaService } from './venda.service';
 import { ProdutoService } from '../produto.service';
-import { WebStorageService } from '../webstorage.service';
+import { WebStorageService } from '../../world/web-storage/webstorage.service';
 import { AlertService } from 'src/app/world/alert/alert.service';
 
 @Component({

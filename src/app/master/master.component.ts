@@ -5,10 +5,7 @@ import { MasterService } from './master.service';
 import { World } from '../world/world';
 import { ActivatedRoute } from '@angular/router';
 import { flatMap } from 'rxjs/operators';
-import { PersonSimplified } from '../world/models/person.simplified';
 import { AlertService } from '../world/alert/alert.service';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ConfirmingModalComponent } from '../world/confirming-modal/confirming-modal.component';
 import { ConfirmingModalService } from '../world/confirming-modal/confirming-modal.service';
 import { ConfirmingModal } from '../world/confirming-modal/confirming-modal';
 import { ResponseModalService } from '../world/confirming-modal/response-modal.service';
@@ -28,11 +25,7 @@ export class MasterComponent implements OnInit {
 
     apareceBotao: boolean = false;
 
-    // coisas do modal
-    openModalBtnText="Terminar etapa";
-    openModalBtnClasses="mt-3 btn btn--primary";
-    modalTitle="Finalizar etapa?";
-    modalContent="Parece que ainda há jogadores que não terminaram a jogada. Finalizar a etapa mesmo assim?";
+    inicioEtapa: number = new Date().getTime();
 
     constructor(
         private masterService: MasterService,
@@ -89,6 +82,17 @@ export class MasterComponent implements OnInit {
                     else if(data == 3){
                         this.hasUnfinishedPlayers = false;
                     }
+                    else if(data == 1 && this.inicioEtapa > (new Date().getTime() + (60000*1) ) ){
+                        this.alertService.info('Algo de errado aconteceu com um jogador e ele ainda não começou a etapa.');
+                    }
+                    else if(data == 1 && this.inicioEtapa > (new Date().getTime() + (60000*2) ) ){
+                        this.apareceBotao = true;
+                        this.masterService.changeFlagFimEtapa()
+                            .subscribe(
+                                () => this.alertService.info('O jogador ainda não conectou, mas foi liberado para os outros jogadores terminarem a etapa, se quiserem.'),
+                                err => console.log(err)
+                            );
+                    }
                 },
                 err => console.log(err)
             );
@@ -117,6 +121,7 @@ export class MasterComponent implements OnInit {
                 .subscribe(
                     () => {
                         this.alertService.success('Etapa terminada.');
+                        this.inicioEtapa = new Date().getTime();
                         this.hasUnfinishedPlayers = true;
                         this.infoMundo$ = this.masterService.getInfoMundo(this.idJogo);
                         this.putInMundo();

@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { interval } from 'rxjs';
+import { interval, Observable, Subscription } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
+import { WebStorageService } from '../world/web-storage/webstorage.service';
+import { World } from '../world/world';
 
 import { AlternativeSecondStagePageService } from './alertnative-second-stage-page.service';
 
@@ -14,20 +16,30 @@ export class AlternativeSecondStagePageComponent implements OnInit {
 
     idJogo;
     idPessoa: number;
+    infoPessoaPrimeiraEtapa: string[];
+
+    mundo$: Observable<World>;
+
+    counter: Observable<number> = interval(10 * 1000);
+    subscription: Subscription;
     
     constructor(
         private activatedRoute: ActivatedRoute,
         private router: Router,
-        private alternativePageService: AlternativeSecondStagePageService
+        private alternativePageService: AlternativeSecondStagePageService,
+        private webStorageService: WebStorageService
     ){ }
 
     ngOnInit(){
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
         this.idPessoa = this.activatedRoute.snapshot.params.idPessoa;
+        this.infoPessoaPrimeiraEtapa = this.webStorageService.getData(this.idJogo + 'papel');
+        this.mundo$ = this.alternativePageService.getInfoMundo(this.idJogo);
+        this.verificaFimEtapa();
     }
 
     verificaFimEtapa(){
-        interval(10 * 1000)
+        this.subscription = this.counter
             .pipe(
                 flatMap(
                     () => this.alternativePageService.verificaFimEtapa(2)
@@ -37,8 +49,8 @@ export class AlternativeSecondStagePageComponent implements OnInit {
                 (data: number) => {
                     console.log(data);
                     if(data == 0){
-                        //this.router.navigate([this.idJogo, 'segundaEtapa', this.idPessoa]);
-                        console.log('Indo para ' + this.idJogo + ' agr ou emp ' + this.idPessoa);
+                        this.router.navigate([this.idJogo, this.infoPessoaPrimeiraEtapa[0], this.idPessoa]);
+                        // console.log('Indo para ' + this.idJogo + ' agr ou emp ' + this.idPessoa);
                     }
                 },
                 err => console.log(err)

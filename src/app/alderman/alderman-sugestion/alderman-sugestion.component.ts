@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatRadioChange } from '@angular/material/radio';
-import { WebStorageService } from 'src/app/agriculturist/webstorage.service';
+import { WebStorageService } from 'src/app/world/web-storage/webstorage.service';
 import { Mayor } from 'src/app/mayor/mayor';
 import { Tax } from 'src/app/mayor/postForm';
 import { AlertService } from 'src/app/world/alert/alert.service';

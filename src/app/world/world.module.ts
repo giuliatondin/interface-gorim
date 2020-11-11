@@ -12,6 +12,8 @@ import { SideBarComponent } from './sidebar/sidebar.component';
 import { ConfirmingModalComponent } from './confirming-modal/confirming-modal.component';
 import { AlertComponent } from './alert/alert.component';
 import { InLineAlertComponent } from './inline-alert/inline-alert.component';
+import { VotingComponent } from './voting/voting.component';
+import { MatRadioModule } from '@angular/material/radio';
 
 @NgModule({
     declarations: [
@@ -21,7 +23,8 @@ import { InLineAlertComponent } from './inline-alert/inline-alert.component';
         SideBarComponent,
         ConfirmingModalComponent,
         AlertComponent,
-        InLineAlertComponent
+        InLineAlertComponent,
+        VotingComponent
     ],
     imports: [
         CommonModule,
@@ -29,6 +32,7 @@ import { InLineAlertComponent } from './inline-alert/inline-alert.component';
         ReactiveFormsModule,
         MatDialogModule,
         MatButtonModule,
+        MatRadioModule,
         FormsModule
     ], 
     exports: [
@@ -38,7 +42,8 @@ import { InLineAlertComponent } from './inline-alert/inline-alert.component';
         SideBarComponent,
         ConfirmingModalComponent,
         AlertComponent,
-        InLineAlertComponent
+        InLineAlertComponent,
+        VotingComponent
     ],
     entryComponents: [
         ConfirmingModalComponent

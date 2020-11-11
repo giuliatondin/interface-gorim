@@ -48,7 +48,7 @@ export class TransferComponent implements OnInit {
         this.transferService.postTransfer(formData)
             .subscribe(
                 () => {
-                    this.alertService.success('Transferencis enviada.');
+                    this.alertService.success('Transferências enviada.');
                     this.transferForm.reset();
                 },
                 err => {

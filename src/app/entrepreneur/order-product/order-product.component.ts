@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { OrderProductService } from './order-product.service';
 import { PersonSimplified } from 'src/app/world/models/person.simplified';
 import { AlertService } from 'src/app/world/alert/alert.service';
-import { WebStorageService } from 'src/app/agriculturist/webstorage.service';
+import { WebStorageService } from 'src/app/world/web-storage/webstorage.service';
 import { Venda } from 'src/app/agriculturist/venda/venda';
 
 @Component({

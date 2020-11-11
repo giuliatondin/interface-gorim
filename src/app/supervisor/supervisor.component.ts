@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { interval, Observable, Subscription } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
-import { WebStorageService } from '../agriculturist/webstorage.service';
+import { WebStorageService } from '../world/web-storage/webstorage.service';
 import { AlertService } from '../world/alert/alert.service';
 import { PersonSimplified } from '../world/models/person.simplified';
 import { World } from '../world/world';
@@ -141,6 +141,11 @@ export class SupervisorComponent implements OnInit {
                     this.subscription.unsubscribe();
                     if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
                     else this.alertService.success('Jogada finalizada.', true);
+                    this.webStorageService.removeData([
+                        'fine' + this.idFis + 'pessoasMultadas',
+                        'fis'+ this.idFis + 'Fines',
+                        'fis'+ this.idFis + 'GreenSeals'
+                    ]);
                     this.router.navigate([this.idJogo, 'waitingPage', this.idFis]);
                 },
                 err => {

@@ -11,7 +11,7 @@ import { AlertService } from 'src/app/world/alert/alert.service';
 import { Produto } from 'src/app/world/models/produto';
 import { ProdutoSimplified } from 'src/app/world/models/produto.simplified';
 import { ProdutoService } from '../produto.service';
-import { WebStorageService } from '../webstorage.service';
+import { WebStorageService } from '../../world/web-storage/webstorage.service';
 import { Parcel, Prod } from './parcel';
 import { ParcelService } from './parcel.service';
 import { PostForm } from './postForm';

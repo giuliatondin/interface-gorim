@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { interval, Observable, Subscription } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
-import { WebStorageService } from '../agriculturist/webstorage.service';
+import { WebStorageService } from '../world/web-storage/webstorage.service';
 import { AlertService } from '../world/alert/alert.service';
 import { World } from '../world/world';
 import { EnvironmentalActionService } from './environmental-action/environmental-action.service';
@@ -135,6 +135,13 @@ export class MayorComponent implements OnInit {
                     this.subscription.unsubscribe();
                     if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
                     else this.alertService.success('Jogada finalizada.', true);
+                    this.webStorageService.removeData([
+                        'envivonmentalAction' + this.idPref + 'formControl',
+                        'envivonmentalAction' + this.idPref + 'anyDisabled',
+                        'taxes' + this.idPref + 'formControl',
+                        'pref'+ this.idPref + 'environmentalActions',
+                        'pref'+ this.idPref + 'taxes'
+                    ]);
                     this.router.navigate([this.idJogo, 'waitingPage', this.idPref]);
                 },
                 err => {

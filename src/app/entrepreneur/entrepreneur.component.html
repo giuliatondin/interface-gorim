@@ -36,6 +36,7 @@
                         *ngIf="mundo.rodada > 1"
                     >Abrir histórico</a>
                     <app-transfer [idPessoa]="idEmp"></app-transfer>
+                    <app-voting *ngIf="isElectionTurn(mundo.rodada)" [cidade]="emp.cidade" [idPessoa]="idEmp"></app-voting>
                     <button
                         class="btn btn--secondary mt-3"
                         (click)="finalizarJogada()"

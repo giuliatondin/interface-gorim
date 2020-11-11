@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { interval, Observable, Subscription } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
 import { AlertService } from '../world/alert/alert.service';
+import { WebStorageService } from '../world/web-storage/webstorage.service';
 import { World } from '../world/world';
 import { Alderman } from './alderman';
 import { AldermanService } from './alderman.service';
@@ -29,7 +30,8 @@ export class AldermanComponent implements OnInit {
         private activatedRoute: ActivatedRoute,
         private router: Router,
         private verService: AldermanService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private webStorageService: WebStorageService
     ){ }
 
     ngOnInit(){
@@ -73,6 +75,7 @@ export class AldermanComponent implements OnInit {
                     this.subscription.unsubscribe();
                     if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
                     else this.alertService.success('Jogada finalizada.', true);
+                    this.webStorageService.removeData(['sugestion' + this.idVer + 'idSugestao']);
                     this.router.navigate([this.idJogo, 'waitingPage', this.idVer]);
                 },
                 err => {

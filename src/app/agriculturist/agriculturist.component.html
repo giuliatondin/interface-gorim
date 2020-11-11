@@ -12,7 +12,12 @@
             ></app-header>
             <hr>
     
-            <i tabindex="0" (keyup.space)="sidebar.toggle()" (click)="sidebar.toggle()" class="fa fa-bars mr-2"></i>
+            <i
+                tabindex="0"
+                (keyup.space)="sidebar.toggle()"
+                (click)="sidebar.toggle()"
+                class="fa fa-bars mr-2"
+            ></i>
     
             <div class="row">
                 <div class="col-md-8 col-xl-7">
@@ -36,6 +41,7 @@
                         *ngIf="mundo.rodada > 1"
                     >Abrir histórico</a>
                     <app-transfer [idPessoa]="idAgr"></app-transfer>
+                    <app-voting *ngIf="isElectionTurn(mundo.rodada)" [cidade]="agr.cidade" [idPessoa]="idAgr"></app-voting>
                 </div>
             </div>
         </div>

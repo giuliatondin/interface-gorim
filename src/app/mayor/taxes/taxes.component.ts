@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { WebStorageService } from 'src/app/agriculturist/webstorage.service';
+import { WebStorageService } from 'src/app/world/web-storage/webstorage.service';
 import { AlertService } from 'src/app/world/alert/alert.service';
 import { Tax } from '../postForm';
 import { TaxesService } from './taxes.service';

@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Tax } from '../mayor/postForm';
-import { Fine, GreenSeal } from '../supervisor/postForm';
 
 @Injectable({
     providedIn: 'root'

@@ -9,6 +9,7 @@ import { Entrepreneur } from './entrepreneur';
 import { ProdutoSimplified } from 'src/app/world/models/produto.simplified';
 import { flatMap } from 'rxjs/operators';
 import { AlertService } from 'src/app/world/alert/alert.service';
+import { WebStorageService } from '../world/web-storage/webstorage.service';
 
 @Component({
     selector: 'app-entrepreneur',
@@ -36,7 +37,8 @@ export class EntrepreneurComponent implements OnInit {
         private activatedRoute: ActivatedRoute,
         private router: Router,
         private empService: EntrepreunersService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private webStorageService: WebStorageService
     ) { }
 
     ngOnInit(): void {
@@ -47,9 +49,11 @@ export class EntrepreneurComponent implements OnInit {
             .subscribe(
                 (data: Entrepreneur) => {
                     this.emp = data;
-
                     this.idJogo = this.activatedRoute.snapshot.params.idJogo;
                     this.infoMundo$ = this.empService.getInfoMundo(this.idJogo);
+                                
+                    this.webStorageService.setData(this.idJogo + 'papel', ['empresario', this.idEmp.toString()]);
+
                     this.arrumaProdutos();
                 }
             );
@@ -75,6 +79,11 @@ export class EntrepreneurComponent implements OnInit {
                 this.produtos.push(aux);
             }
         );
+    }
+
+    isElectionTurn(rodada: number){
+        if((rodada-1)%2 == 0 && rodada != 1) return true;
+        return false;
     }
 
     verificaFimEtapa(){
@@ -104,6 +113,7 @@ export class EntrepreneurComponent implements OnInit {
                     this.subscription.unsubscribe();
                     if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
                     else this.alertService.success('Jogada finalizada.', true);
+                    this.webStorageService.removeData(['orderProduct' + this.idEmp + 'idOrcamento']);
                     this.router.navigate([this.idJogo, 'waitingPage', this.idEmp]);
                 },
                 err => {
