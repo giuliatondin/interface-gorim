@@ -14,6 +14,7 @@ import { FineService } from './fine.service';
 export class FineComponent implements OnInit{
     
     @Input() idFis: number;
+    @Input() cidade: string;
 
     pessoas: PersonSimplified[];
 
@@ -28,7 +29,7 @@ export class FineComponent implements OnInit{
     ){ }
 
     ngOnInit(){
-        this.fineService.getInfoPessoas().subscribe(
+        this.fineService.getInfoPessoas(this.cidade).subscribe(
             (data: PersonSimplified[]) => {
                 this.pessoas = data;
             },

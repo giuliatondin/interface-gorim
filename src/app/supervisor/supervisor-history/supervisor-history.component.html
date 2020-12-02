@@ -9,6 +9,7 @@
                             Rodada {{ rodada.rodada }}
                         </mat-panel-title>
                     </mat-expansion-panel-header>
+                    <h5>Fiscal Ambiental: {{ rodada.nome }}</h5>
                     <mat-accordion *ngFor="let etapa of rodada.etapas">
                         <mat-expansion-panel>
                             <mat-expansion-panel-header>
@@ -52,7 +53,24 @@
                             <h3><span style="color: grey;">Info Mundo</span></h3>
                             <div class="row align-items-center">
                                 <div class="col-md-3 mb-3">
-                                    <div class="history-list-info">Poluição Mundial: {{ etapa.poluicaoMundial }}%</div>
+                                    <div class="history-list-info">Poluição Mundial: {{ etapa.poluicaoMundial | number:'.0-2' }}%</div>
+                                </div>
+                            </div>
+                            <div class="container row" *ngIf="etapa.etapa == 2">
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <b>Ações Ambientais utilizadas pelo Prefeito:</b>
+                                    </div>
+                                    <div class="container row" *ngIf="etapa.acoesAmbientais.length > 0; else nenhumaAcao">
+                                        <div class="col-md-4" *ngFor="let acao of etapa.acoesAmbientais">
+                                            {{ acao }}
+                                        </div>
+                                    </div>
+                                    <ng-template #nenhumaAcao>
+                                        <div class="col-md-12">
+                                            Não foi usada nenhuma Ação Ambiental essa rodada.
+                                        </div>
+                                    </ng-template>
                                 </div>
                             </div>
                             <hr>

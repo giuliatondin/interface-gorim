@@ -7,5 +7,6 @@ import { Component, Input } from '@angular/core';
 })
 export class InLineAlertComponent {
     @Input() message: string = '';
+    @Input() type: string = 'danger';
 
 }

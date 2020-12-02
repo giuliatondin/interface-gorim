@@ -26,6 +26,10 @@ export class SupervisorHistoryComponent implements OnInit {
 
     getHistory(){
         this.history$ = this.fisHistoryService.getHitory(this.idFis);
+        this.fisHistoryService.getHitory(this.idFis).subscribe(
+            (data: SupervisorHistory) => console.log(data),
+            err => console.log(err)
+        );
     }
 
     isMaquina(produto: string){

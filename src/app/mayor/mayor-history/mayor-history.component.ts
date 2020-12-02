@@ -26,6 +26,10 @@ export class MayorHistoryComponent implements OnInit {
 
     getHistory(){
         this.history$ = this.prefHistoryService.getHitory(this.idPref);
+        this.prefHistoryService.getHitory(this.idPref).subscribe(
+            (data: MayorHistory) => console.log(data),
+            err => console.log(err)
+        );
     }
 
     isMaquina(produto: string){

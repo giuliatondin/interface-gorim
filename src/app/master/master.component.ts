@@ -9,6 +9,7 @@ import { AlertService } from '../world/alert/alert.service';
 import { ConfirmingModalService } from '../world/confirming-modal/confirming-modal.service';
 import { ConfirmingModal } from '../world/confirming-modal/confirming-modal';
 import { ResponseModalService } from '../world/confirming-modal/response-modal.service';
+import { WebStorageService } from '../world/web-storage/webstorage.service';
 
 @Component({
     selector: 'app-master',
@@ -32,7 +33,8 @@ export class MasterComponent implements OnInit {
         private activatedRoute: ActivatedRoute,
         private alertService: AlertService,
         private confirmingModalService: ConfirmingModalService,
-        private responseModalService: ResponseModalService
+        private responseModalService: ResponseModalService,
+        private webStorageService: WebStorageService
     ) { }
 
     ngOnInit(): void {
@@ -40,6 +42,10 @@ export class MasterComponent implements OnInit {
         this.hasUnfinishedPlayers = true;
         this.infoMundo$ = this.masterService.getInfoMundo(this.idJogo);
         this.putInMundo();
+
+        if(this.webStorageService.hasData('masterHoraInicioEtapa'))
+            this.inicioEtapa = this.webStorageService.getData('masterHoraInicioEtapa');
+        this.webStorageService.setData('masterHoraInicioEtapa', this.inicioEtapa);
 
         this.responseModalService.sharedResponse.subscribe(
             (response: boolean) => {
@@ -68,6 +74,7 @@ export class MasterComponent implements OnInit {
             )
             .subscribe(
                 (data: number) => {
+                    console.log(data);
                     if(data == 0){
                         this.apareceBotao = false;
                     }
@@ -82,16 +89,18 @@ export class MasterComponent implements OnInit {
                     else if(data == 3){
                         this.hasUnfinishedPlayers = false;
                     }
-                    else if(data == 1 && this.inicioEtapa > (new Date().getTime() + (60000*1) ) ){
-                        this.alertService.info('Algo de errado aconteceu com um jogador e ele ainda não começou a etapa.');
-                    }
-                    else if(data == 1 && this.inicioEtapa > (new Date().getTime() + (60000*2) ) ){
+                    else if(data == 1 && (new Date().getTime()) > (this.inicioEtapa + (1000*60*2) ) ){
+                        console.log('Passou de 2 minutos');
                         this.apareceBotao = true;
                         this.masterService.changeFlagFimEtapa()
                             .subscribe(
                                 () => this.alertService.info('O jogador ainda não conectou, mas foi liberado para os outros jogadores terminarem a etapa, se quiserem.'),
                                 err => console.log(err)
                             );
+                    }
+                    else if(data == 1 && (new Date().getTime()) > (this.inicioEtapa + (1000*60*1) ) ){
+                        console.log('Mais de um minuto');
+                        this.alertService.info('Algo de errado aconteceu com um jogador e ele ainda não começou a etapa.');
                     }
                 },
                 err => console.log(err)
@@ -113,15 +122,14 @@ export class MasterComponent implements OnInit {
     }
 
     finalizarEtapa(userChoice: boolean){
-        if(userChoice) console.log("true");
-        else console.log("false");
-
         if(userChoice){
             this.masterService.finalizarEtapa(this.idJogo)
                 .subscribe(
                     () => {
                         this.alertService.success('Etapa terminada.');
                         this.inicioEtapa = new Date().getTime();
+                        this.webStorageService.setData('masterHoraInicioEtapa', this.inicioEtapa);
+                        console.log(this.inicioEtapa);
                         this.hasUnfinishedPlayers = true;
                         this.infoMundo$ = this.masterService.getInfoMundo(this.idJogo);
                         this.putInMundo();

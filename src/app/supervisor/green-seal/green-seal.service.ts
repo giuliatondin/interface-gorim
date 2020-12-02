@@ -28,10 +28,9 @@ export class GreenSealService {
         this.greenSeal.next(greenSeal);
     }
 
-    getInfoAgricultores(){
-        return this.httpClient.post<PersonSimplified[]>(
-            API + MASTER_ROUTE + '/infoPessoasByClasse',
-            2
+    getInfoAgricultores(cidade: string){
+        return this.httpClient.get<PersonSimplified[]>(
+            API + MASTER_ROUTE + '/infoPessoasForGreenSeal/' + cidade
         );
     }
 }

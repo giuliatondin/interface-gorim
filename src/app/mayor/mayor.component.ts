@@ -129,25 +129,25 @@ export class MayorComponent implements OnInit {
                 impostos: this.taxes,
                 idAcoesAmbientais: this.environmentalActions
             } as PostForm
-            )
-            .subscribe(
-                () => {
-                    this.subscription.unsubscribe();
-                    if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
-                    else this.alertService.success('Jogada finalizada.', true);
-                    this.webStorageService.removeData([
-                        'envivonmentalAction' + this.idPref + 'formControl',
-                        'envivonmentalAction' + this.idPref + 'anyDisabled',
-                        'taxes' + this.idPref + 'formControl',
-                        'pref'+ this.idPref + 'environmentalActions',
-                        'pref'+ this.idPref + 'taxes'
-                    ]);
-                    this.router.navigate([this.idJogo, 'waitingPage', this.idPref]);
-                },
-                err => {
-                    console.log(err);
-                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
-                }
-            );
+        )
+        .subscribe(
+            () => {
+                this.subscription.unsubscribe();
+                if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
+                else this.alertService.success('Jogada finalizada.', true);
+                this.webStorageService.removeData([
+                    'envivonmentalAction' + this.idPref + 'formControl',
+                    'envivonmentalAction' + this.idPref + 'anyDisabled',
+                    'taxes' + this.idPref + 'formControl',
+                    'pref'+ this.idPref + 'environmentalActions',
+                    'pref'+ this.idPref + 'taxes'
+                ]);
+                this.router.navigate([this.idJogo, 'waitingPage', this.idPref]);
+            },
+            err => {
+                console.log(err);
+                this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+            }
+        );
     }
 }

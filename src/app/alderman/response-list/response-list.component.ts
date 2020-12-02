@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { interval } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
 import { AlertService } from 'src/app/world/alert/alert.service';
@@ -13,10 +14,13 @@ import { ResponseListService } from './response-list.service';
 export class ResponseListComponent implements OnInit {
 
     @Input() idVer: number;
+
+    quantidadeRespostas: number = 0;
     responses: AldermanSugestion[];
 
     constructor(
-        private responseListService: ResponseListService
+        private responseListService: ResponseListService,
+        private alertService: AlertService
     ){ }
 
     ngOnInit(){
@@ -30,6 +34,10 @@ export class ResponseListComponent implements OnInit {
             )
             .subscribe(
                 (data: AldermanSugestion[]) => {
+                    if(this.quantidadeRespostas < data.length){
+                        this.quantidadeRespostas = data.length;
+                        this.alertService.info('Você tem novas respostas do Prefeito.');
+                    }
                     this.responses = data;
                 }
             );

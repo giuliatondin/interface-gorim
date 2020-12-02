@@ -1,19 +1,24 @@
+import { Tax } from '../../mayor/postForm';
+
 export interface AldermanHistory {
     nome: string;
     rodadas: Turn[];
 }
 
 export interface Turn {
-    produtividade: number;
+    rodada: number;
+    nome: string;
+    etapas: Stage[];
+}
+
+export interface Stage {
+    etapa: number;
     saldoAnterior: number;
-    imposto: number;
-    multa: number;
     saldoAtual: number;
-    poluicaoCausadaMundo: number;
-    poluicaoPessoal: number;
     poluicaoMundial: number;
+    acoesAmbientais: string[];
+    impostosModificados: Tax[];
     transferencias: Transfers;
-    acoesUtilizadas: string[];
 }
 
 export interface Transfers {

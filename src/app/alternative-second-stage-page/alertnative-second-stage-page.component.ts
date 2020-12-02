@@ -49,6 +49,7 @@ export class AlternativeSecondStagePageComponent implements OnInit {
                 (data: number) => {
                     console.log(data);
                     if(data == 0){
+                        this.subscription.unsubscribe();
                         this.router.navigate([this.idJogo, this.infoPessoaPrimeiraEtapa[0], this.idPessoa]);
                         // console.log('Indo para ' + this.idJogo + ' agr ou emp ' + this.idPessoa);
                     }

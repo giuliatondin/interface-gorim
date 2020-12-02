@@ -13,6 +13,7 @@ import { GreenSealService } from './green-seal.service';
 export class GreenSealComponent implements OnInit{
     
     @Input() idFis: number;
+    @Input() cidade: string;
 
     agricultores: PersonSimplified[];
 
@@ -35,7 +36,7 @@ export class GreenSealComponent implements OnInit{
     ){ }
 
     ngOnInit(){
-        this.greenSealService.getInfoAgricultores().subscribe(
+        this.greenSealService.getInfoAgricultores(this.cidade).subscribe(
             (data: PersonSimplified[]) => {
                 this.agricultores = data;
             },

@@ -27,7 +27,6 @@ export class BeginComponent implements OnInit{
             quantidadeJogadores: [
                 '', [
                     Validators.required,
-                    Validators.max(16),
                     Validators.min(6)
                 ]
             ]
@@ -35,10 +34,9 @@ export class BeginComponent implements OnInit{
     }
 
     comecarJogo(){
-        const quantidadeJogadores: number = this.beginForm.get('quantidadeJogadores').value;
-        this.beginService
-            .iniciaJogada(quantidadeJogadores)
-            .subscribe(
+        if(this.beginForm.valid){
+            const quantidadeJogadores: number = this.beginForm.get('quantidadeJogadores').value;
+            this.beginService.iniciaJogada(quantidadeJogadores).subscribe(
                 () => {
                     const idJogo = 1;
                     // get idJogo
@@ -49,6 +47,7 @@ export class BeginComponent implements OnInit{
                     this.beginForm.reset();
                     this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
                 }
-            )
+            );
+        }
     }
 }

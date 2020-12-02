@@ -7,6 +7,7 @@ export interface MayorHistory {
 
 export interface Turn {
     rodada: number;
+    nome: string;
     etapas: Stage[];
 }
 
@@ -19,8 +20,8 @@ export interface Stage {
     acoesAmbientais: string[];
     impostosModificados: Tax[];
     transferencias: Transfers;
-    empresarios: Entrepreneur[];
-    agricultores: Agriculturist[];
+    empresarios: Businessman[];
+    agricultores: Farmer[];
 }
 
 export interface Transfers {
@@ -33,7 +34,7 @@ export interface Transf {
     valor: number;
 }
 
-export interface Entrepreneur {
+export interface Businessman {
     imposto: number;
     produtividade: number;
     poluicao: number;
@@ -41,7 +42,7 @@ export interface Entrepreneur {
     multa: number; //somente segunda etapa
 }
 
-export interface Agriculturist {
+export interface Farmer {
     imposto: number;
     poluicaoMedia: number;
     nome: string;

@@ -27,6 +27,7 @@ export class SupervisorComponent implements OnInit {
     infoFis: Supervisor;
     infoMundo$: Observable<World>;
 
+    nomeFines: string[] = ['Baixa', 'Média', 'Alta'];
     fines: Fine[] = [];
     greenSeals: GreenSeal[] = [];
 
@@ -52,45 +53,46 @@ export class SupervisorComponent implements OnInit {
             (data: Supervisor) => {
                 this.infoFis = data;
                 this.infoMundo$ = this.fisService.getInfoMundo(this.idJogo);
-            },
-            err => console.log(err)
-        );
         
-        if(this.webStorageService.hasData('fis'+ this.idFis + 'Fines'))
-            this.fines = this.webStorageService.getData('fis'+ this.idFis + 'Fines') as Fine[];
-        this.webStorageService.setData('fis'+ this.idFis + 'Fines', this.fines);
-
-        this.fineService.sharedFines.subscribe(
-            (fine: Fine) => {
-                if(fine.idPessoa != 0){
-                    this.fines.push(fine);
-                    this.webStorageService.setData('fis'+ this.idFis + 'Fines', this.fines);
-                }
-            },
-            err => console.log(err)
-        );
+                if(this.webStorageService.hasData('fis'+ this.idFis + 'Fines'))
+                    this.fines = this.webStorageService.getData('fis'+ this.idFis + 'Fines') as Fine[];
+                this.webStorageService.setData('fis'+ this.idFis + 'Fines', this.fines);
         
-        if(this.webStorageService.hasData('fis'+ this.idFis + 'GreenSeals'))
-            this.greenSeals = this.webStorageService.getData('fis'+ this.idFis + 'GreenSeals') as GreenSeal[];
-        this.webStorageService.setData('fis'+ this.idFis + 'GreenSeals', this.greenSeals);
-
-        this.greenSealService.sharedGreenSeals.subscribe(
-            (greenSeal: GreenSeal) => {
-                if(greenSeal.idAgr != 0){
-                    this.greenSeals.push(greenSeal);
-                    this.webStorageService.setData('fis'+ this.idFis + 'GreenSeals', this.greenSeals);
-                }
+                this.fineService.sharedFines.subscribe(
+                    (fine: Fine) => {
+                        if(fine.idPessoa != 0){
+                            this.fines.push(fine);
+                            this.webStorageService.setData('fis'+ this.idFis + 'Fines', this.fines);
+                        }
+                    },
+                    err => console.log(err)
+                );
+                
+                if(this.webStorageService.hasData('fis'+ this.idFis + 'GreenSeals'))
+                    this.greenSeals = this.webStorageService.getData('fis'+ this.idFis + 'GreenSeals') as GreenSeal[];
+                this.webStorageService.setData('fis'+ this.idFis + 'GreenSeals', this.greenSeals);
+        
+                this.greenSealService.sharedGreenSeals.subscribe(
+                    (greenSeal: GreenSeal) => {
+                        if(greenSeal.idAgr != 0){
+                            console.log(greenSeal);
+                            this.greenSeals.push(greenSeal);
+                            this.webStorageService.setData('fis'+ this.idFis + 'GreenSeals', this.greenSeals);
+                        }
+                    },
+                    err => console.log(err)
+                );
+        
+                this.fineService.getInfoPessoas(this.infoFis.cidade).subscribe(
+                    (data: PersonSimplified[]) => {
+                        console.log(data);
+                        this.pessoas = data;
+                    },
+                    err => console.log(err)
+                );
             },
             err => console.log(err)
         );
-
-        this.fineService.getInfoPessoas()
-            .subscribe(
-                (data: PersonSimplified[]) => {
-                    this.pessoas = data;
-                },
-                err => console.log(err)
-            );
 
         this.verificaFimEtapa();
     }
@@ -106,6 +108,12 @@ export class SupervisorComponent implements OnInit {
         this.greenSeals.splice(this.greenSeals.indexOf(greenSeal), 1);
         this.alertService.success("Removido.");
         this.webStorageService.setData('fis'+ this.idFis + 'GreenSeals', this.greenSeals);
+    }
+
+    getNomePessoa(idPessoa: number){
+        this.pessoas.forEach(pessoa => {
+            if(pessoa.id == idPessoa) return pessoa.nome;
+        });
     }
 
     verificaFimEtapa(){

@@ -20,7 +20,7 @@ export class AldermanHistoryComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.idVer = this.activatedRoute.snapshot.params.idEmp;
+        this.idVer = this.activatedRoute.snapshot.params.idVer;
         this.getHistory();
     }
 

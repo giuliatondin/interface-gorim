@@ -64,9 +64,13 @@ export class EnvironmentalActionComponent implements OnInit{
     atualizaAnyDisabled(){
         this.formControl.forEach(
             button => {
-                if(button) return true;
+                if(button){
+                    this.webStorageService.setData('envivonmentalAction' + this.idPref + 'anyDisabled', this.anyDisabled);
+                    return true;
+                }
             }
         );
+        this.webStorageService.setData('envivonmentalAction' + this.idPref + 'anyDisabled', this.anyDisabled);
         return false;
     }
 

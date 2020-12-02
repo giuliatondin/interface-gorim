@@ -34,10 +34,9 @@ export class FineService{
         this.desmultaId.next(idPessoa);
     }
 
-    getInfoPessoas(){
-        return this.httpClient.post<PersonSimplified[]>(
-            API + MASTER_ROUTE + '/infoPessoasByEtapa',
-            1
+    getInfoPessoas(cidade: string){
+        return this.httpClient.get<PersonSimplified[]>(
+            API + MASTER_ROUTE + '/infoPessoasForFining/' + cidade
         );
     }
 

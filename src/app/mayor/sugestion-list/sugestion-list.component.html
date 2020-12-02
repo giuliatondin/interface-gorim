@@ -4,11 +4,12 @@
             <div class="card">
                 <div class="card-body">
                     <div *ngIf="isTaxSugestion(sugestion); else acaoAmbiental">
-                        <h4 class="card-text">Tipo {{ sugestion.imposto.tipo }}</h4>
-                        <p class="card-text">Mudar para taxa: <b>{{ sugestion.imposto.taxa }}</b></p>
+                        <h4 class="card-text">Taxa de imposto tipo {{ sugestion.imposto.tipo + 1 }}</h4>
+                        <p class="card-text">Mudar para: <b>{{ sugestion.imposto.taxa }}</b></p>
                     </div>
                     <ng-template #acaoAmbiental>
-                        <p class="card-text">Aplicar Ação Ambiental de {{ sugestion.acaoAmbiental }}</p>
+                        <h4 class="card-text">Aplicar Ação Ambiental</h4>
+                        <p class="card-text">Tipo: <b>{{ sugestion.acaoAmbiental }}</b></p>
                     </ng-template>
                     <a class="btn btn-warning" (click)="sendResponse(sugestion, false)" >Negar</a>
                     <a class="btn btn-success" (click)="sendResponse(sugestion, true)" >Aceitar</a>

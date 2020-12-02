@@ -9,6 +9,7 @@
                             Rodada {{ rodada.rodada }}
                         </mat-panel-title>
                     </mat-expansion-panel-header>
+                    <h5>Prefeito: {{ rodada.nome }}</h5>
                     <mat-accordion *ngFor="let etapa of rodada.etapas">
                         <mat-expansion-panel>
                             <mat-expansion-panel-header>
@@ -17,7 +18,7 @@
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
                             <div class="row align-items-center">
-                                <div class="col-md-3 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <div class="history-list-info">Caixa Anterior: D${{ etapa.saldoAnterior }}</div>
                                 </div>
                             </div>
@@ -40,7 +41,7 @@
                                     <p>Multas Recebidas D${{ etapa.multas }}</p>
                                 </div>
                             </div>
-                            <h3><span style="color: lightsalmon;">Débitos</span></h3>
+                            <h3 *ngIf="etapa.etapa == 2"><span style="color: lightsalmon;">Débitos</span></h3>
                             <div class="row align-items-center">
                                 <div class="col-md-3 mb-3" *ngIf="etapa.transferencias.enviado">
                                     <div class="row" *ngFor="let enviada of etapa.transferencias.enviado">
@@ -52,15 +53,22 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3 mb-3" *ngIf="etapa.etapa == 2 && etapa.acoesAmbientais.length > 0">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <p>Ações Ambientais feitas:</p>
-                                        </div>
+                            </div>
+                            <div class="container row" *ngIf="etapa.etapa == 2">
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <b>Ações Ambientais feitas:</b>
+                                    </div>
+                                    <div class="container row" *ngIf="etapa.acoesAmbientais.length > 0; else nenhumaAcao">
                                         <div class="col-md-3" *ngFor="let acao of etapa.acoesAmbientais">
                                             {{ acao }}
                                         </div>
                                     </div>
+                                    <ng-template #nenhumaAcao>
+                                        <div class="col-md-12">
+                                            Não foi usada nenhuma Ação Ambiental essa rodada.
+                                        </div>
+                                    </ng-template>
                                 </div>
                             </div>
                             <h3><span style="color: grey;">Info Prefeitura</span></h3>
@@ -68,21 +76,28 @@
                                 <div class="col-md-3 mb-3">
                                     <div class="history-list-info">Caixa Atual: D${{ etapa.saldoAtual }}</div>
                                 </div>
-                                <div class="col-md-3 mb-3" *ngIf="etapa.etapa == 2 && etapa.impostosModificados.length > 0">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <p>Impostos modificados:</p>
-                                        </div>
-                                        <div class="col-md-3" *ngFor="let imposto of etapa.impostosModificados">
-                                            Imposto {{ imposto.tipo }} <span *ngIf="imposto.tipo==1; else imposto">D$</span>{{ imposto.taxa }}<ng-template #imposto>%</ng-template>
+                            </div>
+                            <div class="container row">
+                                <div class="row mb-3" *ngIf="etapa.etapa == 2">
+                                    <div class="col-md-12">
+                                        <b>Impostos modificados:</b>
+                                    </div>
+                                    <div class="container row" *ngIf="etapa.impostosModificados.length > 0; else nenhumaTaxa">
+                                        <div class="col-md-4" *ngFor="let imposto of etapa.impostosModificados">
+                                            <p>Tipo {{ imposto.tipo }} para: <span *ngIf="imposto.tipo==1">D${{ imposto.taxa }}</span><span *ngIf="imposto.tipo > 1">{{ imposto.taxa*100 }}%</span></p>
                                         </div>
                                     </div>
+                                    <ng-template #nenhumaTaxa>
+                                        <div class="col-md-12">
+                                            Nenhuma taxa foi modificada nessa rodada.
+                                        </div>
+                                    </ng-template>
                                 </div>
                             </div>
                             <h3><span style="color: grey;">Info Mundo</span></h3>
                             <div class="row align-items-center">
                                 <div class="col-md-3 mb-3">
-                                    <div class="history-list-info">Poluição Mundial: {{ etapa.poluicaoMundial }}%</div>
+                                    <div class="history-list-info">Poluição Mundial: {{ etapa.poluicaoMundial | number:'.0-2' }}%</div>
                                 </div>
                             </div>
                             <hr>
@@ -90,7 +105,7 @@
                             <div class="container" *ngFor="let empresario of etapa.empresarios">
                                 <div class="row align-items-center">
                                     <div class="col-md-12 mb-12">
-                                        <div class="history-list-info"><h4>Nome: {{ empresario.nome }}</h4></div>
+                                        <div class="history-list-info"><b>Nome: {{ empresario.nome }}</b></div>
                                     </div>
                                 </div>
                                 <div class="row align-items-center">
@@ -113,7 +128,7 @@
                             <div class="container" *ngFor="let agricultor of etapa.agricultores">
                                 <div class="row align-items-center">
                                     <div class="col-md-12 mb-12">
-                                        <div class="history-list-info"><h4>Nome: {{ agricultor.nome }}</h4></div>
+                                        <div class="history-list-info"><b>Nome: {{ agricultor.nome }}</b></div>
                                     </div>
                                 </div>
                                 <div class="row align-items-center">

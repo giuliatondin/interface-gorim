@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 //List of components
 import { HomeComponent } from './home/home.component';
-import { AgriculturistComponent } from './agriculturist/agriculturist.component';
+import { FarmerComponent } from './farmer/farmer.component';
 import { NotFoundComponent } from './errors/not-found/not-found.component';
-import { EntrepreneurComponent } from './entrepreneur/entrepreneur.component';
-import { AgriculturistHistoryComponent } from './agriculturist/agriculturist-history/agriculturist-history.component';
-import { EntrepreneurHistoryComponent } from './entrepreneur/entrepreneur-history/entrepreneur-history.component';
+import { BusinessmanComponent } from './businessman/businessman.component';
+import { FarmerHistoryComponent } from './farmer/farmer-history/farmer-history.component';
+import { BusinessmanHistoryComponent } from './businessman/businessman-history/businessman-history.component';
 import { MasterComponent } from './master/master.component';
 import { WaitingPageComponent } from './waiting-page/waiting-page.component';
 import { AlternativeSecondStagePageComponent } from './alternative-second-stage-page/alertnative-second-stage-page.component';
@@ -24,20 +24,20 @@ const routes: Routes = [
         component: HomeComponent
     },
     {
-        path: ':idJogo/agricultor/:idAgr', //agriculturist
-        component: AgriculturistComponent
+        path: ':idJogo/empresario/:idEmp', //businessman 
+        component: BusinessmanComponent
     },
     {
-        path: ':idJogo/historico-agricultor/:idAgr', //history-agriculturist
-        component: AgriculturistHistoryComponent
+        path: ':idJogo/historico-empresario/:idEmp', //history-businessman
+        component: BusinessmanHistoryComponent
     },
     {
-        path: ':idJogo/empresario/:idEmp', //entrepreneur 
-        component: EntrepreneurComponent
+        path: ':idJogo/agricultor/:idAgr', //farmer
+        component: FarmerComponent
     },
     {
-        path: ':idJogo/historico-empresario/:idEmp', //history-entrepreneur
-        component: EntrepreneurHistoryComponent
+        path: ':idJogo/historico-agricultor/:idAgr', //history-farmer
+        component: FarmerHistoryComponent
     },
     {
         path: ':idJogo/fiscalAmbiental/:idFis', //supervisor 
@@ -68,7 +68,7 @@ const routes: Routes = [
         component: MasterComponent
     },
     {
-        path: ':idJogo/waitingPage/:idPessoa', //history-entrepreneur
+        path: ':idJogo/waitingPage/:idPessoa', //history-businessman
         component: WaitingPageComponent
     },
     {

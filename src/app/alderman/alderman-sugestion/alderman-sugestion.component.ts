@@ -43,7 +43,7 @@ export class AldermanSugestionComponent implements OnInit {
                     acao => acoes.push(acao.tipo)
                 );
                 this.selectData.push(acoes);
-                this.selectData.push(['B', 'M', 'A']);
+                this.selectData.push(['Baixo', 'Médio', 'Alto']);
                 this.radioOptions.push('Ações Ambientais');
                 let i = 0;
                 do {

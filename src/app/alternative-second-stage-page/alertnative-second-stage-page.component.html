@@ -11,10 +11,10 @@
         <div class="container pb-6">
             <div class="row text-center">
                 <div class="col-md-6">
-                    <p>Poluição Mundial {{ mundo.poluicaoMundo }}%</p>
+                    <p>Poluição Mundial {{ mundo.poluicaoMundo | number:'.0-2' }}%</p>
                 </div>
                 <div class="col-md-6">
-                    <p>Produtividade Mundial {{ mundo.produtividadeMundo }}%</p>
+                    <p>Produtividade Mundial {{ mundo.produtividadeMundo | number:'.0-2' }}%</p>
                 </div>
             </div>
             <div class="row">

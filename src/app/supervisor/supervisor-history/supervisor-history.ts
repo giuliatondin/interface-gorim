@@ -5,6 +5,7 @@ export interface SupervisorHistory {
 
 export interface Turn {
     rodada: number;
+    nome: string;
     etapas: Stage[];
 }
 
@@ -14,18 +15,19 @@ export interface Stage {
     saldoAtual: number;
     poluicaoMundial: number;
     transferencias: Transfers;
-    empresarios: Entrepreneur[];
-    agricultores: Agriculturist[];
+    empresarios: Businessman[];
+    agricultores: Farmer[];
+    acoesAmbientais: string[];
 }
 
-export interface Entrepreneur {
+export interface Businessman {
     produtividade: number;
     poluicao: number;
     nome: string;
     multa: number; //somente segunda etapa
 }
 
-export interface Agriculturist {
+export interface Farmer {
     poluicaoMedia: number;
     nome: string;
     multa: number; //somente segunda etapa

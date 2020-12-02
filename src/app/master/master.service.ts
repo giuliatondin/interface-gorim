@@ -33,7 +33,7 @@ export class MasterService{
         );
     }
 
-    getAgriculturists(){
+    getFarmers(){
         return this.httpClient.get(
             API + MASTER_ROUTE + '/agricultores'
         );

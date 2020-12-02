@@ -14,6 +14,7 @@ export class SugestionListComponent implements OnInit{
 
     @Input() idPref: number;
 
+    quantidadeSugestoes: number = 0;
     sugestions: AldermanSugestion[];
 
     constructor(
@@ -21,7 +22,9 @@ export class SugestionListComponent implements OnInit{
         private alertService: AlertService
     ){ }
 
-    ngOnInit(){ }
+    ngOnInit(){
+        this.getSugestions();
+    }
 
     getSugestions(){
         interval(10 * 1000)
@@ -30,6 +33,10 @@ export class SugestionListComponent implements OnInit{
             )
             .subscribe(
                 (data: AldermanSugestion[]) => {
+                    if(this.quantidadeSugestoes < data.length){
+                        this.quantidadeSugestoes = data.length;
+                        this.alertService.info('Você tem novas sugestões do Vereador.');
+                    }
                     this.sugestions = data;
                 }
             );
@@ -45,8 +52,10 @@ export class SugestionListComponent implements OnInit{
         this.sugestionListService.postResponse(this.idPref, response).subscribe(
             () => {
                 this.alertService.success('Resposta enviada.');
+                this.quantidadeSugestoes--;
                 this.sugestionListService.getSugestions(this.idPref).subscribe(
                     (data: AldermanSugestion[]) => {
+                        console.log(data);
                         this.sugestions = data;
                     },
                     err => console.log(err)
