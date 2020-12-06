@@ -13,6 +13,7 @@ import { TransferService } from './transfer.service';
 })
 export class TransferComponent implements OnInit {
 
+    @Input() idJogo: number;
     @Input() idPessoa: number;
     pessoas: PersonSimplified[];
     
@@ -25,7 +26,7 @@ export class TransferComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.transferService.getInfoPessoas()
+        this.transferService.getInfoPessoas(this.idJogo)
             .subscribe(
                 (data: PersonSimplified[]) => {
                     this.pessoas = data;
@@ -45,7 +46,7 @@ export class TransferComponent implements OnInit {
         let aux = formData.quantia.toString();
         if(aux.includes(',')) aux = aux.replace(',', '.');
         formData.quantia = aux as unknown as number;
-        this.transferService.postTransfer(formData)
+        this.transferService.postTransfer(this.idJogo, formData)
             .subscribe(
                 () => {
                     this.alertService.success('Transferências enviada.');

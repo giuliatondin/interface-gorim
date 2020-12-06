@@ -10,7 +10,7 @@ import { BusinessmanHistoryService } from './businessman-history.service';
     styleUrls: ['./businessman-history.component.scss']
 })
 export class BusinessmanHistoryComponent implements OnInit {
-
+    idJogo: number;
     idEmp: number;
     history$: Observable<BusinessmanHistory>;
 
@@ -20,8 +20,9 @@ export class BusinessmanHistoryComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
+        this.idJogo = this.activatedRoute.snapshot.params.idJogo;
         this.idEmp = this.activatedRoute.snapshot.params.idEmp;
-        this.empHistoryService.getHitory(this.idEmp).subscribe(
+        this.empHistoryService.getHitory(this.idJogo, this.idEmp).subscribe(
             (data: BusinessmanHistory) => console.log(data),
             err => console.log(err)
         );
@@ -29,7 +30,7 @@ export class BusinessmanHistoryComponent implements OnInit {
     }
 
     getHistory(){
-        this.history$ = this.empHistoryService.getHitory(this.idEmp);
+        this.history$ = this.empHistoryService.getHitory(this.idJogo, this.idEmp);
 
         
     }

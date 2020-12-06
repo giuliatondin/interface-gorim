@@ -13,6 +13,7 @@ import { FineService } from './fine.service';
 })
 export class FineComponent implements OnInit{
     
+    @Input() idJogo: number;
     @Input() idFis: number;
     @Input() cidade: string;
 
@@ -29,7 +30,7 @@ export class FineComponent implements OnInit{
     ){ }
 
     ngOnInit(){
-        this.fineService.getInfoPessoas(this.cidade).subscribe(
+        this.fineService.getInfoPessoas(this.idJogo, this.cidade).subscribe(
             (data: PersonSimplified[]) => {
                 this.pessoas = data;
             },

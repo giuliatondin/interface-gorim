@@ -69,7 +69,7 @@ export class MasterComponent implements OnInit {
         interval(10 * 1000)
             .pipe(
                 flatMap(
-                    () => this.masterService.getSituacaoEtapa(this.mundo.etapa)
+                    () => this.masterService.getSituacaoEtapa(this.idJogo, this.mundo.etapa)
                 )
             )
             .subscribe(
@@ -80,7 +80,7 @@ export class MasterComponent implements OnInit {
                     }
                     else if(data == 2){
                         this.apareceBotao = true;
-                        this.masterService.changeFlagFimEtapa()
+                        this.masterService.changeFlagFimEtapa(this.idJogo)
                             .subscribe(
                                 () => this.alertService.info('Todos os jogadores começaram a etapa.'),
                                 err => console.log(err)
@@ -92,7 +92,7 @@ export class MasterComponent implements OnInit {
                     else if(data == 1 && (new Date().getTime()) > (this.inicioEtapa + (1000*60*2) ) ){
                         console.log('Passou de 2 minutos');
                         this.apareceBotao = true;
-                        this.masterService.changeFlagFimEtapa()
+                        this.masterService.changeFlagFimEtapa(this.idJogo)
                             .subscribe(
                                 () => this.alertService.info('O jogador ainda não conectou, mas foi liberado para os outros jogadores terminarem a etapa, se quiserem.'),
                                 err => console.log(err)

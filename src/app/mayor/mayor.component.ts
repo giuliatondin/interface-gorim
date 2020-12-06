@@ -19,7 +19,7 @@ import { TaxesService } from './taxes/taxes.service';
 export class MayorComponent implements OnInit {
     
     idPref: number;
-    idJogo;
+    idJogo: number;
 
     infoPref: Mayor;
     infoMundo$: Observable<World>;
@@ -48,7 +48,7 @@ export class MayorComponent implements OnInit {
 
         this.infoMundo$ = this.prefService.getInfoMundo(this.idJogo);
 
-        this.prefService.getInfo(this.idPref).subscribe(
+        this.prefService.getInfo(this.idJogo, this.idPref).subscribe(
             (data: Mayor) => this.infoPref = data,
             err => console.log(err)
         );
@@ -106,7 +106,7 @@ export class MayorComponent implements OnInit {
         this.subscription = this.counter
             .pipe(
                 flatMap(
-                    () => this.prefService.verificaFimEtapa(2)
+                    () => this.prefService.verificaFimEtapa(this.idJogo, 2)
                 )
             )
             .subscribe(
@@ -124,6 +124,7 @@ export class MayorComponent implements OnInit {
 
     finalizarJogada(finishedByMaster: boolean = false){
         this.prefService.finalizaJogada(
+            this.idJogo,
             this.idPref,
             {
                 impostos: this.taxes,

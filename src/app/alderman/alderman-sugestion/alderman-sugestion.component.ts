@@ -15,6 +15,8 @@ import { AldermanSugestion } from './alderman-sugestion';
 })
 export class AldermanSugestionComponent implements OnInit {
 
+    @Input() idJogo: number;
+    
     @Input() idVer: number;
     idSugestao: number;
     sugestionForm: FormGroup;
@@ -36,7 +38,7 @@ export class AldermanSugestionComponent implements OnInit {
         this.webStorageService.setData('sugestion' + this.idVer + 'idSugestao', this.idSugestao);
         
         this.resetForm();
-        this.sugestionService.getInfoPrefeito(this.idVer).subscribe(
+        this.sugestionService.getInfoPrefeito(this.idJogo, this.idVer).subscribe(
             (data: Mayor) => {
                 let acoes: string[] = [];
                 data.acoesAmbientais.forEach(
@@ -77,6 +79,7 @@ export class AldermanSugestionComponent implements OnInit {
             (this.selector == 0) ? this.sugestionForm.get('especificacao').value : '';
 
         this.sugestionService.postSugestion(
+            this.idJogo,
             this.idVer,
             {
                 tipoSugestao: this.selector,

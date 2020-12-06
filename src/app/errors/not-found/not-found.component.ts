@@ -10,7 +10,7 @@ export class NotFoundComponent implements OnInit {
   description = "Página não encontrada :("
   image = {
     link: '../../../assets/imgs/not-found-icon.png',
-    alt: 'Icone da pagina nao encontrada'
+    alt: 'Icone da pagina não encontrada'
   }
 
   constructor() { }

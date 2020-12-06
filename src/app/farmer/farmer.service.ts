@@ -6,9 +6,9 @@ import { Farmer } from './farmer';
 import { World } from '../world/world';
 import { ProdutoSimplified } from '../world/models/produto.simplified';
 
-const API = environment.ApiUrl;
-const AGR_ROUTE = '/request/api/agricultor';
-const MASTER_ROUTE = '/request/api/mestre';
+const API = environment.ApiUrl + '/request/api';
+const AGR_ROUTE = '/agricultor';
+const MASTER_ROUTE = '/mestre';
 
 @Injectable({
     providedIn: 'root'
@@ -21,9 +21,9 @@ export class FarmerService{
         //
     }
 
-    getInfo(id: number){
+    getInfo(idJogo: number, idAgr: number){
         return this.httpClient.get<Farmer>(
-            API + AGR_ROUTE + '/' + id
+            API + '/' + idJogo + AGR_ROUTE + '/' + idAgr
         );
     }
 
@@ -31,13 +31,13 @@ export class FarmerService{
         idJogo: number
     ){
         return this.httpClient.get<World>(
-            API + MASTER_ROUTE + '/infoMundo/' + idJogo
+            API + '/' + idJogo + MASTER_ROUTE + '/infoMundo'
         );
     }
 
-    getProdutosEmpresarios(){
+    getProdutosEmpresarios(idJogo: number){
         return this.httpClient.get<ProdutoSimplified[]>(
-            API + AGR_ROUTE + '/empresarios/produtos'
+            API + '/' + idJogo + AGR_ROUTE + '/empresarios/produtos'
         )
     }
 

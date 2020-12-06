@@ -13,6 +13,7 @@ import { VendaService } from './venda.service';
 })
 export class VendaComponent implements OnInit{
     
+    @Input() idJogo: number;
     @Input() idEmp: number;
 
     quantidadeOrcamentos: number = 0;
@@ -32,7 +33,7 @@ export class VendaComponent implements OnInit{
     getOrcamentos(){
         interval(10 * 1000)
             .pipe(
-                flatMap(() => this.vendaService.getVendas(this.idEmp))
+                flatMap(() => this.vendaService.getVendas(this.idJogo, this.idEmp))
             )
             .subscribe(
                 (data: Venda[]) => {

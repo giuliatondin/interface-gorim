@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { BehaviorSubject } from 'rxjs';
 import { ConfirmingModal } from './confirming-modal';
 import { ConfirmingModalComponent } from './confirming-modal.component';
 

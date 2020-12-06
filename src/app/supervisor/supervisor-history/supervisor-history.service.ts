@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { SupervisorHistory } from './supervisor-history';
 
-const API = environment.ApiUrl;
-const HISTORY_ROUTE = '/request/api/arquivoResumo';
+const API = environment.ApiUrl + '/request/api';
+const HISTORY_ROUTE = '/arquivoResumo';
 
 @Injectable({
     providedIn: 'root'
@@ -16,10 +16,11 @@ export class SupervisorHistoryService{
     ){ }
 
     getHitory(
-        id: number
+        idJogo: number,
+        idFis: number
     ){
         return this.httpClient.get<SupervisorHistory>(
-            API + HISTORY_ROUTE + '/' + id
+            API + '/' + idJogo + HISTORY_ROUTE + '/' + idFis
         );
     }
 }

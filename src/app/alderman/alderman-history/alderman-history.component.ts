@@ -10,6 +10,8 @@ import { AldermanHistoryService } from './alderman-history.service';
     styleUrls: ['./alderman-history.component.scss']
 })
 export class AldermanHistoryComponent implements OnInit {
+    
+    idJogo: number;
 
     idVer: number;
     history$: Observable<AldermanHistory>;
@@ -21,11 +23,12 @@ export class AldermanHistoryComponent implements OnInit {
 
     ngOnInit(): void {
         this.idVer = this.activatedRoute.snapshot.params.idVer;
+        this.idJogo = this.activatedRoute.snapshot.params.idJogo;
         this.getHistory();
     }
 
     getHistory(){
-        this.history$ = this.empHistoryService.getHitory(this.idVer);
+        this.history$ = this.empHistoryService.getHitory(this.idJogo, this.idVer);
     }
 
 }

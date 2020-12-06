@@ -54,15 +54,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="row pb-5 align-items-center justify-content-center"> <!-- *ngIf="apareceBotao"-->
-                    <!--app-confirming-modal
-                        *ngIf="hasUnfinishedPlayers"
-                        [openModalBtnText]="openModalBtnText"
-                        [openModalBtnClasses]="openModalBtnClasses"
-                        [modalTitle]="modalTitle"
-                        [modalContent]="modalContent"
-                        (messageEvent)="receiveUserChoice($event)"
-                    ></app-confirming-modal-->
+                <div class="row pb-5 align-items-center justify-content-center">
+                    
                     <button
                         (click)="openModal()"
                         class="mt-3 btn btn--primary"
@@ -80,6 +73,7 @@
             </div>
             <div class="col-md-3">
                 <app-rightsidebar
+                    [idJogo]="idJogo"
                     [etapa]="mundo.etapa"
                 ></app-rightsidebar>
             </div>

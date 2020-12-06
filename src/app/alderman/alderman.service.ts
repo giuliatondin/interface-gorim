@@ -4,9 +4,9 @@ import { environment } from 'src/environments/environment';
 import { World } from '../world/world';
 import { Alderman } from './alderman';
 
-const API = environment.ApiUrl;
-const VER_ROUTE = '/request/api/vereador';
-const MASTER_ROUTE = '/request/api/mestre';
+const API = environment.ApiUrl + '/request/api';
+const VER_ROUTE = '/vereador';
+const MASTER_ROUTE = '/mestre';
 
 @Injectable({
     providedIn: 'root'
@@ -17,27 +17,27 @@ export class AldermanService {
         private httpClient: HttpClient
     ){ }
 
-    getInfo(idVer: number){
+    getInfo(idJogo: number, idVer: number){
         return this.httpClient.get<Alderman>(
-            API + VER_ROUTE + '/' + idVer
+            API + '/' + idJogo + VER_ROUTE + '/' + idVer
         );
     }
 
     getInfoMundo(idJogo: number){
         return this.httpClient.get<World>(
-            API + MASTER_ROUTE + '/infoMundo/' + idJogo
+            API + '/' + idJogo + MASTER_ROUTE + '/infoMundo'
         );
     }
     
-    verificaFimEtapa(etapa: number){
+    verificaFimEtapa(idJogo: number, etapa: number){
         return this.httpClient.get(
-            API + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
+            API + '/' + idJogo + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
         );
     }
 
-    finalizaJogada(idVer: number){
+    finalizaJogada(idJogo: number, idVer: number){
         return this.httpClient.post(
-            API + VER_ROUTE + '/' + idVer,
+            API + '/' + idJogo + VER_ROUTE + '/' + idVer,
             null
         );
     }

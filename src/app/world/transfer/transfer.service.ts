@@ -5,8 +5,8 @@ import { environment } from 'src/environments/environment';
 import { PersonSimplified } from '../models/person.simplified';
 import { Transfer } from './transfer';
 
-const API = environment.ApiUrl;
-const MASTER_ROUTE = '/request/api/mestre';
+const API = environment.ApiUrl + '/request/api';
+const MASTER_ROUTE = '/mestre';
 
 @Injectable({
     providedIn: 'root'
@@ -19,16 +19,16 @@ export class TransferService{
         //
     }
 
-    getInfoPessoas(){
+    getInfoPessoas(idJogo: number){
         return this.httpClient.post<PersonSimplified[]>(
-            API + MASTER_ROUTE + '/infoPessoasByEtapa',
+            API + '/' + idJogo + MASTER_ROUTE + '/infoPessoasByEtapa',
             0
         );
     }
 
-    postTransfer(formData: Transfer){
+    postTransfer(idJogo: number, formData: Transfer){
         return this.httpClient.post(
-            API + MASTER_ROUTE + '/adicionaTransferencia',
+            API + '/' + idJogo + MASTER_ROUTE + '/adicionaTransferencia',
             formData
         )
     }

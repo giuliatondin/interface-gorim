@@ -5,8 +5,8 @@ import { PersonSimplified } from 'src/app/world/models/person.simplified';
 import { environment } from 'src/environments/environment';
 import { GreenSeal } from '../postForm';
 
-const API = environment.ApiUrl;
-const MASTER_ROUTE = '/request/api/mestre';
+const API = environment.ApiUrl + '/request/api';
+const MASTER_ROUTE = '/mestre';
 
 @Injectable({
     providedIn: 'root'
@@ -28,9 +28,9 @@ export class GreenSealService {
         this.greenSeal.next(greenSeal);
     }
 
-    getInfoAgricultores(cidade: string){
+    getInfoAgricultores(idJogo: number, cidade: string){
         return this.httpClient.get<PersonSimplified[]>(
-            API + MASTER_ROUTE + '/infoPessoasForGreenSeal/' + cidade
+            API + '/' + idJogo + MASTER_ROUTE + '/infoPessoasForGreenSeal/' + cidade
         );
     }
 }

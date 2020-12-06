@@ -38,7 +38,7 @@ export class AldermanComponent implements OnInit {
         this.idVer = this.activatedRoute.snapshot.params.idVer;
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
 
-        this.verService.getInfo(this.idVer).subscribe(
+        this.verService.getInfo(this.idJogo, this.idVer).subscribe(
             (data: Alderman) => {
                 this.infoVer = data;
                 this.infoMundo$ = this.verService.getInfoMundo(this.idJogo);
@@ -52,7 +52,7 @@ export class AldermanComponent implements OnInit {
         this.subscription = this.counter
             .pipe(
                 flatMap(
-                    () => this.verService.verificaFimEtapa(2)
+                    () => this.verService.verificaFimEtapa(this.idJogo, 2)
                 )
             )
             .subscribe(
@@ -69,7 +69,7 @@ export class AldermanComponent implements OnInit {
     }
 
     finalizaJogada(finishedByMaster: boolean = false){
-        this.verService.finalizaJogada(this.idVer)
+        this.verService.finalizaJogada(this.idJogo, this.idVer)
             .subscribe(
                 () => {
                     this.subscription.unsubscribe();

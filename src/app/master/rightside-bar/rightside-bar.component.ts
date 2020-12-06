@@ -10,6 +10,7 @@ import { MasterService } from '../master.service';
     styleUrls: [ './rightside-bar.component.scss' ]
 })
 export class RightSideBarComponent implements OnInit {
+    @Input() idJogo: number;
     @Input() etapa: number;
     finalizadosEtapa: boolean[];
     pessoas: PersonSimplified[];
@@ -19,7 +20,7 @@ export class RightSideBarComponent implements OnInit {
     ){ }
 
     ngOnInit(){
-        this.masterService.verificaFinalizados(this.etapa)
+        this.masterService.verificaFinalizados(this.idJogo, this.etapa)
             .subscribe(
                 (data: boolean[]) => {
                     this.finalizadosEtapa = data;
@@ -38,7 +39,7 @@ export class RightSideBarComponent implements OnInit {
     verificaFinalizados(){
         interval(10 * 1000)
             .pipe(
-                flatMap(() => this.masterService.verificaFinalizados(this.etapa))
+                flatMap(() => this.masterService.verificaFinalizados(this.idJogo, this.etapa))
             )
             .subscribe(
                 (data: boolean[]) => {
@@ -49,7 +50,7 @@ export class RightSideBarComponent implements OnInit {
     }
 
     getInfoPessoas(){
-        this.masterService.getInfoPessoas(this.etapa)
+        this.masterService.getInfoPessoas(this.idJogo, this.etapa)
             .subscribe(
                 (data: PersonSimplified[]) => {
                     this.pessoas = data;

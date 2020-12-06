@@ -13,8 +13,9 @@ import { WaitingPageService } from './waiting-page.service';
     styleUrls: [ './waiting-page.component.scss' ]
 })
 export class WaitingPageComponent implements OnInit{
+
     infoMundo: World;
-    idJogo;
+    idJogo: number;
 
     idPessoa: number;
     counter: Observable<number> = interval(10 * 1000);
@@ -49,7 +50,7 @@ export class WaitingPageComponent implements OnInit{
         this.subscription = this.counter
             .pipe(
                 flatMap(
-                    () => this.waitingPageService.verificaFimEtapa(this.infoMundo.etapa)
+                    () => this.waitingPageService.verificaFimEtapa(this.idJogo, this.infoMundo.etapa)
                 )
             )
             .subscribe(
@@ -58,7 +59,7 @@ export class WaitingPageComponent implements OnInit{
                     if(response == 0) {
                         this.subscription.unsubscribe();
                         if(this.infoMundo.etapa == 1){
-                            this.waitingPageService.getPapelSegundaEtapa(this.idPessoa)
+                            this.waitingPageService.getPapelSegundaEtapa(this.idJogo, this.idPessoa)
                             .subscribe(
                                 (idProximaEtapa: number) => {
                                     this.alertService.info('A segunta etapa vai começar.');

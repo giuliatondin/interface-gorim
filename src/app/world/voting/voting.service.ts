@@ -4,8 +4,8 @@ import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { PersonSimplified } from '../models/person.simplified';
 
-const API = environment.ApiUrl;
-const MASTER_ROUTE = '/request/api/mestre';
+const API = environment.ApiUrl + '/request/api';
+const MASTER_ROUTE = '/mestre';
 
 @Injectable({
     providedIn: 'root'
@@ -21,15 +21,15 @@ export class VotingService {
         //
     }
 
-    getInfoPessoas(cidade: string){
+    getInfoPessoas(idJogo: number, cidade: string){
         return this.httpClient.get<PersonSimplified[]>(
-            API + MASTER_ROUTE + '/infoPessoasForVoting/' + cidade
+            API + '/' + idJogo + MASTER_ROUTE + '/infoPessoasForVoting/' + cidade
         );
     }
 
-    votar(votos: number[]){
+    votar(idJogo: number, votos: number[]){
         return this.httpClient.post(
-            API + MASTER_ROUTE + '/votar',
+            API + '/' + idJogo + MASTER_ROUTE + '/votar',
             votos
         );
     }

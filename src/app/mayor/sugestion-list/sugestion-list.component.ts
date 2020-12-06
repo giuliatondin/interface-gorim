@@ -12,6 +12,7 @@ import { SugestionListService } from './sugestion-list.service';
 })
 export class SugestionListComponent implements OnInit{
 
+    @Input() idJogo: number;
     @Input() idPref: number;
 
     quantidadeSugestoes: number = 0;
@@ -29,7 +30,7 @@ export class SugestionListComponent implements OnInit{
     getSugestions(){
         interval(10 * 1000)
             .pipe(
-                flatMap(() => this.sugestionListService.getSugestions(this.idPref))
+                flatMap(() => this.sugestionListService.getSugestions(this.idJogo, this.idPref))
             )
             .subscribe(
                 (data: AldermanSugestion[]) => {
@@ -49,11 +50,11 @@ export class SugestionListComponent implements OnInit{
 
     sendResponse(response: AldermanSugestion, aceito: boolean){
         response.aceito = aceito;
-        this.sugestionListService.postResponse(this.idPref, response).subscribe(
+        this.sugestionListService.postResponse(this.idJogo, this.idPref, response).subscribe(
             () => {
                 this.alertService.success('Resposta enviada.');
                 this.quantidadeSugestoes--;
-                this.sugestionListService.getSugestions(this.idPref).subscribe(
+                this.sugestionListService.getSugestions(this.idJogo, this.idPref).subscribe(
                     (data: AldermanSugestion[]) => {
                         console.log(data);
                         this.sugestions = data;

@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { AldermanSugestion } from 'src/app/alderman/alderman-sugestion/alderman-sugestion';
 import { environment } from 'src/environments/environment';
 
-const API = environment.ApiUrl;
-const PREF_ROUTE = '/request/api/prefeito';
+const API = environment.ApiUrl + '/request/api';
+const PREF_ROUTE = '/prefeito';
 
 @Injectable({
     providedIn: 'root'
@@ -15,15 +15,19 @@ export class SugestionListService {
         private httpClient: HttpClient
     ){ }
 
-    getSugestions(idPref: number){
+    getSugestions(idJogo: number, idPref: number){
         return this.httpClient.get<AldermanSugestion[]>(
-            API + PREF_ROUTE + '/getSugestoesVereador/' + idPref
+            API + '/' + idJogo + PREF_ROUTE + '/getSugestoesVereador/' + idPref
         );
     }
 
-    postResponse(idPref: number, response: AldermanSugestion){
+    postResponse(
+        idJogo: number,
+        idPref: number,
+        response: AldermanSugestion
+    ){
         return this.httpClient.post(
-            API + PREF_ROUTE + '/adicionaRespostaSugestao/' + idPref,
+            API + '/' + idJogo + PREF_ROUTE + '/adicionaRespostaSugestao/' + idPref,
             response
         );
     }

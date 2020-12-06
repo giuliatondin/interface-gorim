@@ -11,6 +11,7 @@ import { SupervisorHistoryService } from './supervisor-history.service';
 })
 export class SupervisorHistoryComponent implements OnInit {
 
+    idJogo: number;
     idFis: number;
     history$: Observable<SupervisorHistory>;
 
@@ -20,13 +21,14 @@ export class SupervisorHistoryComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
+        this.idJogo = this.activatedRoute.snapshot.params.idJogo;
         this.idFis = this.activatedRoute.snapshot.params.idFis;
         this.getHistory();
     }
 
     getHistory(){
-        this.history$ = this.fisHistoryService.getHitory(this.idFis);
-        this.fisHistoryService.getHitory(this.idFis).subscribe(
+        this.history$ = this.fisHistoryService.getHitory(this.idJogo, this.idFis);
+        this.fisHistoryService.getHitory(this.idJogo, this.idFis).subscribe(
             (data: SupervisorHistory) => console.log(data),
             err => console.log(err)
         );

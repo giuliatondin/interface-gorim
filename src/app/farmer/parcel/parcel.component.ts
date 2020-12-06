@@ -25,7 +25,7 @@ export class ParcelComponent implements OnInit {
     @Input() rodada: number;
 
     @Input() idAgr: number;
-    idJogo;
+    @Input() idJogo: number;
 
     parcelasForm: FormGroup;
 
@@ -48,13 +48,11 @@ export class ParcelComponent implements OnInit {
         private formBuilder: FormBuilder,
         private webStorageService: WebStorageService,
         private parcelService: ParcelService,
-        private activatedRoute: ActivatedRoute,
         private router: Router,
         private alertService: AlertService
     ) { }
 
     ngOnInit(): void {
-        this.idJogo = this.activatedRoute.snapshot.params.idJogo;
         this.liberaBotao = false;
 
         this.iniciaArrays();
@@ -294,7 +292,7 @@ export class ParcelComponent implements OnInit {
         this.subscription = this.counter
             .pipe(
                 flatMap(
-                    () => this.parcelService.verificaFimEtapa(1)
+                    () => this.parcelService.verificaFimEtapa(this.idJogo, 1)
                 )
             )
             .subscribe(
@@ -359,7 +357,7 @@ export class ParcelComponent implements OnInit {
                 seloVerde: this.parcelasForm.getRawValue().seloVerde
             };
 
-            this.parcelService.postAgricultiristForm(this.idAgr, postForm)
+            this.parcelService.postAgricultiristForm(this.idJogo, this.idAgr, postForm)
                 .subscribe(
                     () => {
                         if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);

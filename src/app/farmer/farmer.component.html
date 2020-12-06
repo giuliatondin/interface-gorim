@@ -24,6 +24,7 @@
                     <mat-tab-group mat-align-tabs="center">
                         <mat-tab label="Parcelas">
                             <app-parcel
+                                [idJogo]="idJogo"
                                 [produtos]="produtos"
                                 [idAgr]="idAgr"
                                 [rodada]="mundo.rodada"
@@ -41,9 +42,10 @@
                         class="btn btn--primary mb-2"
                         *ngIf="mundo.rodada > 1"
                     >Abrir histórico</a>
-                    <app-transfer [idPessoa]="idAgr"></app-transfer>
+                    <app-transfer [idJogo]="idJogo" [idPessoa]="idAgr"></app-transfer>
                     <app-voting
                         *ngIf="isElectionTurn(mundo.rodada)"
+                        [idJogo]="idJogo"
                         [cidade]="agr.cidade"
                         [idPessoa]="idAgr"
                     ></app-voting>
@@ -53,9 +55,15 @@
             
         <app-sidebar #sidebar>
             <app-vendacard
+                [idJogo]="idJogo"
                 [idAgr]="idAgr"
                 [quantidadeJogadores]="mundo.quantidadeJogadores"
             ></app-vendacard>
         </app-sidebar>
     </div>
 </div>
+<ng-chat
+    [adapter]="chatAdapter"
+    [userId]="idAgr"
+    title="Chat"
+></ng-chat>

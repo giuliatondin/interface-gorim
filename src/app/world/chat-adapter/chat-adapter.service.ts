@@ -1,26 +1,23 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { FarmerHistory } from './farmer-history';
+import { PersonSimplified } from '../models/person.simplified';
 
 const API = environment.ApiUrl + '/request/api';
-const HISTORY_ROUTE = '/arquivoResumo/';
+const CHAT_ROUTE = '/chat';
 
 @Injectable({
     providedIn: 'root'
 })
-export class FarmerHistoryService {
-
+export class ChatAdapterService {
+    
     constructor(
         private httpClient: HttpClient
     ){ }
 
-    getHistory(
-        idJogo: number,
-        idAgr: number
-    ){
-        return this.httpClient.get<FarmerHistory>(
-            API + '/' + idJogo + HISTORY_ROUTE + idAgr
+    getContactList(idJogo: number, idPessoa: number){
+        return this.httpClient.get<PersonSimplified[]>(
+            API + '/' + idJogo + CHAT_ROUTE + '/listaContatoChat/' + idPessoa
         );
     }
 }

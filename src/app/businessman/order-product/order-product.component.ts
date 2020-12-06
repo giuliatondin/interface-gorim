@@ -13,12 +13,13 @@ import { Venda } from 'src/app/farmer/venda/venda';
 })
 export class OrderProductComponent implements OnInit {
 
-    orcamentoForm: FormGroup;
-    idOrcamento: number;
-
+    @Input() idJogo: number;
     @Input() idEmp: number;
     @Input() produtos: string[];
     @Input() nomeAgricultores: PersonSimplified[];
+
+    orcamentoForm: FormGroup;
+    idOrcamento: number;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -74,6 +75,7 @@ export class OrderProductComponent implements OnInit {
 
         this.orderProductService
             .adicionarOrcamento(
+                this.idJogo,
                 this.idOrcamento,
                 this.orcamentoForm.get('idAgr').value,
                 this.orcamentoForm.getRawValue() as Venda

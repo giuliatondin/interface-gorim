@@ -20,7 +20,7 @@ import { SupervisorService } from './supervisor.service';
 export class SupervisorComponent implements OnInit {
     
     idFis: number;
-    idJogo;
+    idJogo: number;
     
     pessoas: PersonSimplified[];
 
@@ -49,7 +49,7 @@ export class SupervisorComponent implements OnInit {
     ngOnInit(){
         this.idFis = this.activatedRoute.snapshot.params.idFis;
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
-        this.fisService.getInfo(this.idFis).subscribe(
+        this.fisService.getInfo(this.idJogo, this.idFis).subscribe(
             (data: Supervisor) => {
                 this.infoFis = data;
                 this.infoMundo$ = this.fisService.getInfoMundo(this.idJogo);
@@ -83,7 +83,7 @@ export class SupervisorComponent implements OnInit {
                     err => console.log(err)
                 );
         
-                this.fineService.getInfoPessoas(this.infoFis.cidade).subscribe(
+                this.fineService.getInfoPessoas(this.idJogo, this.infoFis.cidade).subscribe(
                     (data: PersonSimplified[]) => {
                         console.log(data);
                         this.pessoas = data;
@@ -120,7 +120,7 @@ export class SupervisorComponent implements OnInit {
         this.subscription = this.counter
             .pipe(
                 flatMap(
-                    () => this.fisService.verificaFimEtapa(2)
+                    () => this.fisService.verificaFimEtapa(this. idJogo, 2)
                 )
             )
             .subscribe(
@@ -138,28 +138,28 @@ export class SupervisorComponent implements OnInit {
 
     finalizarJogada(finishedByMaster: boolean = false){
         this.fisService.finalizaJogada(
+            this.idJogo,
             this.idFis,
             {
                 multas: this.fines,
                 selosVerde: this.greenSeals
             } as PostForm
-            )
-            .subscribe(
-                () => {
-                    this.subscription.unsubscribe();
-                    if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
-                    else this.alertService.success('Jogada finalizada.', true);
-                    this.webStorageService.removeData([
-                        'fine' + this.idFis + 'pessoasMultadas',
-                        'fis'+ this.idFis + 'Fines',
-                        'fis'+ this.idFis + 'GreenSeals'
-                    ]);
-                    this.router.navigate([this.idJogo, 'waitingPage', this.idFis]);
-                },
-                err => {
-                    console.log(err);
-                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
-                }
-            );
+        ).subscribe(
+            () => {
+                this.subscription.unsubscribe();
+                if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
+                else this.alertService.success('Jogada finalizada.', true);
+                this.webStorageService.removeData([
+                    'fine' + this.idFis + 'pessoasMultadas',
+                    'fis'+ this.idFis + 'Fines',
+                    'fis'+ this.idFis + 'GreenSeals'
+                ]);
+                this.router.navigate([this.idJogo, 'waitingPage', this.idFis]);
+            },
+            err => {
+                console.log(err);
+                this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+            }
+        );
     }
 }

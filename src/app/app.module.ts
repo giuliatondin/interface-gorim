@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgChatModule } from 'ng-chat';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -36,8 +37,9 @@ import { AletrnativeSecondStagePageModule } from './alternative-second-stage-pag
         WorldModule,
         ErrorsModule,
         BrowserAnimationsModule,
+        NgChatModule
     ],
     providers: [],
-    bootstrap: [AppComponent]
+    bootstrap: [ AppComponent ]
 })
 export class AppModule { }

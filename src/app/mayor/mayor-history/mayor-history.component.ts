@@ -10,7 +10,8 @@ import { MayorHistoryService } from './mayor-history.service';
     styleUrls: ['./mayor-history.component.scss']
 })
 export class MayorHistoryComponent implements OnInit {
-
+    
+    idJogo: number;
     idPref: number;
     history$: Observable<MayorHistory>;
 
@@ -20,16 +21,13 @@ export class MayorHistoryComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
+        this.idJogo = this.activatedRoute.snapshot.params.idJogo;
         this.idPref = this.activatedRoute.snapshot.params.idPref;
         this.getHistory();
     }
 
     getHistory(){
-        this.history$ = this.prefHistoryService.getHitory(this.idPref);
-        this.prefHistoryService.getHitory(this.idPref).subscribe(
-            (data: MayorHistory) => console.log(data),
-            err => console.log(err)
-        );
+        this.history$ = this.prefHistoryService.getHitory(this.idJogo, this.idPref);
     }
 
     isMaquina(produto: string){

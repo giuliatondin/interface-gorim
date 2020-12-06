@@ -12,7 +12,7 @@ import { ResponseListService } from './response-list.service';
     styleUrls: [ 'response-list.component.scss' ]
 })
 export class ResponseListComponent implements OnInit {
-
+    @Input() idJogo: number;
     @Input() idVer: number;
 
     quantidadeRespostas: number = 0;
@@ -30,7 +30,7 @@ export class ResponseListComponent implements OnInit {
     getResponses(){
         interval(10 * 1000)
             .pipe(
-                flatMap(() => this.responseListService.getResponses(this.idVer))
+                flatMap(() => this.responseListService.getResponses(this.idJogo, this.idVer))
             )
             .subscribe(
                 (data: AldermanSugestion[]) => {

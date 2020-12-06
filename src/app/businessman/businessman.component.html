@@ -18,6 +18,7 @@
                     <mat-tab-group mat-align-tabs="center">
                         <mat-tab label="Orçamentos">
                             <app-order-product
+                                [idJogo]="idJogo"
                                 [idEmp]="idEmp"
                                 [produtos]="emp.produtos"
                                 [nomeAgricultores]="nomeAgricultores"
@@ -35,8 +36,13 @@
                         class="btn btn--primary mb-2"
                         *ngIf="mundo.rodada > 1"
                     >Abrir histórico</a>
-                    <app-transfer [idPessoa]="idEmp"></app-transfer>
-                    <app-voting *ngIf="isElectionTurn(mundo.rodada)" [cidade]="emp.cidade" [idPessoa]="idEmp"></app-voting>
+                    <app-transfer [idJogo]="idJogo" [idPessoa]="idEmp"></app-transfer>
+                    <app-voting
+                        *ngIf="isElectionTurn(mundo.rodada)"
+                        [idJogo]="idJogo"
+                        [cidade]="emp.cidade"
+                        [idPessoa]="idEmp"
+                    ></app-voting>
                     <button
                         class="btn btn--secondary mt-3"
                         (click)="finalizarJogada()"
@@ -49,8 +55,16 @@
             </div>
             
             <app-sidebar #sidebar>
-                <app-vendacard [idEmp]="idEmp"></app-vendacard>
+                <app-vendacard
+                    [idJogo]="idJogo"
+                    [idEmp]="idEmp"
+                ></app-vendacard>
             </app-sidebar>
         </div>
     </div>
 </div>
+<ng-chat
+    [adapter]="chatAdapter"
+    [userId]="idEmp"
+    title="Chat"
+></ng-chat>

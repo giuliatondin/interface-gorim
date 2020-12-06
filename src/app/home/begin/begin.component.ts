@@ -37,10 +37,13 @@ export class BeginComponent implements OnInit{
         if(this.beginForm.valid){
             const quantidadeJogadores: number = this.beginForm.get('quantidadeJogadores').value;
             this.beginService.iniciaJogada(quantidadeJogadores).subscribe(
-                () => {
-                    const idJogo = 1;
-                    // get idJogo
-                    this.router.navigate([idJogo, 'mestre'], { replaceUrl: true });
+                (data: number) => {
+                    const idJogo = data;
+                    if(idJogo > 0) this.router.navigate([idJogo, 'mestre'], { replaceUrl: true });
+                    else {
+                        this.beginForm.reset();
+                        this.alertService.danger('Não foi possível criar um Mundo novo. Por favor, tente novamente.');
+                    }
                 },
                 err => {
                     console.log(err);

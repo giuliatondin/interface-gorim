@@ -5,9 +5,9 @@ import { PostForm } from './postForm';
 import { World } from '../world/world';
 import { Mayor } from './mayor';
 
-const API = environment.ApiUrl;
-const MAYOR_ROUTE = '/request/api/prefeito';
-const MASTER_ROUTE = '/request/api/mestre';
+const API = environment.ApiUrl + '/request/api';
+const MAYOR_ROUTE = '/prefeito';
+const MASTER_ROUTE = '/mestre';
 
 @Injectable({
     providedIn: 'root'
@@ -18,30 +18,31 @@ export class MayorService {
         private httpClient: HttpClient
     ){ }
 
-    getInfo(idPref: number){
+    getInfo(idJogo: number, idPref: number){
         return this.httpClient.get<Mayor>(
-            API + MAYOR_ROUTE + '/' + idPref
+            API + '/' + idJogo + MAYOR_ROUTE + '/' + idPref
         );
     }
 
     getInfoMundo(idJogo: number){
         return this.httpClient.get<World>(
-            API + MASTER_ROUTE + '/infoMundo/' + idJogo
+            API + '/' + idJogo + MASTER_ROUTE + '/infoMundo'
         );
     }
     
-    verificaFimEtapa(etapa: number){
+    verificaFimEtapa(idJogo: number, etapa: number){
         return this.httpClient.get(
-            API + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
+            API + '/' + idJogo + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
         );
     }
 
     finalizaJogada(
+        idJogo: number,
         idPref: number,
         postForm: PostForm
     ){
         return this.httpClient.post(
-            API + MAYOR_ROUTE + '/' + idPref,
+            API + '/' + idJogo + MAYOR_ROUTE + '/' + idPref,
             postForm
         )
     }

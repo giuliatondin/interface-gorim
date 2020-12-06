@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { AldermanHistory } from './alderman-history';
 
-const API = environment.ApiUrl;
-const HISTORY_ROUTE = '/request/api/arquivoResumo/';
+const API = environment.ApiUrl + '/request/api';
+const HISTORY_ROUTE = '/arquivoResumo/';
 
 @Injectable({
     providedIn: 'root'
@@ -16,10 +16,11 @@ export class AldermanHistoryService{
     ){ }
 
     getHitory(
-        id: number
+        idJogo: number,
+        idVer: number
     ){
         return this.httpClient.get<AldermanHistory>(
-            API + HISTORY_ROUTE + id
+            API + '/' + idJogo + HISTORY_ROUTE + idVer
         );
     }
 }

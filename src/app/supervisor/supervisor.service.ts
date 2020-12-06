@@ -5,9 +5,9 @@ import { World } from '../world/world';
 import { PostForm } from './postForm';
 import { Supervisor } from './supervisor';
 
-const API = environment.ApiUrl;
-const SUPERVISOR_ROUTE = '/request/api/fiscal';
-const MASTER_ROUTE = '/request/api/mestre';
+const API = environment.ApiUrl + '/request/api';
+const SUPERVISOR_ROUTE = '/fiscal';
+const MASTER_ROUTE = '/mestre';
 
 @Injectable({
     providedIn: 'root'
@@ -18,31 +18,32 @@ export class SupervisorService {
         private httpClient: HttpClient
     ){ }
 
-    getInfo(idFis: number){
+    getInfo(idJogo: number, idFis: number){
         return this.httpClient.get<Supervisor>(
-            API + SUPERVISOR_ROUTE + '/' + idFis
+            API + '/' + idJogo + SUPERVISOR_ROUTE + '/' + idFis
         );
     }
 
     getInfoMundo(idJogo: number){
         return this.httpClient.get<World>(
-            API + MASTER_ROUTE + '/infoMundo/' + idJogo
+            API + '/'+ idJogo + MASTER_ROUTE + '/infoMundo'
         );
     }
     
-    verificaFimEtapa(etapa: number){
+    verificaFimEtapa(idJogo: number, etapa: number){
         return this.httpClient.get(
-            API + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
+            API + '/' + idJogo + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
         );
     }
 
     finalizaJogada(
+        idJogo: number,
         idFis: number,
         postForm: PostForm
     ){
         return this.httpClient.post(
-            API + SUPERVISOR_ROUTE + '/' + idFis,
-            {idFis}
+            API + '/' + idJogo + SUPERVISOR_ROUTE + '/' + idFis,
+            postForm
         )
     }
 }

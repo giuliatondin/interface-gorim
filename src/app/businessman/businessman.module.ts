@@ -5,6 +5,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatSelectModule } from '@angular/material/select';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgChatModule } from 'ng-chat';
 
 import { AppComponent } from '../app.component';
 import { BusinessmanComponent } from './businessman.component';
@@ -26,7 +27,8 @@ import { VendaComponent } from './venda/venda.component';
         MatSelectModule,
         MatExpansionModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        NgChatModule
     ],
     exports: [
         BusinessmanComponent

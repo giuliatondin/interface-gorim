@@ -5,8 +5,8 @@ import { PersonSimplified } from 'src/app/world/models/person.simplified';
 import { environment } from 'src/environments/environment';
 import { Fine } from '../postForm';
 
-const API = environment.ApiUrl;
-const MASTER_ROUTE = '/request/api/mestre';
+const API = environment.ApiUrl + '/request/api';
+const MASTER_ROUTE = '/mestre';
 
 @Injectable({
     providedIn: 'root'
@@ -34,9 +34,9 @@ export class FineService{
         this.desmultaId.next(idPessoa);
     }
 
-    getInfoPessoas(cidade: string){
+    getInfoPessoas(idJogo: number, cidade: string){
         return this.httpClient.get<PersonSimplified[]>(
-            API + MASTER_ROUTE + '/infoPessoasForFining/' + cidade
+            API + '/' + idJogo + MASTER_ROUTE + '/infoPessoasForFining/' + cidade
         );
     }
 

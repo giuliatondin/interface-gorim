@@ -17,9 +17,11 @@ import { AlertService } from 'src/app/world/alert/alert.service';
 })
 export class VendaComponent implements OnInit{
 
+    @Input() idJogo: number;
     @Input() idAgr: number;
-    idEmp: number;
     @Input() quantidadeJogadores: number;
+
+    idEmp: number;
     
     private quantidadeProdutos: number[];
 
@@ -68,7 +70,7 @@ export class VendaComponent implements OnInit{
                 let quantidadeJaComprada = this.quantidadeProdutos[indiceProduto];
 
                 // Ver se 0 > orc.quantidade || orc.quantidade > (6-qntd)
-                if(orc.quantidade < 0) this.vendaService.apagarOrcamento(this.idAgr, orc);
+                if(orc.quantidade < 0) this.vendaService.apagarOrcamento(this.idJogo, this.idAgr, orc);
 
                 else if(orc.idOrcamento > (this.quantidadeJogadores*100-1)) this.overPurchases.push(orc);
 
@@ -91,11 +93,11 @@ export class VendaComponent implements OnInit{
                         };
 
                         // Remover orc de data
-                        this.vendaService.apagarOrcamento(this.idAgr, orc)
+                        this.vendaService.apagarOrcamento(this.idJogo, this.idAgr, orc)
                             .subscribe(
                                 () => {
                                     this.overPurchases.push(orcamentoDivididoNaoCompravel);
-                                    this.vendaService.adicionaOverOrcamento(this.idAgr, orcamentoDivididoNaoCompravel)
+                                    this.vendaService.adicionaOverOrcamento(this.idJogo, this.idAgr, orcamentoDivididoNaoCompravel)
                                         .subscribe(
                                             () => {
                                                 // if(quantidadePossivel > 0) this.orcamentos(orcamentoDivididoCompravel)
@@ -112,7 +114,7 @@ export class VendaComponent implements OnInit{
                                                         preco: orc.preco,
                                                         quantidade: quantidadePossivel
                                                     };
-                                                    this.vendaService.adicionaOverOrcamento(this.idAgr, orcamentoDivididoCompravel)
+                                                    this.vendaService.adicionaOverOrcamento(this.idJogo, this.idAgr, orcamentoDivididoCompravel)
                                                         .subscribe(
                                                             () => 
                                                             this.orcamentos.push(orcamentoDivididoCompravel),
@@ -141,7 +143,7 @@ export class VendaComponent implements OnInit{
     getOrcamentos(){
         interval(10 * 1000)
             .pipe(
-                flatMap(() => this.vendaService.getOrcamentos(this.idAgr))
+                flatMap(() => this.vendaService.getOrcamentos(this.idJogo, this.idAgr))
             )
             .subscribe(
                 (data: Venda[]) => {
@@ -156,7 +158,7 @@ export class VendaComponent implements OnInit{
 
     apagarOrcamento(orcamento: Venda): Observable<any>{
         this.quantidadeOrcamentos--;
-        return this.vendaService.apagarOrcamento(this.idAgr, orcamento);
+        return this.vendaService.apagarOrcamento(this.idJogo, this.idAgr, orcamento);
     }
 
     salvarCompra(venda: Venda, resposta: boolean){
@@ -164,7 +166,7 @@ export class VendaComponent implements OnInit{
         this.apagarOrcamento(venda)
             .subscribe(
                 () => {
-                    this.vendaService.adicionaVendaById(venda.idEmp, venda)
+                    this.vendaService.adicionaVendaById(this.idJogo, venda.idEmp, venda)
                         .subscribe(
                             () => {
                                 if(venda.sucesso){
@@ -173,7 +175,7 @@ export class VendaComponent implements OnInit{
                                     this.alertService.success('Produto comprado.');
                                 }
                                 else this.alertService.warning('Produto cancelado.');
-                                this.vendaService.getOrcamentos(this.idAgr)
+                                this.vendaService.getOrcamentos(this.idJogo, this.idAgr)
                                     .subscribe(
                                         (data: Venda[]) => {
                                             this.arrumaOverPurchases(data);

@@ -7,6 +7,9 @@ import { World } from 'src/app/world/world';
 import { FarmerService } from './farmer.service';
 import { Farmer } from './farmer';
 import { WebStorageService } from '../world/web-storage/webstorage.service';
+import { GorimChatAdapter } from '../world/chat-adapter/chat-adapter';
+import { HttpClient } from '@angular/common/http';
+import { ChatAdapterService } from '../world/chat-adapter/chat-adapter.service';
 
 @Component({
     selector: 'app-farmer',
@@ -25,21 +28,27 @@ export class FarmerComponent implements OnInit {
 
     produtos: ProdutoSimplified[];
 
+    chatAdapter: GorimChatAdapter;
+
     constructor(
         private activatedRoute: ActivatedRoute,
         private agrService: FarmerService,
-        private webStorageService: WebStorageService
-    ) { }
-
-    ngOnInit(): void {
+        private webStorageService: WebStorageService,
+        private chatAdapterService: ChatAdapterService
+    ) {
         this.idAgr = this.activatedRoute.snapshot.params.idAgr;
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
+
+        this.chatAdapter = new GorimChatAdapter(this.idJogo, this.idAgr, this.chatAdapterService);
+    }
+
+    ngOnInit(): void {
         
         this.webStorageService.setData(this.idJogo + 'papel', ['agricultor', this.idAgr.toString()]);
 
         this.infoMundo$ = this.agrService.getInfoMundo(this.idJogo);
-        this.infoAgr$ = this.agrService.getInfo(this.idAgr);
-        this.agrService.getProdutosEmpresarios()
+        this.infoAgr$ = this.agrService.getInfo(this. idJogo, this.idAgr);
+        this.agrService.getProdutosEmpresarios(this.idJogo)
             .subscribe(
                 produtos => {
                     this.produtos = produtos;

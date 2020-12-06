@@ -10,6 +10,8 @@ import { ProdutoSimplified } from 'src/app/world/models/produto.simplified';
 import { flatMap } from 'rxjs/operators';
 import { AlertService } from 'src/app/world/alert/alert.service';
 import { WebStorageService } from '../world/web-storage/webstorage.service';
+import { GorimChatAdapter } from '../world/chat-adapter/chat-adapter';
+import { ChatAdapterService } from '../world/chat-adapter/chat-adapter.service';
 
 @Component({
     selector: 'app-businessman',
@@ -35,23 +37,29 @@ export class BusinessmanComponent implements OnInit {
 
     inLineAlertButton: string = '';
 
+    chatAdapter: GorimChatAdapter;
+
     constructor(
         private activatedRoute: ActivatedRoute,
         private router: Router,
         private empService: BusinessmanService,
         private alertService: AlertService,
-        private webStorageService: WebStorageService
-    ) { }
+        private webStorageService: WebStorageService,
+        private chatAdapterService: ChatAdapterService
+    ) {
+        this.idEmp = this.activatedRoute.snapshot.params.idEmp;
+        this.idJogo = this.activatedRoute.snapshot.params.idJogo;
+        
+        this.chatAdapter = new GorimChatAdapter(this.idJogo, this.idEmp, this.chatAdapterService);
+    }
 
     ngOnInit(): void {
         this.liberaBotao = false;
 
-        this.idEmp = this.activatedRoute.snapshot.params.idEmp;
-        this.empService.getInfo(this.idEmp)
+        this.empService.getInfo(this.idJogo, this.idEmp)
             .subscribe(
                 (data: Businessman) => {
                     this.emp = data;
-                    this.idJogo = this.activatedRoute.snapshot.params.idJogo;
                     this.infoMundo$ = this.empService.getInfoMundo(this.idJogo);
                                 
                     this.webStorageService.setData(this.idJogo + 'papel', ['empresario', this.idEmp.toString()]);
@@ -60,7 +68,7 @@ export class BusinessmanComponent implements OnInit {
                 }
             );
 
-        this.empService.getInfoAgricultores()
+        this.empService.getInfoAgricultores(this.idJogo)
             .subscribe(
                 (data: PersonSimplified[]) => {
                     this.nomeAgricultores = data;
@@ -92,7 +100,7 @@ export class BusinessmanComponent implements OnInit {
         this.subscription = this.counter
             .pipe(
                 flatMap(
-                    () => this.empService.verificaFimEtapa(1)
+                    () => this.empService.verificaFimEtapa(this.idJogo, 1)
                 )
             )
             .subscribe(
@@ -113,7 +121,7 @@ export class BusinessmanComponent implements OnInit {
             this.webStorageService.getData(this.idEmp + 'voting') != true ||
             finishedByMaster
         ){
-            this.empService.finalizaJogada(this.idEmp)
+            this.empService.finalizaJogada(this.idJogo, this.idEmp)
                 .subscribe(
                     () => {
                         this.subscription.unsubscribe();

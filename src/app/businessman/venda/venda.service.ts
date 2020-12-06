@@ -4,7 +4,8 @@ import { environment } from 'src/environments/environment';
 
 import { Venda } from 'src/app/farmer/venda/venda';
 
-const API = environment.ApiUrl + '/request/api/empresario/venda/';
+const API = environment.ApiUrl + '/request/api';
+const EMP_ROUTE = '/empresario';
 
 @Injectable({
     providedIn: 'root'
@@ -18,10 +19,11 @@ export class VendaService {
     }
 
     getVendas(
+        idJogo: number,
         idEmp: number
     ){
         return this.httpClient.get<Venda[]>(
-            API + idEmp
+            API + '/' + idJogo + EMP_ROUTE + '/venda/' + idEmp
         );
     }
 

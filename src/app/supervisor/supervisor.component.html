@@ -26,6 +26,7 @@
                                         </mat-panel-title>
                                     </mat-expansion-panel-header>
                                     <app-fine
+                                        [idJogo]="idJogo"
                                         [idFis]="idFis"
                                         [cidade]="infoFis.cidade"
                                     ></app-fine>
@@ -53,6 +54,7 @@
                                         </mat-panel-title>
                                     </mat-expansion-panel-header>
                                     <app-green-seal
+                                        [idJogo]="idJogo"
                                         [idFis]="idFis"
                                         [cidade]="infoFis.cidade"
                                     ></app-green-seal>
@@ -87,7 +89,7 @@
                         target="_blank"
                         class="btn btn--primary mb-2"
                     >Abrir histórico</a>
-                    <app-transfer [idPessoa]="idFis"></app-transfer>
+                    <app-transfer [idJogo]="idJogo" [idPessoa]="idFis"></app-transfer>
                     <button
                         class="btn btn--secondary mt-3"
                         (click)="finalizarJogada()"

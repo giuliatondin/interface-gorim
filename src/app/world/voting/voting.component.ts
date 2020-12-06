@@ -14,6 +14,7 @@ import { VotingService } from './voting.service';
 })
 export class VotingComponent implements OnInit{
 
+    @Input() idJogo: number;
     @Input() cidade: string;
     @Input() idPessoa: number;
     
@@ -37,12 +38,12 @@ export class VotingComponent implements OnInit{
     ){ }
 
     ngOnInit(){
-        this.candidatosFiscal$ = this.votingService.getInfoPessoas(this.cidade);
+        this.candidatosFiscal$ = this.votingService.getInfoPessoas(this.idJogo, this.cidade);
         if(this.webStorageService.hasData(this.idPessoa + 'voting')){
             this.showForm = false;
         }
         this.resetForm();
-        this.votingService.getInfoPessoas(this.cidade).subscribe(
+        this.votingService.getInfoPessoas(this.idJogo, this.cidade).subscribe(
             (data: PersonSimplified[]) => {
                 this.candidatosFiscal = data;
             },
@@ -94,7 +95,7 @@ export class VotingComponent implements OnInit{
             this.votingForm.get('prefeito').value,
             this.votingForm.get('vereador').value
         ];
-        this.votingService.votar(this.votos).subscribe(
+        this.votingService.votar(this.idJogo, this.votos).subscribe(
             () => {
                 this.webStorageService.setData(this.idPessoa + 'voting', this.votos);
                 this.showForm = false

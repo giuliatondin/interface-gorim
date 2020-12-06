@@ -6,9 +6,9 @@ import { Businessman } from './businessman';
 import { World } from '../world/world';
 import { PersonSimplified } from '../world/models/person.simplified';
 
-const API = environment.ApiUrl;
-const EMP_ROUTE = '/request/api/empresario';
-const MASTER_ROUTE = '/request/api/mestre';
+const API = environment.ApiUrl + '/request/api';
+const EMP_ROUTE = '/empresario';
+const MASTER_ROUTE = '/mestre';
 
 @Injectable({
     providedIn: 'root'
@@ -22,10 +22,11 @@ export class BusinessmanService{
     }
 
     getInfo(
-        id: number
+        idJogo: number,
+        idEmp: number
     ){
         return this.httpClient.get<Businessman>(
-            API + EMP_ROUTE + '/' + id
+            API + '/' + idJogo + EMP_ROUTE + '/' + idEmp
         );
     }
 
@@ -33,28 +34,29 @@ export class BusinessmanService{
         idJogo: number
     ){
         return this.httpClient.get<World>(
-            API + MASTER_ROUTE + '/infoMundo/' + idJogo
+            API + '/' + idJogo + MASTER_ROUTE + '/infoMundo'
         );
     }
 
-    getInfoAgricultores(){
+    getInfoAgricultores(idJogo: number){
         return this.httpClient.post<PersonSimplified[]>(
-            API + MASTER_ROUTE +'/infoPessoasByClasse',
+            API + '/' + idJogo + MASTER_ROUTE +'/infoPessoasByClasse',
             2
         );
     }
     
-    verificaFimEtapa(etapa: number){
+    verificaFimEtapa(idJogo: number, etapa: number){
         return this.httpClient.get(
-            API + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
+            API + '/' + idJogo + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
         );
     }
 
     finalizaJogada(
+        idJogo: number,
         idEmp: number
     ){
         return this.httpClient.post(
-            API + EMP_ROUTE + '/' + idEmp,
+            API + '/' + idJogo + EMP_ROUTE + '/' + idEmp,
             {idEmp}
         )
     }

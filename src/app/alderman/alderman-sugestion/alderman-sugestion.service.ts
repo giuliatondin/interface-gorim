@@ -4,8 +4,8 @@ import { Mayor } from 'src/app/mayor/mayor';
 import { environment } from 'src/environments/environment';
 import { AldermanSugestion } from './alderman-sugestion';
 
-const API = environment.ApiUrl;
-const VER_ROUTE = '/request/api/vereador';
+const API = environment.ApiUrl + '/request/api';
+const VER_ROUTE = '/vereador';
 
 @Injectable({
     providedIn: 'root'
@@ -16,15 +16,22 @@ export class AldermanSugestionService {
         private httpClient: HttpClient
     ){ }
 
-    getInfoPrefeito(idVer: number){
+    getInfoPrefeito(
+        idJogo: number,
+        idVer: number
+    ){
         return this.httpClient.get<Mayor>(
-            API + VER_ROUTE + '/infoPrefeito/' + idVer
+            API + '/' + idJogo + VER_ROUTE + '/infoPrefeito/' + idVer
         );
     }
 
-    postSugestion(idVer: number, sugestao: AldermanSugestion){
+    postSugestion(
+        idJogo: number,
+        idVer: number,
+        sugestao: AldermanSugestion
+    ){
         return this.httpClient.post(
-            API + VER_ROUTE + '/adicionaSugestao/' + idVer,
+            API + '/' + idJogo + VER_ROUTE + '/adicionaSugestao/' + idVer,
             sugestao
         );
     }

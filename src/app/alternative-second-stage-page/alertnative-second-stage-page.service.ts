@@ -4,8 +4,8 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { World } from '../world/world';
 
-const API = environment.ApiUrl;
-const MASTER_ROUTE = '/request/api/mestre';
+const API = environment.ApiUrl + '/request/api';
+const MASTER_ROUTE = '/mestre';
 
 @Injectable({
     providedIn: 'root'
@@ -15,15 +15,15 @@ export class AlternativeSecondStagePageService {
         private httpClient: HttpClient
     ){ }
 
-    verificaFimEtapa(etapa: number){
+    verificaFimEtapa(idJogo: number, etapa: number){
         return this.httpClient.get(
-            API + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
+            API + '/' + idJogo + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
         );
     }
 
-    getInfoMundo(idJogo){
+    getInfoMundo(idJogo: number){
         return this.httpClient.get<World>(
-            API + MASTER_ROUTE + '/infoMundo/' + idJogo
+            API + '/' + idJogo + MASTER_ROUTE + '/infoMundo'
         );
     }
 }

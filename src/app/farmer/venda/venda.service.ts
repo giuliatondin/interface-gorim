@@ -4,9 +4,9 @@ import { environment } from 'src/environments/environment';
 
 import { Venda } from 'src/app/farmer/venda/venda';
 
-const API = environment.ApiUrl;
-const AGR_ROUTE = '/request/api/agricultor/venda/';
-const ADD_ORC_ROUTE = '/request/api/empresario/venda/';
+const API = environment.ApiUrl + '/request/api';
+const AGR_ROUTE = '/agricultor/venda/';
+const ADD_ORC_ROUTE = '/empresario/venda/';
 
 @Injectable({
     providedIn: 'root'
@@ -20,41 +20,44 @@ export class VendaService {
     }
 
     getOrcamentos(
+        idJogo: number,
         idAgr: number
     ){
         return this.httpClient.get<Venda[]>(
-            API + AGR_ROUTE + idAgr
+            API + '/' + idJogo + AGR_ROUTE + idAgr
         );
     }
 
     adicionaVendaById(
+        idJogo: number,
         idEmp: number,
         venda: Venda
     ){
         return this.httpClient.post(
-            API + AGR_ROUTE + idEmp,
+            API + '/' + idJogo + AGR_ROUTE + idEmp,
             venda
         )
     }
 
     apagarOrcamento(
+        idJogo: number,
         idAgr: number,
         orcamento: Venda
     ){
         console.log("Apagando");
         return this.httpClient.post(
-            API + AGR_ROUTE + 'delete/' + orcamento.idEmp + '/' + idAgr,
+            API + '/' + idJogo + AGR_ROUTE + 'delete/' + orcamento.idEmp + '/' + idAgr,
             orcamento.idOrcamento
         )
     }
 
     adicionaOverOrcamento(
-        idAgr,
+        idJogo: number,
+        idAgr: number,
         orcamento: Venda
     ){
-        console.log("Adicionando orcamento a mais");
         return this.httpClient.post(
-            API + ADD_ORC_ROUTE + idAgr,
+            API + '/' + idJogo + ADD_ORC_ROUTE + idAgr,
             orcamento
         )
     }

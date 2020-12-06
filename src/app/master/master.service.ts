@@ -5,8 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import { World } from '../world/world';
 import { PersonSimplified } from '../world/models/person.simplified';
 
-const API = environment.ApiUrl;
-const MASTER_ROUTE = '/request/api/mestre';
+const API = environment.ApiUrl + '/request/api';
+const MASTER_ROUTE = '/mestre';
 
 @Injectable({
     providedIn: 'root'
@@ -20,22 +20,21 @@ export class MasterService{
     }
 
     finalizarEtapa(idJogo: number){
-        console.log("entra " + idJogo);
         return this.httpClient.post(
-            API + MASTER_ROUTE + '/finalizarEtapa',
+            API + '/' + idJogo + MASTER_ROUTE + '/finalizarEtapa',
             null
         );
     }
 
-    getEntrepreuners(){
+    getEntrepreuners(idJogo: number){
         return this.httpClient.get(
-            API + MASTER_ROUTE + '/empresarios'
+            API + '/' + idJogo + MASTER_ROUTE + '/empresarios'
         );
     }
 
-    getFarmers(){
+    getFarmers(idJogo: number){
         return this.httpClient.get(
-            API + MASTER_ROUTE + '/agricultores'
+            API + '/' + idJogo + MASTER_ROUTE + '/agricultores'
         );
     }
 
@@ -43,33 +42,33 @@ export class MasterService{
         idJogo: number
     ){
         return this.httpClient.get<World>(
-            API + MASTER_ROUTE + '/infoMundo/' + idJogo
+            API + '/' + idJogo + MASTER_ROUTE + '/infoMundo'
         );
     }
 
-    verificaFinalizados(etapa: number){
+    verificaFinalizados(idJogo: number, etapa: number){
         return this.httpClient.post<boolean[]>(
-            API + MASTER_ROUTE + '/verificaFinalizados',
+            API + '/' + idJogo + MASTER_ROUTE + '/verificaFinalizados',
             etapa
         )
     }
 
-    getInfoPessoas(etapa: number){
+    getInfoPessoas(idJogo: number, etapa: number){
         return this.httpClient.post<PersonSimplified[]>(
-            API + MASTER_ROUTE + '/infoPessoasByEtapa',
+            API + '/' + idJogo + MASTER_ROUTE + '/infoPessoasByEtapa',
             etapa
         )
     }
 
-    getSituacaoEtapa(etapa: number){
+    getSituacaoEtapa(idJogo: number, etapa: number){
         return this.httpClient.get(
-            API + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
+            API + '/' + idJogo + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
         );
     }
 
-    changeFlagFimEtapa(){
+    changeFlagFimEtapa(idJogo: number){
         return this.httpClient.post(
-            API + MASTER_ROUTE + '/changeFlagFimEtapa/',
+            API + '/' + idJogo + MASTER_ROUTE + '/changeFlagFimEtapa',
             null
         );
     }

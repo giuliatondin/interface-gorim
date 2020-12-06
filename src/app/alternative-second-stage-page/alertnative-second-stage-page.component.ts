@@ -14,7 +14,7 @@ import { AlternativeSecondStagePageService } from './alertnative-second-stage-pa
 })
 export class AlternativeSecondStagePageComponent implements OnInit {
 
-    idJogo;
+    idJogo: number;
     idPessoa: number;
     infoPessoaPrimeiraEtapa: string[];
 
@@ -42,7 +42,7 @@ export class AlternativeSecondStagePageComponent implements OnInit {
         this.subscription = this.counter
             .pipe(
                 flatMap(
-                    () => this.alternativePageService.verificaFimEtapa(2)
+                    () => this.alternativePageService.verificaFimEtapa(this.idJogo, 2)
                 )
             )
             .subscribe(

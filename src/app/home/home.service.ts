@@ -14,17 +14,5 @@ export class HomeService{
     ){
         //
     }
-
-    iniciaJogada(
-        quantidadeJogadores: number
-    ){
-        //const formData = new FormData();
-        //formData.append("quantidadeJogadores", quantidadeJogadores.toString());
-        console.log("Aqui entra.");
-        return this.httpClient.post(
-            API + MASTER_ROUTE,
-            {quantidadeJogadores}
-        );
-    }
     
 }

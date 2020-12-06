@@ -10,7 +10,7 @@ import { FarmerHistoryService } from './farmer-history.service';
     styleUrls: ['./farmer-history.component.scss']
 })
 export class FarmerHistoryComponent implements OnInit {
-
+    idJogo: number;
     idAgr: number;
     history$: Observable<FarmerHistory>;
 
@@ -20,12 +20,13 @@ export class FarmerHistoryComponent implements OnInit {
     ){ }
 
     ngOnInit(): void {
+        this.idJogo = this.activatedRoute.snapshot.params.idJogo;
         this.idAgr = this.activatedRoute.snapshot.params.idAgr;
         this.getHistory();
     }
 
     getHistory(){
-        this.history$ = this.agrHistoryService.getHistory(this.idAgr);
+        this.history$ = this.agrHistoryService.getHistory(this.idJogo, this.idAgr);
     }
 
     isMaquina(produto: string){

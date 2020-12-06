@@ -4,9 +4,9 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { PostForm } from './postForm';
 
-const API = environment.ApiUrl;
-const AGR_ROUTE = '/request/api/agricultor';
-const MASTER_ROUTE = '/request/api/mestre';
+const API = environment.ApiUrl + '/request/api';
+const AGR_ROUTE = '/agricultor';
+const MASTER_ROUTE = '/mestre';
 
 @Injectable({
     providedIn:'root'
@@ -19,20 +19,19 @@ export class ParcelService{
         //
     }
     
-    verificaFimEtapa(etapa: number){
+    verificaFimEtapa(idJogo: number, etapa: number){
         return this.httpClient.get(
-            API + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
+            API + '/' + idJogo + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
         );
     }
 
     postAgricultiristForm(
+        idJogo: number,
         idAgr: number,
         postForm: PostForm
     ){
-        console.log("idAgr ParcelService: " + idAgr);
-        console.log('JSON: ' + JSON.stringify(postForm));
         return this.httpClient.post(
-            API + AGR_ROUTE + '/' + idAgr,
+            API + '/' + idJogo + AGR_ROUTE + '/' + idAgr,
             postForm
         );
     }
