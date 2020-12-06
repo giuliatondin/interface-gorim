@@ -1,6 +1,6 @@
-import { Component, OnInit/*, ViewChild, ElementRef*/ } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AlertService } from 'src/app/world/alert/alert.service';
 
 import { BeginService } from './begin.service';
@@ -18,7 +18,6 @@ export class BeginComponent implements OnInit{
         private formBuilder: FormBuilder,
         private router: Router,
         private beginService: BeginService,
-        private route: ActivatedRoute,
         private alertService: AlertService
     ){ }
 

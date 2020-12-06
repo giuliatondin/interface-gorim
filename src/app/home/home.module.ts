@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
-
 import { CommonModule } from '@angular/common';
+
 import { HomeComponent } from './home.component';
 import { BeginModule } from './begin/begin.module';
 import { ContinueModule } from './continue/continue.module';
 import { HomeService } from './home.service';
 import { WorldModule } from '../world/world.module';
+import { JoinModule } from './join/join.module';
 
 @NgModule({
     declarations: [
@@ -15,6 +16,7 @@ import { WorldModule } from '../world/world.module';
         CommonModule,
         BeginModule,
         ContinueModule,
+        JoinModule,
         WorldModule
     ],
     exports: [
