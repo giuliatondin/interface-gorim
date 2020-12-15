@@ -18,13 +18,16 @@
                 <div class="col-md-8 col-xl-7">
                     <mat-tab-group mat-align-tabs="center">
                         <mat-tab label="Sugestões para o Prefeito">
-                            <app-alderman-sugestion
+                            <app-alderman-suggestion
                                 [idVer]="idVer"
                                 [idJogo]="idJogo"
-                            ></app-alderman-sugestion>
+                            ></app-alderman-suggestion>
                         </mat-tab>
                         <mat-tab label="Tabelas de Valores">
-                            <!--app-table-values role='vereador'></app-table-values-->
+                            <app-table-values
+                                role='vereador'
+                                [cidade]="infoVer.cidade"
+                            ></app-table-values>
                         </mat-tab>
                     </mat-tab-group>
                 </div>

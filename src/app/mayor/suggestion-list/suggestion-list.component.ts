@@ -1,63 +1,63 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { interval } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
-import { AldermanSugestion } from 'src/app/alderman/alderman-sugestion/alderman-sugestion';
+import { AldermanSuggestion } from 'src/app/alderman/alderman-suggestion/alderman-suggestion';
 import { AlertService } from 'src/app/world/alert/alert.service';
-import { SugestionListService } from './sugestion-list.service';
+import { SuggestionListService } from './suggestion-list.service';
 
 @Component({
-    selector: 'app-sugestion-list',
-    templateUrl: './sugestion-list.component.html',
-    styleUrls: [ './sugestion-list.component.scss' ]
+    selector: 'app-suggestion-list',
+    templateUrl: './suggestion-list.component.html',
+    styleUrls: [ './suggestion-list.component.scss' ]
 })
-export class SugestionListComponent implements OnInit{
+export class SuggestionListComponent implements OnInit{
 
     @Input() idJogo: number;
     @Input() idPref: number;
 
     quantidadeSugestoes: number = 0;
-    sugestions: AldermanSugestion[];
+    suggestions: AldermanSuggestion[] = [];
 
     constructor(
-        private sugestionListService: SugestionListService,
+        private suggestionListService: SuggestionListService,
         private alertService: AlertService
     ){ }
 
     ngOnInit(){
-        this.getSugestions();
+        this.getSuggestions();
     }
 
-    getSugestions(){
+    getSuggestions(){
         interval(10 * 1000)
             .pipe(
-                flatMap(() => this.sugestionListService.getSugestions(this.idJogo, this.idPref))
+                flatMap(() => this.suggestionListService.getSuggestions(this.idJogo, this.idPref))
             )
             .subscribe(
-                (data: AldermanSugestion[]) => {
+                (data: AldermanSuggestion[]) => {
                     if(this.quantidadeSugestoes < data.length){
                         this.quantidadeSugestoes = data.length;
                         this.alertService.info('Você tem novas sugestões do Vereador.');
                     }
-                    this.sugestions = data;
+                    this.suggestions = data;
                 }
             );
     }
 
-    isTaxSugestion(response: AldermanSugestion){
+    isTaxSuggestion(response: AldermanSuggestion){
         if(response.tipoSugestao == 0) return false;
         return true;
     }
 
-    sendResponse(response: AldermanSugestion, aceito: boolean){
+    sendResponse(response: AldermanSuggestion, aceito: boolean){
         response.aceito = aceito;
-        this.sugestionListService.postResponse(this.idJogo, this.idPref, response).subscribe(
+        this.suggestionListService.postResponse(this.idJogo, this.idPref, response).subscribe(
             () => {
                 this.alertService.success('Resposta enviada.');
                 this.quantidadeSugestoes--;
-                this.sugestionListService.getSugestions(this.idJogo, this.idPref).subscribe(
-                    (data: AldermanSugestion[]) => {
+                this.suggestionListService.getSuggestions(this.idJogo, this.idPref).subscribe(
+                    (data: AldermanSuggestion[]) => {
                         console.log(data);
-                        this.sugestions = data;
+                        this.suggestions = data;
                     },
                     err => console.log(err)
                 );

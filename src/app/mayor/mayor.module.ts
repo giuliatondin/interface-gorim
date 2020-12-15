@@ -9,7 +9,7 @@ import { WorldModule } from '../world/world.module';
 import { EnvironmentalActionComponent } from './environmental-action/environmental-action.component';
 import { MayorHistoryComponent } from './mayor-history/mayor-history.component';
 import { MayorComponent } from './mayor.component';
-import { SugestionListComponent } from './sugestion-list/sugestion-list.component';
+import { SuggestionListComponent } from './suggestion-list/suggestion-list.component';
 import { TaxesComponent } from './taxes/taxes.component';
 
 @NgModule({
@@ -18,7 +18,7 @@ import { TaxesComponent } from './taxes/taxes.component';
         MayorHistoryComponent,
         EnvironmentalActionComponent,
         TaxesComponent,
-        SugestionListComponent
+        SuggestionListComponent
     ],
     imports: [
         CommonModule,

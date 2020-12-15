@@ -27,8 +27,8 @@ export class VendaComponent implements OnInit{
 
     comprasForm: FormGroup;
 
-    orcamentos: Venda[];
-    overPurchases: Venda[];
+    orcamentos: Venda[] = [];
+    overPurchases: Venda[] = [];
     quantidadeOrcamentos: number = 0;
 
     constructor(

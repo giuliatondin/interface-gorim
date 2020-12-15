@@ -79,7 +79,10 @@
                             </mat-accordion>
                         </mat-tab>
                         <mat-tab label="Tabelas de Valores">
-                            <!--app-table-values role='fiscalAmbiental'></app-table-values-->
+                            <app-table-values
+                                role="fiscalAmbiental"
+                                [cidade]="infoFis.cidade"
+                            ></app-table-values>
                         </mat-tab>
                     </mat-tab-group>
                 </div>
@@ -102,6 +105,9 @@
                 <div class="container">
                     <div class="row">
                         <h3>Agricultores que pediram Selo Verde</h3>
+                        <p class="text-center text-muted" *ngIf="(infoFis.pedidos.length < 1)"> 
+                            Nenhum agricultor pediu selo verde nessa rodada.
+                        </p>
                         <div class="col-md-12 col-md-6" *ngFor="let pedido of infoFis.pedidos">
                             <div class="card">
                                 <div class="card-body">

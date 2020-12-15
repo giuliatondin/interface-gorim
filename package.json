@@ -30,7 +30,9 @@
     "ng-chat": "^3.0.3",
     "ng2-money-mask": "^2.1.0",
     "rxjs": "~6.5.4",
+    "sockjs-client": "^1.5.0",
     "tslib": "^1.10.0",
+    "webstomp-client": "^1.2.6",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {

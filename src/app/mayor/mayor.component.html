@@ -64,7 +64,10 @@
                             </mat-accordion>
                         </mat-tab>
                         <mat-tab label="Tabelas de Valores">
-                            <!--app-table-values role='prefeito'></app-table-values-->
+                            <app-table-values
+                                role='prefeito'
+                                [cidade]="infoPref.cidade"
+                            ></app-table-values>
                         </mat-tab>
                     </mat-tab-group>
                 </div>
@@ -87,10 +90,10 @@
                 <div class="container">
                     <div class="row">
                         <h3>Sugestões do Vereador</h3>
-                        <app-sugestion-list
+                        <app-suggestion-list
                             [idJogo]="idJogo"
                             [idPref]="idPref"
-                        ></app-sugestion-list>
+                        ></app-suggestion-list>
                     </div>
                 </div>
             </app-sidebar>

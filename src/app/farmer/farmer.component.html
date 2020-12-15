@@ -31,7 +31,13 @@
                             ></app-parcel>
                         </mat-tab>
                         <mat-tab label="Valores dos produtos">
-                            <app-table-product-values role='agricultor' [produtos]="produtos"></app-table-product-values>
+                            <app-table-product-values
+                                role='agricultor'
+                                [produtos]="produtos"
+                            ></app-table-product-values>
+                            <app-table-values
+                                role="agricultor"
+                            ></app-table-values>
                         </mat-tab>
                     </mat-tab-group>
                 </div>
@@ -54,11 +60,16 @@
         </div>
             
         <app-sidebar #sidebar>
-            <app-vendacard
-                [idJogo]="idJogo"
-                [idAgr]="idAgr"
-                [quantidadeJogadores]="mundo.quantidadeJogadores"
-            ></app-vendacard>
+            <div class="container">
+                <div class="row">
+                    <h3>Orçamentos</h3>
+                    <app-vendacard
+                        [idJogo]="idJogo"
+                        [idAgr]="idAgr"
+                        [quantidadeJogadores]="mundo.quantidadeJogadores"
+                    ></app-vendacard>
+                </div>
+            </div>
         </app-sidebar>
     </div>
 </div>

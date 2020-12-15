@@ -14,12 +14,14 @@ import { AlertComponent } from './alert/alert.component';
 import { InLineAlertComponent } from './inline-alert/inline-alert.component';
 import { VotingComponent } from './voting/voting.component';
 import { MatRadioModule } from '@angular/material/radio';
+import { TableValuesComponent } from './table-values/table-values.component';
 
 @NgModule({
     declarations: [
         HeaderComponent,
         TransferComponent,
         TableProductValuesComponent,
+        TableValuesComponent,
         SideBarComponent,
         ConfirmingModalComponent,
         AlertComponent,
@@ -39,6 +41,7 @@ import { MatRadioModule } from '@angular/material/radio';
         HeaderComponent,
         TransferComponent,
         TableProductValuesComponent,
+        TableValuesComponent,
         SideBarComponent,
         ConfirmingModalComponent,
         AlertComponent,

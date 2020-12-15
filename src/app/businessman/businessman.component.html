@@ -25,7 +25,14 @@
                             ></app-order-product>
                         </mat-tab>
                         <mat-tab label="Valores dos produtos">
-                            <app-table-product-values role="empresario" [produtos]="produtos"></app-table-product-values>
+                            <app-table-product-values
+                                role="empresario"
+                                [produtos]="produtos"
+                            ></app-table-product-values>
+                            <app-table-values
+                                role="empresario"
+                                [tipoEmpresario]="emp.setor"
+                            ></app-table-values>
                         </mat-tab>
                     </mat-tab-group>
                 </div>
@@ -55,10 +62,15 @@
             </div>
             
             <app-sidebar #sidebar>
-                <app-vendacard
-                    [idJogo]="idJogo"
-                    [idEmp]="idEmp"
-                ></app-vendacard>
+                <div class="container">
+                    <div class="row">
+                        <h3>Respostas dos Agricultores para os orçamentos</h3>
+                        <app-vendacard
+                            [idJogo]="idJogo"
+                            [idEmp]="idEmp"
+                        ></app-vendacard>
+                    </div>
+                </div>
             </app-sidebar>
         </div>
     </div>

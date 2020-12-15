@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { interval } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
 import { AlertService } from 'src/app/world/alert/alert.service';
-import { AldermanSugestion } from '../alderman-sugestion/alderman-sugestion';
+import { AldermanSuggestion } from '../alderman-suggestion/alderman-suggestion';
 import { ResponseListService } from './response-list.service';
 
 @Component({
@@ -16,7 +16,7 @@ export class ResponseListComponent implements OnInit {
     @Input() idVer: number;
 
     quantidadeRespostas: number = 0;
-    responses: AldermanSugestion[];
+    responses: AldermanSuggestion[] = [];
 
     constructor(
         private responseListService: ResponseListService,
@@ -33,7 +33,7 @@ export class ResponseListComponent implements OnInit {
                 flatMap(() => this.responseListService.getResponses(this.idJogo, this.idVer))
             )
             .subscribe(
-                (data: AldermanSugestion[]) => {
+                (data: AldermanSuggestion[]) => {
                     if(this.quantidadeRespostas < data.length){
                         this.quantidadeRespostas = data.length;
                         this.alertService.info('Você tem novas respostas do Prefeito.');
@@ -48,7 +48,7 @@ export class ResponseListComponent implements OnInit {
         else return 'sugestaoFalha';
     }
 
-    isTaxSugestion(response: AldermanSugestion){
+    isTaxSuggestion(response: AldermanSuggestion){
         if(response.tipoSugestao == 0) return false;
         return true;
     }

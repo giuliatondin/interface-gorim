@@ -9,7 +9,10 @@ import { TableValuesService } from './table-values.service';
 })
 export class TableValuesComponent implements OnInit{
     @Input() role: string;
-    idJogo;
+    @Input() tipoEmpresario: string = "";
+    @Input() cidade: string = "";
+    
+    idJogo: number;
 
     classePessoa: number;
 
@@ -21,6 +24,50 @@ export class TableValuesComponent implements OnInit{
     ngOnInit(){
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
         this.classePessoa = this.getClassePessoa();
+    }
+
+    isFromAtlantis() {
+        return (this.cidade == "Atlantis") ? true : false;
+    }
+
+    isFromCidadela() {
+        return (this.cidade == "Cidadela") ? true : false;
+    }
+
+    isAgricultor(){
+        return (this.role == "agricultor") ? true : false;
+    }
+
+    isEmpresario(){
+        return (this.role == "empresario") ? true : false;
+    }
+
+    isSemente(){
+        return (this.tipoEmpresario == "semente") ? true : false;
+    }
+
+    isFertilizante(){
+        return (this.tipoEmpresario == "fertilizante") ? true : false;
+    }
+
+    isMaquina(){
+        return (this.tipoEmpresario == "maquina") ? true : false;
+    }
+
+    isAgrotoxico(){
+        return (this.tipoEmpresario == "agrotoxico") ? true : false;
+    }
+
+    isFiscal(){
+        return (this.role == "fiscalAmbiental") ? true : false;
+    }
+
+    isPrefeito(){
+        return (this.role == "prefeito") ? true : false;
+    }
+
+    isVereador(){
+        return (this.role == "vereador") ? true : false;
     }
 
     getClassePessoa(){

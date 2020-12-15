@@ -1,6 +1,6 @@
 import { Tax } from '../../mayor/postForm';
 
-export interface AldermanSugestion {
+export interface AldermanSuggestion {
     imposto: Tax;
     acaoAmbiental: string;
     tipoSugestao: number;

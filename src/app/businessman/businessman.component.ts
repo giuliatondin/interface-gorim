@@ -35,9 +35,9 @@ export class BusinessmanComponent implements OnInit {
     counter: Observable<number> = interval(10 * 1000);
     subscription: Subscription;
 
-    inLineAlertButton: string = '';
-
-    chatAdapter: GorimChatAdapter;
+    inLineAlertButton: string = 'Nem todos os jogadores começaram o jogo ainda. Aguarde para finalizar a jogada.';
+    
+    public chatAdapter: GorimChatAdapter;
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -47,13 +47,15 @@ export class BusinessmanComponent implements OnInit {
         private webStorageService: WebStorageService,
         private chatAdapterService: ChatAdapterService
     ) {
-        this.idEmp = this.activatedRoute.snapshot.params.idEmp;
-        this.idJogo = this.activatedRoute.snapshot.params.idJogo;
-        
-        this.chatAdapter = new GorimChatAdapter(this.idJogo, this.idEmp, this.chatAdapterService);
     }
 
     ngOnInit(): void {
+        this.idEmp = this.activatedRoute.snapshot.params.idEmp;
+        this.idJogo = this.activatedRoute.snapshot.params.idJogo;
+
+        this.chatAdapter = new GorimChatAdapter(this.chatAdapterService);
+        this.chatAdapter.configAdapter(this.idJogo, this.idEmp);
+
         this.liberaBotao = false;
 
         this.empService.getInfo(this.idJogo, this.idEmp)
@@ -61,7 +63,7 @@ export class BusinessmanComponent implements OnInit {
                 (data: Businessman) => {
                     this.emp = data;
                     this.infoMundo$ = this.empService.getInfoMundo(this.idJogo);
-                                
+                    
                     this.webStorageService.setData(this.idJogo + 'papel', ['empresario', this.idEmp.toString()]);
 
                     this.arrumaProdutos();
@@ -106,7 +108,10 @@ export class BusinessmanComponent implements OnInit {
             .subscribe(
                 (data: number) => {
                     console.log(data);
-                    if(data > 2) this.liberaBotao = true;
+                    if(data > 2) {
+                        this.liberaBotao = true;
+                        this.inLineAlertButton = '';
+                    }
                     else if(data == 0){
                         this.subscription.unsubscribe();
                         this.finalizarJogada(true);

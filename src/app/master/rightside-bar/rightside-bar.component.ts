@@ -12,8 +12,8 @@ import { MasterService } from '../master.service';
 export class RightSideBarComponent implements OnInit {
     @Input() idJogo: number;
     @Input() etapa: number;
-    finalizadosEtapa: boolean[];
-    pessoas: PersonSimplified[];
+    finalizadosEtapa: boolean[] = [];
+    pessoas: PersonSimplified[] = [];
 
     constructor(
         private masterService: MasterService
@@ -44,6 +44,7 @@ export class RightSideBarComponent implements OnInit {
             .subscribe(
                 (data: boolean[]) => {
                     this.finalizadosEtapa = data;
+                    this.getInfoPessoas();
                 },
                 err => console.log(err)
             );

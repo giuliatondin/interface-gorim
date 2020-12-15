@@ -75,7 +75,7 @@ export class AldermanComponent implements OnInit {
                     this.subscription.unsubscribe();
                     if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
                     else this.alertService.success('Jogada finalizada.', true);
-                    this.webStorageService.removeData(['sugestion' + this.idVer + 'idSugestao']);
+                    this.webStorageService.removeData(['suggestion' + this.idVer + 'idSugestao']);
                     this.router.navigate([this.idJogo, 'waitingPage', this.idVer]);
                 },
                 err => {

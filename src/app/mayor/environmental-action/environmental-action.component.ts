@@ -62,16 +62,15 @@ export class EnvironmentalActionComponent implements OnInit{
     }
 
     atualizaAnyDisabled(){
+        let hasDisabled: boolean = false;
         this.formControl.forEach(
             button => {
-                if(button){
-                    this.webStorageService.setData('envivonmentalAction' + this.idPref + 'anyDisabled', this.anyDisabled);
-                    return true;
+                if(button == true){
+                    hasDisabled = true;
                 }
             }
         );
-        this.webStorageService.setData('envivonmentalAction' + this.idPref + 'anyDisabled', this.anyDisabled);
-        return false;
+        return hasDisabled;
     }
 
     formReset(){
@@ -105,7 +104,9 @@ export class EnvironmentalActionComponent implements OnInit{
                     this.formReset();
                     acao.checked = false;
                     this.formControl[acao.id] = true;
+                    this.webStorageService.setData('envivonmentalAction' + this.idPref + 'formControl', this.formControl);
                     this.anyDisabled = true;
+                    this.webStorageService.setData('envivonmentalAction' + this.idPref + 'anyDisabled', this.anyDisabled);
                     this.alertService.success('Registrado.');
                 }
             }

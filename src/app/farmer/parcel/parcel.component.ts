@@ -41,7 +41,7 @@ export class ParcelComponent implements OnInit {
     counter = interval(10 * 1000);
     subscription: Subscription;
 
-    inLineAlertButton: string = '';
+    inLineAlertButton: string = 'Nem todos os jogadores começaram o jogo ainda. Aguarde para finalizar a jogada.';
 
     constructor(
         private produtoService: ProdutoService,
@@ -298,7 +298,10 @@ export class ParcelComponent implements OnInit {
             .subscribe(
                 (data: number) => {
                     console.log(data);
-                    if(data > 2) this.liberaBotao = true;
+                    if(data > 2) {
+                        this.liberaBotao = true;
+                        this.inLineAlertButton = '';
+                    }
                     else if(data == 0){
                         this.subscription.unsubscribe();
                         this.finalizarJogada(true);

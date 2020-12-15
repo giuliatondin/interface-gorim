@@ -5,7 +5,7 @@
             <div class="container row align-items-sm-center mb-sm-3">
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <label class="input-group-text" for="idAgr">Solicitante</label>
+                        <label class="input-group-text" for="idAgr">Solicitante<span class="requiredStar">*</span></label>
                     </div>
                     <select #idAgr
                         formControlName="idAgr"
@@ -22,7 +22,7 @@
                 </div>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <label class="input-group-text" for="nomeProduto">Produto</label>
+                        <label class="input-group-text" for="nomeProduto">Produto<span class="requiredStar">*</span></label>
                     </div>
                     <select #nomeProduto
                         formControlName="idProduto"
@@ -39,18 +39,19 @@
                 </div>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <label class="input-group-text" for="quantidade">Quantidade</label>
+                        <label class="input-group-text" for="quantidade">Quantidade<span class="requiredStar">*</span></label>
                     </div>
                     <input #quantidade
                         formControlName="quantidade"
                         type="number"
                         aria-label="quantidade"
                         class="form-control"
+                        placeholder="Max. 6"
                     >
                 </div>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <label class="input-group-text" for="preco">Preço</label>
+                        <label class="input-group-text" for="preco">Preço<span class="requiredStar">*</span></label>
                     </div>
                     <select #preco
                         formControlName="preco"

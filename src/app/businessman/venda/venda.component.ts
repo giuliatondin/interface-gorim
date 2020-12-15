@@ -17,7 +17,7 @@ export class VendaComponent implements OnInit{
     @Input() idEmp: number;
 
     quantidadeOrcamentos: number = 0;
-    orcamentos: Venda[];
+    orcamentos: Venda[] = [];
 
     constructor(
         private vendaService: VendaService,

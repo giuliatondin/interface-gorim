@@ -129,7 +129,6 @@ export class MasterComponent implements OnInit {
                         this.alertService.success('Etapa terminada.');
                         this.inicioEtapa = new Date().getTime();
                         this.webStorageService.setData('masterHoraInicioEtapa', this.inicioEtapa);
-                        console.log(this.inicioEtapa);
                         this.hasUnfinishedPlayers = true;
                         this.infoMundo$ = this.masterService.getInfoMundo(this.idJogo);
                         this.putInMundo();

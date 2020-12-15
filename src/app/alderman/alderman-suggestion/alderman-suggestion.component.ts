@@ -5,40 +5,40 @@ import { WebStorageService } from 'src/app/world/web-storage/webstorage.service'
 import { Mayor } from 'src/app/mayor/mayor';
 import { Tax } from 'src/app/mayor/postForm';
 import { AlertService } from 'src/app/world/alert/alert.service';
-import { AldermanSugestionService } from './alderman-sugestion.service';
-import { AldermanSugestion } from './alderman-sugestion';
+import { AldermanSuggestionService } from './alderman-suggestion.service';
+import { AldermanSuggestion } from './alderman-suggestion';
 
 @Component({
-    selector: 'app-alderman-sugestion',
-    templateUrl: './alderman-sugestion.component.html',
-    styleUrls: [ './alderman-sugestion.component.scss' ]
+    selector: 'app-alderman-suggestion',
+    templateUrl: './alderman-suggestion.component.html',
+    styleUrls: [ './alderman-suggestion.component.scss' ]
 })
-export class AldermanSugestionComponent implements OnInit {
+export class AldermanSuggestionComponent implements OnInit {
 
     @Input() idJogo: number;
     
     @Input() idVer: number;
     idSugestao: number;
-    sugestionForm: FormGroup;
+    suggestionForm: FormGroup;
 
     selector: number;
     selectData: string[][] = [];
     radioOptions: string[] = [];
 
     constructor(
-        private sugestionService: AldermanSugestionService,
+        private suggestionService: AldermanSuggestionService,
         private alertService: AlertService,
         private formBuilder: FormBuilder,
         private webStorageService: WebStorageService
     ){ }
 
     ngOnInit(){
-        if(this.webStorageService.hasData('sugestion' + this.idVer + 'idSugestao'))
-            this.idSugestao = this.webStorageService.getData('sugestion' + this.idVer + 'idSugestao');
-        this.webStorageService.setData('sugestion' + this.idVer + 'idSugestao', this.idSugestao);
+        if(this.webStorageService.hasData('suggestion' + this.idVer + 'idSugestao'))
+            this.idSugestao = this.webStorageService.getData('suggestion' + this.idVer + 'idSugestao');
+        this.webStorageService.setData('suggestion' + this.idVer + 'idSugestao', this.idSugestao);
         
         this.resetForm();
-        this.sugestionService.getInfoPrefeito(this.idJogo, this.idVer).subscribe(
+        this.suggestionService.getInfoPrefeito(this.idJogo, this.idVer).subscribe(
             (data: Mayor) => {
                 let acoes: string[] = [];
                 data.acoesAmbientais.forEach(
@@ -59,7 +59,7 @@ export class AldermanSugestionComponent implements OnInit {
 
     resetForm(){
         this.selector = -1;
-        this.sugestionForm = this.formBuilder.group({
+        this.suggestionForm = this.formBuilder.group({
             sugestao: ['', [Validators.required]],
             especificacao: ['', [Validators.required]]
         });
@@ -71,14 +71,14 @@ export class AldermanSugestionComponent implements OnInit {
 
     enviarSugestao(){        
         let newImposto: Tax = {
-            tipo: this.sugestionForm.get('sugestao').value as number - 1,
-            taxa: (this.selector > 0) ? this.sugestionForm.get('especificacao').value : ""
+            tipo: this.suggestionForm.get('sugestao').value as number - 1,
+            taxa: (this.selector > 0) ? this.suggestionForm.get('especificacao').value : ""
         };
 
         let newAcaoAmbiental: string =
-            (this.selector == 0) ? this.sugestionForm.get('especificacao').value : '';
+            (this.selector == 0) ? this.suggestionForm.get('especificacao').value : '';
 
-        this.sugestionService.postSugestion(
+        this.suggestionService.postSuggestion(
             this.idJogo,
             this.idVer,
             {
@@ -87,12 +87,12 @@ export class AldermanSugestionComponent implements OnInit {
                 idSugestao: this.idSugestao,
                 imposto: newImposto,
                 acaoAmbiental: newAcaoAmbiental
-            } as AldermanSugestion
+            } as AldermanSuggestion
         ).subscribe(
             () => {
                 this.resetForm();
                 this.idSugestao++;
-                this.webStorageService.setData('sugestion' + this.idVer + 'idSugestao', this.idSugestao);
+                this.webStorageService.setData('suggestion' + this.idVer + 'idSugestao', this.idSugestao);
                 this.alertService.success('Sugestão enviada ao Prefeito.');
             },
             err => {

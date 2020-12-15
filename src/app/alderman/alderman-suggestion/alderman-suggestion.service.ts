@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Mayor } from 'src/app/mayor/mayor';
 import { environment } from 'src/environments/environment';
-import { AldermanSugestion } from './alderman-sugestion';
+import { AldermanSuggestion } from './alderman-suggestion';
 
 const API = environment.ApiUrl + '/request/api';
 const VER_ROUTE = '/vereador';
@@ -10,7 +10,7 @@ const VER_ROUTE = '/vereador';
 @Injectable({
     providedIn: 'root'
 })
-export class AldermanSugestionService {
+export class AldermanSuggestionService {
     
     constructor(
         private httpClient: HttpClient
@@ -25,10 +25,10 @@ export class AldermanSugestionService {
         );
     }
 
-    postSugestion(
+    postSuggestion(
         idJogo: number,
         idVer: number,
-        sugestao: AldermanSugestion
+        sugestao: AldermanSuggestion
     ){
         return this.httpClient.post(
             API + '/' + idJogo + VER_ROUTE + '/adicionaSugestao/' + idVer,

@@ -7,7 +7,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatTabsModule } from '@angular/material/tabs';
 import { WorldModule } from '../world/world.module';
 import { AldermanHistoryComponent } from './alderman-history/alderman-history.component';
-import { AldermanSugestionComponent } from './alderman-sugestion/alderman-sugestion.component';
+import { AldermanSuggestionComponent } from './alderman-suggestion/alderman-suggestion.component';
 import { AldermanComponent } from './alderman.component';
 import { ResponseListComponent } from './response-list/response-list.component';
 
@@ -15,7 +15,7 @@ import { ResponseListComponent } from './response-list/response-list.component';
     declarations: [
         AldermanComponent,
         AldermanHistoryComponent,
-        AldermanSugestionComponent,
+        AldermanSuggestionComponent,
         ResponseListComponent
     ],
     imports: [
@@ -32,7 +32,7 @@ import { ResponseListComponent } from './response-list/response-list.component';
         AldermanComponent
         // ,
         // AldermanHistoryComponent,
-        // AldermanSugestionComponent
+        // AldermanSuggestionComponent
     ]
 })
 export class AldermanModule {

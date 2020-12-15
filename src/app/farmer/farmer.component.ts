@@ -8,7 +8,6 @@ import { FarmerService } from './farmer.service';
 import { Farmer } from './farmer';
 import { WebStorageService } from '../world/web-storage/webstorage.service';
 import { GorimChatAdapter } from '../world/chat-adapter/chat-adapter';
-import { HttpClient } from '@angular/common/http';
 import { ChatAdapterService } from '../world/chat-adapter/chat-adapter.service';
 
 @Component({
@@ -28,21 +27,21 @@ export class FarmerComponent implements OnInit {
 
     produtos: ProdutoSimplified[];
 
-    chatAdapter: GorimChatAdapter;
+    public chatAdapter: GorimChatAdapter;
 
     constructor(
         private activatedRoute: ActivatedRoute,
         private agrService: FarmerService,
         private webStorageService: WebStorageService,
         private chatAdapterService: ChatAdapterService
-    ) {
+    ) { }
+
+    ngOnInit(): void {
         this.idAgr = this.activatedRoute.snapshot.params.idAgr;
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
 
-        this.chatAdapter = new GorimChatAdapter(this.idJogo, this.idAgr, this.chatAdapterService);
-    }
-
-    ngOnInit(): void {
+        this.chatAdapter = new GorimChatAdapter(this.chatAdapterService);
+        this.chatAdapter.configAdapter(this.idJogo, this.idAgr);
         
         this.webStorageService.setData(this.idJogo + 'papel', ['agricultor', this.idAgr.toString()]);
 

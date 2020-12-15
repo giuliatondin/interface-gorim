@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { AldermanSugestion } from '../alderman-sugestion/alderman-sugestion';
+import { AldermanSuggestion } from '../alderman-suggestion/alderman-suggestion';
 
 const API = environment.ApiUrl + '/request/api';
 const VER_ROUTE = '/vereador';
@@ -19,7 +19,7 @@ export class ResponseListService {
         idJogo: number,
         idVer: number
     ){
-        return this.httpClient.get<AldermanSugestion[]>(
+        return this.httpClient.get<AldermanSuggestion[]>(
             API + '/' + idJogo + VER_ROUTE + '/getRespostasPrefeito/' + idVer
         );
     }
