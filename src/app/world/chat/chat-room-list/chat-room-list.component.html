@@ -1,0 +1,13 @@
+<div *ngIf="openedRooms.length != 0">
+    <div
+        *ngFor="let friend of openedRooms; let i=index"
+        class="chat-room-slot {{ getChatRoomClass(i) }}"
+    >
+        <app-chat-room
+            [nomeAmigo]="friend"
+            [nomePessoa]="nomePessoa"
+            [idJogo]="idJogo"
+            class="w-100"
+        ></app-chat-room>
+    </div>
+</div>

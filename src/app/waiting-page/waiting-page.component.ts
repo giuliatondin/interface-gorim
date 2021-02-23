@@ -6,6 +6,8 @@ import { WebStorageService } from '../world/web-storage/webstorage.service';
 import { AlertService } from '../world/alert/alert.service';
 import { World } from '../world/world';
 import { WaitingPageService } from './waiting-page.service';
+import { LoginLogoutService } from '../world/login-logout/login-logout.service';
+import { LoginBodyResponse } from '../world/login-logout/loginBodyResponse';
 
 @Component({
     selector: 'app-waiting-page',
@@ -28,7 +30,8 @@ export class WaitingPageComponent implements OnInit{
         private activatedRoute: ActivatedRoute,
         private router: Router,
         private webStorageService: WebStorageService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private loginLogoutService: LoginLogoutService
     ){ }
 
     ngOnInit(){
@@ -67,15 +70,43 @@ export class WaitingPageComponent implements OnInit{
                                         this.router.navigate([this.idJogo, 'segundaEtapa', this.idPessoa]);
                                     else {
                                         let id = Math.floor(idProximaEtapa/10);
-                                        let papel = (idProximaEtapa%10 == 0) ? 'fiscalAmbiental' : (idProximaEtapa%10 == 1) ? 'prefeito' : 'vereador';
+                                        let papel: string;
+                                        let nome: string;
 
-                                        this.router.navigate([this.idJogo, papel, id]);
+                                        if(idProximaEtapa%10 == 0){
+                                            papel = 'fiscalAmbiental';
+                                            nome = 'Fiscal';
+                                        }
+                                        else if(idProximaEtapa%10 == 1){
+                                            papel = 'prefeito';
+                                            nome = 'Prefeito';
+                                        }
+                                        else{
+                                            papel = 'vereador';
+                                            nome = 'Vereador';
+                                        }
+
+                                        if(id%2 == 0) nome += 'CD';
+                                        else nome += 'AT';
+
+                                        this.loginLogoutService.logout();
+                                        this.loginLogoutService.login(this.idJogo, id, nome).subscribe(
+                                            (data: LoginBodyResponse) => {
+                                                this.webStorageService.setData('authToken', data.token);
+                                                this.router.navigate([this.idJogo, papel, id]);
+                                            },
+                                            err => console.log(err)
+                                        );
                                     }
                                 }
                             );
                         }
                         else {
                             this.alertService.info('A próxima rodada vai começar.');
+                            if(this.idPessoa > this.infoMundo.quantidadeJogadores){
+                                this.loginLogoutService.logout();
+                                this.loginLogoutService.login(this.idJogo, this.infoPessoaPrimeiraEtapa[1] as unknown as number, this.infoPessoaPrimeiraEtapa[2]);
+                            }
                             this.router.navigate([this.idJogo, this.infoPessoaPrimeiraEtapa[0], this.infoPessoaPrimeiraEtapa[1]]);
                         }
                     }

@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/world/alert/alert.service';
+import { LoginLogoutService } from 'src/app/world/login-logout/login-logout.service';
+import { LoginBodyResponse } from 'src/app/world/login-logout/loginBodyResponse';
 import { PersonSimplified } from 'src/app/world/models/person.simplified';
+import { WebStorageService } from 'src/app/world/web-storage/webstorage.service';
 import { JoinService } from './join.service';
 
 @Component({
@@ -24,7 +27,9 @@ export class JoinComponent implements OnInit{
         private joinService: JoinService,
         private formBuilder: FormBuilder,
         private alertService: AlertService,
-        private router: Router
+        private router: Router,
+        private webStorageService: WebStorageService,
+        private loginLogoutService: LoginLogoutService
     ){ }
 
     ngOnInit(){
@@ -41,6 +46,7 @@ export class JoinComponent implements OnInit{
         if(!isNaN(idJogo) && idJogo != null){
             this.joinService.getInfoPessoas(this.jogoForm.get('idJogo').value).subscribe(
                 (data: PersonSimplified[]) => {
+                    console.log(data);
                     if(data != null){
                         this.pessoas = data;
                         this.showPessoas = true;
@@ -61,7 +67,18 @@ export class JoinComponent implements OnInit{
         
         if(idPessoa < 4) role = 'empresario';
         else role = 'agricultor';
+
+        console.log('Nome: ' + this.pessoas[idPessoa-1].nome + '; idJogo: ' + this.idJogo + '; idPessoa: ' + idPessoa);
         
-        this.router.navigate([this.idJogo, role, idPessoa], { replaceUrl: true });
+        this.loginLogoutService.login(this.idJogo, idPessoa, this.pessoas[idPessoa-1].nome).subscribe(
+            (data: LoginBodyResponse) => {
+                this.webStorageService.setData('authToken', data.token);
+                this.router.navigate([this.idJogo, role, idPessoa]);//, { replaceUrl: true });
+            },
+            err => {
+                console.log(err);
+                this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+            }
+        );
     }
 }

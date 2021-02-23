@@ -75,8 +75,10 @@
         </div>
     </div>
 </div>
-<ng-chat
-    [adapter]="chatAdapter"
-    [userId]="idEmp"
-    title="Chat"
-></ng-chat>
+<app-chat
+    [nomePessoa]="emp.nome"
+    [idPessoa]="idEmp"
+    [idJogo]="idJogo"
+    role="empresario"
+    [cidade]="emp.cidade"
+></app-chat>

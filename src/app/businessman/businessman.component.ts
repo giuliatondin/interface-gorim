@@ -10,8 +10,6 @@ import { ProdutoSimplified } from 'src/app/world/models/produto.simplified';
 import { flatMap } from 'rxjs/operators';
 import { AlertService } from 'src/app/world/alert/alert.service';
 import { WebStorageService } from '../world/web-storage/webstorage.service';
-import { GorimChatAdapter } from '../world/chat-adapter/chat-adapter';
-import { ChatAdapterService } from '../world/chat-adapter/chat-adapter.service';
 
 @Component({
     selector: 'app-businessman',
@@ -37,7 +35,7 @@ export class BusinessmanComponent implements OnInit {
 
     inLineAlertButton: string = 'Nem todos os jogadores começaram o jogo ainda. Aguarde para finalizar a jogada.';
     
-    public chatAdapter: GorimChatAdapter;
+    //public chatAdapter: GorimChatAdapter;
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -45,7 +43,7 @@ export class BusinessmanComponent implements OnInit {
         private empService: BusinessmanService,
         private alertService: AlertService,
         private webStorageService: WebStorageService,
-        private chatAdapterService: ChatAdapterService
+        //private chatAdapterService: ChatAdapterService
     ) {
     }
 
@@ -53,8 +51,8 @@ export class BusinessmanComponent implements OnInit {
         this.idEmp = this.activatedRoute.snapshot.params.idEmp;
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
 
-        this.chatAdapter = new GorimChatAdapter(this.chatAdapterService);
-        this.chatAdapter.configAdapter(this.idJogo, this.idEmp);
+        // this.chatAdapter = new GorimChatAdapter(this.chatAdapterService);
+        // this.chatAdapter.configAdapter(this.idJogo, this.idEmp);
 
         this.liberaBotao = false;
 
@@ -64,7 +62,7 @@ export class BusinessmanComponent implements OnInit {
                     this.emp = data;
                     this.infoMundo$ = this.empService.getInfoMundo(this.idJogo);
                     
-                    this.webStorageService.setData(this.idJogo + 'papel', ['empresario', this.idEmp.toString()]);
+                    this.webStorageService.setData(this.idJogo + 'papel', ['empresario', this.idEmp.toString(), data.nome]);
 
                     this.arrumaProdutos();
                 }

@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 
 import { HeaderComponent } from './header/header.component';
 import { TransferComponent } from './transfer/transfer.component';
@@ -15,6 +16,11 @@ import { InLineAlertComponent } from './inline-alert/inline-alert.component';
 import { VotingComponent } from './voting/voting.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { TableValuesComponent } from './table-values/table-values.component';
+import { ChatComponent } from './chat/chat.component';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { ChatRoomComponent } from './chat/chat-room-list/chat-room/chat-room.component';
+import { ChatRoomListComponent } from './chat/chat-room-list/chat-room-list.component';
+import { FriendsListComponent } from './chat/friends-list/friends-list.component';
 
 @NgModule({
     declarations: [
@@ -26,7 +32,11 @@ import { TableValuesComponent } from './table-values/table-values.component';
         ConfirmingModalComponent,
         AlertComponent,
         InLineAlertComponent,
-        VotingComponent
+        VotingComponent,
+        ChatComponent,
+        ChatRoomComponent,
+        ChatRoomListComponent,
+        FriendsListComponent
     ],
     imports: [
         CommonModule,
@@ -35,7 +45,9 @@ import { TableValuesComponent } from './table-values/table-values.component';
         MatDialogModule,
         MatButtonModule,
         MatRadioModule,
-        FormsModule
+        FormsModule,
+        MatCardModule,
+        MatExpansionModule
     ], 
     exports: [
         HeaderComponent,
@@ -46,7 +58,8 @@ import { TableValuesComponent } from './table-values/table-values.component';
         ConfirmingModalComponent,
         AlertComponent,
         InLineAlertComponent,
-        VotingComponent
+        VotingComponent,
+        ChatComponent
     ],
     entryComponents: [
         ConfirmingModalComponent
