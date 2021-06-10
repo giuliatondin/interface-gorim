@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatRadioChange } from '@angular/material/radio';
@@ -42,6 +42,9 @@ export class ParcelComponent implements OnInit {
     subscription: Subscription;
 
     inLineAlertButton: string = 'Nem todos os jogadores começaram o jogo ainda. Aguarde para finalizar a jogada.';
+
+    
+    @Output() tellParentJogadaIsOver: EventEmitter<any> = new EventEmitter();
 
     constructor(
         private produtoService: ProdutoService,
@@ -324,7 +327,7 @@ export class ParcelComponent implements OnInit {
     }
 
     finalizarJogada(finishedByMaster: boolean = false){
-        console.log('finishedByMaster ' + finishedByMaster);
+        this.tellParentJogadaIsOver.emit(null);
         if(
             (
                 !this.hasUnsetProducts() &&

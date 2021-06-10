@@ -1,9 +1,9 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Produto } from '../world/models/produto';
 
 @Injectable()
-export class ProdutoService{
+export class ProdutoService {
     
     private produto = new BehaviorSubject<Produto>({
         id: 0,

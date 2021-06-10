@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { interval, Observable, Subscription } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
+import { ChatInfo } from '../world/chat/chat-info';
+import { WebSocketService } from '../world/web-socket/web-socket.service';
 import { WebStorageService } from '../world/web-storage/webstorage.service';
 import { World } from '../world/world';
 
@@ -16,7 +18,7 @@ export class AlternativeSecondStagePageComponent implements OnInit {
 
     idJogo: number;
     idPessoa: number;
-    infoPessoaPrimeiraEtapa: string[];
+    chatInfo: ChatInfo = null;
 
     mundo$: Observable<World>;
 
@@ -27,13 +29,34 @@ export class AlternativeSecondStagePageComponent implements OnInit {
         private activatedRoute: ActivatedRoute,
         private router: Router,
         private alternativePageService: AlternativeSecondStagePageService,
-        private webStorageService: WebStorageService
+        private webStorageService: WebStorageService,
+        private wsService: WebSocketService
     ){ }
 
     ngOnInit(){
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
         this.idPessoa = this.activatedRoute.snapshot.params.idPessoa;
-        this.infoPessoaPrimeiraEtapa = this.webStorageService.getData(this.idJogo + 'papel');
+        
+        let info = JSON.parse(this.webStorageService.getData(this.idJogo + 'papel')) as ChatInfo;
+        if(this.wsService.isConnected()){
+            this.wsService.config(
+                info.nomePessoa + this.idJogo,
+                info.nomePessoa,
+                info.nomePessoa + info.idPessoa,
+                this.alternativePageService
+            );
+            this.wsService.connect();
+        }
+        else {
+            this.wsService.changeConnection(
+                info.nomePessoa + this.idJogo,
+                info.nomePessoa,
+                info.nomePessoa + info.idPessoa,
+                this.alternativePageService
+            );
+        }
+        this.chatInfo = info;
+
         this.mundo$ = this.alternativePageService.getInfoMundo(this.idJogo);
         this.verificaFimEtapa();
     }
@@ -50,8 +73,7 @@ export class AlternativeSecondStagePageComponent implements OnInit {
                     console.log(data);
                     if(data == 0){
                         this.subscription.unsubscribe();
-                        this.router.navigate([this.idJogo, this.infoPessoaPrimeiraEtapa[0], this.idPessoa]);
-                        // console.log('Indo para ' + this.idJogo + ' agr ou emp ' + this.idPessoa);
+                        this.router.navigate([this.idJogo, this.chatInfo.role, this.idPessoa]);
                     }
                 },
                 err => console.log(err)

@@ -17,7 +17,7 @@ mat-dialog-container#master-modal {
     overflow-y: hidden;
 }
 
-// pretty print of value tables
+// pretty print of table values
 .tableValues {
     h3 {
         font-size: 18px;
@@ -38,7 +38,8 @@ mat-dialog-container#master-modal {
     }
 }
 
-// for required stars
+// For "required stars" (*) in forms
 .requiredStar { 
     color: red;
+    font-size: 12px;
 }

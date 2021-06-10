@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { WorldModule } from '../world/world.module';
 import { WaitingPageComponent } from './waiting-page.component';
 
 @NgModule({
@@ -7,7 +8,8 @@ import { WaitingPageComponent } from './waiting-page.component';
         WaitingPageComponent
     ],
     imports: [
-        CommonModule
+        CommonModule,
+        WorldModule
     ],
     exports: [
         WaitingPageComponent
