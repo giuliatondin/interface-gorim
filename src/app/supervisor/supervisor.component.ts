@@ -11,6 +11,8 @@ import { GreenSealService } from './green-seal/green-seal.service';
 import { Fine, GreenSeal, PostForm } from './postForm';
 import { Supervisor } from './supervisor';
 import { SupervisorService } from './supervisor.service';
+import { ChatInfo } from '../world/chat/chat-info';
+import { WebSocketService } from '../world/web-socket/web-socket.service';
 
 @Component({
     selector: 'app-supervisor',
@@ -25,6 +27,7 @@ export class SupervisorComponent implements OnInit {
     pessoas: PersonSimplified[];
 
     infoFis: Supervisor;
+    nomeCurto: string;
     infoMundo$: Observable<World>;
 
     nomeFines: string[] = ['Baixa', 'Média', 'Alta'];
@@ -36,6 +39,8 @@ export class SupervisorComponent implements OnInit {
     counter: Observable<number> = interval(10 * 1000);
     subscription: Subscription;
 
+    chatInfo: ChatInfo;
+
     constructor(
         private activatedRoute: ActivatedRoute,
         private fisService: SupervisorService,
@@ -43,7 +48,8 @@ export class SupervisorComponent implements OnInit {
         private greenSealService: GreenSealService,
         private webStorageService: WebStorageService,
         private alertService: AlertService,
-        private router: Router
+        private router: Router,
+        private wsService: WebSocketService
     ){ }
 
     ngOnInit(){
@@ -51,8 +57,18 @@ export class SupervisorComponent implements OnInit {
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
         this.fisService.getInfo(this.idJogo, this.idFis).subscribe(
             (data: Supervisor) => {
-                this.infoFis = data;
                 this.infoMundo$ = this.fisService.getInfoMundo(this.idJogo);
+                this.nomeCurto = (data.cidade == 'Atlantis') ? 'FisfAT' : 'FisCD';
+
+                this.wsService.changeConnection((this.nomeCurto + this.idJogo), this.nomeCurto, (this.nomeCurto + this.idFis), this.fisService);
+
+                this.chatInfo = {
+                    nomePessoa: this.nomeCurto,
+                    idPessoa: data.id,
+                    idJogo: this.idJogo,
+                    role: 'prefeito',
+                    cidade: data.cidade
+                } as ChatInfo;
         
                 if(this.webStorageService.hasData('fis'+ this.idFis + 'Fines'))
                     this.fines = this.webStorageService.getData('fis'+ this.idFis + 'Fines') as Fine[];
@@ -83,13 +99,15 @@ export class SupervisorComponent implements OnInit {
                     err => console.log(err)
                 );
         
-                this.fineService.getInfoPessoas(this.idJogo, this.infoFis.cidade).subscribe(
+                this.fineService.getInfoPessoas(this.idJogo, data.cidade).subscribe(
                     (data: PersonSimplified[]) => {
                         console.log(data);
                         this.pessoas = data;
                     },
                     err => console.log(err)
                 );
+
+                this.infoFis = data;
             },
             err => console.log(err)
         );

@@ -29,6 +29,7 @@
                                     [produtos]="produtos"
                                     [idAgr]="idAgr"
                                     [rodada]="mundo.rodada"
+                                    (tellParentJogadaIsOver)="onFinalizarJogada($event)"
                                 ></app-parcel>
                             </mat-tab>
                             <mat-tab label="Valores dos produtos">
@@ -75,10 +76,6 @@
         </div>
     </div>
     <app-chat
-        [nomePessoa]="agr.nome"
-        [idPessoa]="idAgr"
-        [idJogo]="idJogo"
-        role="agricultor"
-        [cidade]="agr.cidade"
+        [chatInfo]="chatInfo"
     ></app-chat>
 </div>

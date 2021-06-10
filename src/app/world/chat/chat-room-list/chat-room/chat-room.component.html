@@ -1,9 +1,16 @@
 <div class="chat-room w-100">
-    <mat-accordion>
-        <mat-expansion-panel class="custom-body">
+    <mat-accordion hideToggle>
+        <mat-expansion-panel  (opened)="panelOpenState = true"
+                              (closed)="panelOpenState = false"
+                              class="custom-body">
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    {{ nomeAmigo }}
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm">{{ friendName }}</div>
+                            <div class="col-sm"><span class="new-message {{ getNewMessageCircleColour()}}"></span></div>
+                        </div>
+                    </div>
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <div class="container messages-area" #scrollMe>
@@ -31,6 +38,7 @@
                             class="form-control replyTextArea"
                             placeholder="Digite sua mensagem aqui"
                             (keyup.enter)="enterPressed($event)"
+                            (focus)="seenNewMessages()"
                         ></textarea>
                         <div class="input-group-append">
                             <button class="btn btn-outline-secondary" type="submit">
@@ -42,4 +50,5 @@
             </div>
         </mat-expansion-panel>
     </mat-accordion>
+    <button type="button" class="close-button btn btn-danger" (click)="fecharChatRoom()"><i class="fas fa-times"></i></button>
 </div>

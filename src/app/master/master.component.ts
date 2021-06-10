@@ -10,6 +10,8 @@ import { ConfirmingModalService } from '../world/confirming-modal/confirming-mod
 import { ConfirmingModal } from '../world/confirming-modal/confirming-modal';
 import { ResponseModalService } from '../world/confirming-modal/response-modal.service';
 import { WebStorageService } from '../world/web-storage/webstorage.service';
+import { ChatInfo } from '../world/chat/chat-info';
+import { WebSocketService } from '../world/web-socket/web-socket.service';
 
 @Component({
     selector: 'app-master',
@@ -28,13 +30,18 @@ export class MasterComponent implements OnInit {
 
     inicioEtapa: number = new Date().getTime();
 
+    chatInfo: ChatInfo;
+    mestreNome: string = 'Mestre';
+    mestreId: number = 0;
+
     constructor(
         private masterService: MasterService,
         private activatedRoute: ActivatedRoute,
         private alertService: AlertService,
         private confirmingModalService: ConfirmingModalService,
         private responseModalService: ResponseModalService,
-        private webStorageService: WebStorageService
+        private webStorageService: WebStorageService,
+        private wsService: WebSocketService
     ) { }
 
     ngOnInit(): void {
@@ -53,6 +60,22 @@ export class MasterComponent implements OnInit {
             },
             err => console.log(err)
         );
+        
+        this.wsService.config(
+            this.mestreNome + this.idJogo,
+            this.mestreNome,
+            this.mestreNome + this.mestreId,
+            this.masterService
+        );
+        this.wsService.connect();
+
+        this.chatInfo = {
+            cidade: '',
+            idJogo: this.idJogo,
+            nomePessoa: this.mestreNome,
+            idPessoa: this.mestreId,
+            role: 'mestre'
+        } as ChatInfo;
     }
 
     putInMundo(){

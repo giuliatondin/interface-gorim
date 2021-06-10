@@ -14,7 +14,7 @@
 }
 
 ::ng-deep .mat-expansion-panel-body {
-    padding: 0 0px 10px;
+    padding: 0 0px 10px !important;
 }
 
 @media(min-width:1080px){
@@ -108,4 +108,20 @@
             }
         }
     }
+}
+
+// PARA SINALIZAR NOVAS MENSAGENS RECEBIDAS EM CHAT-ROOM E FRIENDS-LIST
+.new-message {
+    margin-left: 1%;
+    height: 5px;
+    width: 5px;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+}
+.green-circle {
+    background-color: green;
+}
+.transparent-circle {
+    background-color: transparent;
 }

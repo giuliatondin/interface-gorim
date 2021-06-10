@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { WorldModule } from '../world/world.module';
 
 import { AlternativeSecondStagePageComponent } from './alertnative-second-stage-page.component';
 
@@ -8,7 +9,8 @@ import { AlternativeSecondStagePageComponent } from './alertnative-second-stage-
         AlternativeSecondStagePageComponent
     ],
     imports: [
-        CommonModule
+        CommonModule,
+        WorldModule
     ],
     exports: [
         AlternativeSecondStagePageComponent

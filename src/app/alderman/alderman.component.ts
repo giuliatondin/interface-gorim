@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { interval, Observable, Subscription } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
 import { AlertService } from '../world/alert/alert.service';
+import { ChatInfo } from '../world/chat/chat-info';
+import { WebSocketService } from '../world/web-socket/web-socket.service';
 import { WebStorageService } from '../world/web-storage/webstorage.service';
 import { World } from '../world/world';
 import { Alderman } from './alderman';
@@ -16,22 +18,26 @@ import { AldermanService } from './alderman.service';
 export class AldermanComponent implements OnInit {
     
     idVer: number;
-    idJogo;
+    idJogo: number;
 
     infoVer: Alderman;
+    nomeCurto: string;
     infoMundo$: Observable<World>;
 
     liberaBotao: boolean = false;
 
     counter: Observable<number> = interval(10 * 1000);
     subscription: Subscription;
+
+    chatInfo: ChatInfo;
     
     constructor(
         private activatedRoute: ActivatedRoute,
         private router: Router,
         private verService: AldermanService,
         private alertService: AlertService,
-        private webStorageService: WebStorageService
+        private webStorageService: WebStorageService,
+        private wsService: WebSocketService
     ){ }
 
     ngOnInit(){
@@ -40,12 +46,24 @@ export class AldermanComponent implements OnInit {
 
         this.verService.getInfo(this.idJogo, this.idVer).subscribe(
             (data: Alderman) => {
-                this.infoVer = data;
                 this.infoMundo$ = this.verService.getInfoMundo(this.idJogo);
-                this.verificaFimEtapa();
+                this.nomeCurto = (data.cidade == 'Atlantis') ? 'VerAT' : 'VerCD';
+
+                this.wsService.changeConnection((this.nomeCurto + this.idJogo), this.nomeCurto, (this.nomeCurto + this.idVer), this.verService);
+
+                this.chatInfo = {
+                    nomePessoa: this.nomeCurto,
+                    idPessoa: data.id,
+                    idJogo: this.idJogo,
+                    role: 'vereador',
+                    cidade: data.cidade
+                } as ChatInfo;
+
+                this.infoVer = data;
             },
             err => console.log(err)
         );
+        this.verificaFimEtapa();
     }
 
     verificaFimEtapa(){

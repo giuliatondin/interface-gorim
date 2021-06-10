@@ -1,12 +1,8 @@
 import { Component, Input, OnInit } from "@angular/core";
-import * as Stomp from 'stomp-client/lib/client';
-import * as SockJS from 'sockjs-client';
-
-
-//var Stomp = require('../lib/client').StompClient;
 
 import { ChatService } from "./chat.service";
 import { environment } from "src/environments/environment";
+import { ChatInfo } from "./chat-info";
 
 const API_WS = environment.ApiUrl + '/ws';
 
@@ -16,42 +12,24 @@ const API_WS = environment.ApiUrl + '/ws';
     styleUrls: [ './chat.component.scss' ]
 })
 export class ChatComponent implements OnInit{
-    @Input() nomePessoa: string;
-    @Input() idPessoa: number;
-    @Input() idJogo: number;
-    @Input() role: string;
-    @Input() cidade: string;
+    @Input() chatInfo: ChatInfo;
 
-    private stompClient: any;
+    nomePessoa: string;
+    idPessoa: number;
+    idJogo: number;
+    role: string;
+    cidade: string;
 
     constructor(
         private chatService: ChatService
     ) { }
 
     ngOnInit(){
-    
-        const connect = () => {
-            var sockjs = new SockJS(API_WS);
-            return Stomp.over(sockjs).connect({}, onConnected, onError);
-        };
-    
-        const onConnected = () => {
-            console.log('connected');
-            console.log(this.nomePessoa);
-            this.stompClient.subscribe(
-                    '/user/' + this.idJogo + this.nomePessoa + '/queue/messages',
-                    onMessageReceived
-            );
-        };
-      
-        const onError = (err) => {
-            console.log(err);
-        };
-
-        const onMessageReceived = () => {
-
-        };
-
+        this.nomePessoa = this.chatInfo.nomePessoa;
+        this.idPessoa = this.chatInfo.idPessoa;
+        this.idJogo = this.chatInfo.idJogo;
+        this.role = this.chatInfo.role;
+        this.cidade = this.chatInfo.cidade;
     }
 
 }

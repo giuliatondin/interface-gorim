@@ -10,6 +10,8 @@ import { ProdutoSimplified } from 'src/app/world/models/produto.simplified';
 import { flatMap } from 'rxjs/operators';
 import { AlertService } from 'src/app/world/alert/alert.service';
 import { WebStorageService } from '../world/web-storage/webstorage.service';
+import { WebSocketService } from '../world/web-socket/web-socket.service';
+import { ChatInfo } from '../world/chat/chat-info';
 
 @Component({
     selector: 'app-businessman',
@@ -35,7 +37,7 @@ export class BusinessmanComponent implements OnInit {
 
     inLineAlertButton: string = 'Nem todos os jogadores começaram o jogo ainda. Aguarde para finalizar a jogada.';
     
-    //public chatAdapter: GorimChatAdapter;
+    chatInfo: ChatInfo;
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -43,16 +45,13 @@ export class BusinessmanComponent implements OnInit {
         private empService: BusinessmanService,
         private alertService: AlertService,
         private webStorageService: WebStorageService,
-        //private chatAdapterService: ChatAdapterService
+        private wsService: WebSocketService
     ) {
     }
 
     ngOnInit(): void {
         this.idEmp = this.activatedRoute.snapshot.params.idEmp;
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
-
-        // this.chatAdapter = new GorimChatAdapter(this.chatAdapterService);
-        // this.chatAdapter.configAdapter(this.idJogo, this.idEmp);
 
         this.liberaBotao = false;
 
@@ -62,7 +61,36 @@ export class BusinessmanComponent implements OnInit {
                     this.emp = data;
                     this.infoMundo$ = this.empService.getInfoMundo(this.idJogo);
                     
-                    this.webStorageService.setData(this.idJogo + 'papel', ['empresario', this.idEmp.toString(), data.nome]);
+                    this.chatInfo = {
+                        nomePessoa: data.nome,
+                        idPessoa: data.id,
+                        idJogo: this.idJogo,
+                        role: 'empresario',
+                        cidade: data.cidade
+                    } as ChatInfo;
+                    
+                    this.webStorageService.setData(
+                        this.idJogo + 'papel',
+                        JSON.stringify(this.chatInfo)
+                    );
+
+                    if(this.wsService.isConnected()){
+                        this.wsService.config(
+                            this.emp.nome + this.idJogo,
+                            this.emp.nome,
+                            this.emp.nome + this.idEmp,
+                            this.empService
+                        );
+                        this.wsService.connect();
+                    }
+                    else {
+                        this.wsService.changeConnection(
+                            this.emp.nome + this.idJogo,
+                            this.emp.nome,
+                            this.emp.nome + this.idEmp,
+                            this.empService
+                        );
+                    }
 
                     this.arrumaProdutos();
                 }

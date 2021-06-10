@@ -10,6 +10,8 @@ import { Mayor } from './mayor';
 import { MayorService } from './mayor.service';
 import { PostForm, Tax } from './postForm';
 import { TaxesService } from './taxes/taxes.service';
+import { WebSocketService } from '../world/web-socket/web-socket.service';
+import { ChatInfo } from '../world/chat/chat-info';
 
 @Component({
     selector: 'app-mayor',
@@ -22,6 +24,7 @@ export class MayorComponent implements OnInit {
     idJogo: number;
 
     infoPref: Mayor;
+    nomeCurto: string;
     infoMundo$: Observable<World>;
 
     environmentalActions: number[] = [];
@@ -32,6 +35,8 @@ export class MayorComponent implements OnInit {
     counter: Observable<number> = interval(10 * 1000);
     subscription: Subscription;
 
+    chatInfo: ChatInfo;
+
     constructor(
         private prefService: MayorService,
         private activatedRoute: ActivatedRoute,
@@ -39,7 +44,8 @@ export class MayorComponent implements OnInit {
         private alertService: AlertService,
         private environmentalActService: EnvironmentalActionService,
         private taxesService: TaxesService,
-        private router: Router
+        private router: Router,
+        private wsService: WebSocketService
     ){ }
 
     ngOnInit(){
@@ -49,7 +55,21 @@ export class MayorComponent implements OnInit {
         this.infoMundo$ = this.prefService.getInfoMundo(this.idJogo);
 
         this.prefService.getInfo(this.idJogo, this.idPref).subscribe(
-            (data: Mayor) => this.infoPref = data,
+            (data: Mayor) => {
+                this.nomeCurto = (data.cidade == 'Atlantis') ? 'PrefAT' : 'PrefCD';
+
+                this.wsService.changeConnection((this.nomeCurto + this.idJogo), this.nomeCurto, (this.nomeCurto + this.idPref), this.prefService);
+
+                this.chatInfo = {
+                    nomePessoa: this.nomeCurto,
+                    idPessoa: data.id,
+                    idJogo: this.idJogo,
+                    role: 'prefeito',
+                    cidade: data.cidade
+                } as ChatInfo;
+                
+                this.infoPref = data;
+            },
             err => console.log(err)
         );
 
@@ -90,14 +110,14 @@ export class MayorComponent implements OnInit {
 
     removeAction(acao: number){
         this.environmentalActions.splice(this.environmentalActions.indexOf(acao), 1);
-        this.alertService.success("Removido.");
+        this.alertService.success('Removido.');
         this.environmentalActService.nextTroca(acao);
         this.webStorageService.setData('pref'+ this.idPref + 'environmentalActions', this.environmentalActions);
     }
 
     removeTax(tax: Tax){
         this.taxes.splice(this.taxes.indexOf(tax), 1);
-        this.alertService.success("Removido.");
+        this.alertService.success('Removido.');
         this.taxesService.nextTroca(tax.tipo);
         this.webStorageService.setData('pref'+ this.idPref + 'taxes', this.taxes);
     }

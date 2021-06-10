@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, HostListener, Input, OnInit } from "@angular/core";
+import { ChatNotification } from "../chat-notification";
 import { ChatService } from "../chat.service";
 
 @Component({
@@ -25,7 +26,7 @@ export class ChatRoomListComponent implements OnInit, AfterViewInit {
     ngOnInit(){
         this.chatService.sharedfriendNames.subscribe(
             (friendName: string) => {
-                if(friendName != ''){
+                if(friendName != '' && !this.isRoomOpened(friendName)){
                     if(this.chatQuantity == this.limiteChatRooms){
                         this.openedRooms.shift();
                         this.chatQuantity--;
@@ -33,6 +34,21 @@ export class ChatRoomListComponent implements OnInit, AfterViewInit {
                     this.openedRooms.push(friendName);
                     this.chatQuantity++;
                 }
+            }
+        );
+        let that = this;
+        this.chatService.sharedCloseChatRooms.subscribe(
+            (chatRoom : string) => {
+                let closeEverySingleOne: boolean = false;
+                if(chatRoom === 'FECHAR_TODAS_AS_JANELAS') closeEverySingleOne = true;
+                if(chatRoom != '') this.openedRooms.forEach(
+                    function(room, index, object) {
+                        if (room === chatRoom || closeEverySingleOne) {
+                          object.splice(index, 1);
+                          that.chatQuantity--;
+                        }
+                    }
+                );
             }
         );
     }
@@ -62,5 +78,14 @@ export class ChatRoomListComponent implements OnInit, AfterViewInit {
 
     getChatRoomClass(index: number){
         return 'col --chat-room room-' + (index+1);
+    }
+
+    isRoomOpened(value: string): boolean{
+        this.openedRooms.forEach(
+            room => {
+                if(room == value) return true;
+            }
+        );
+        return false;
     }
 }

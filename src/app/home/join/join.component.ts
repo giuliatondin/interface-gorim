@@ -65,7 +65,7 @@ export class JoinComponent implements OnInit{
         let idPessoa: number = this.joinForm.get('personagem').value as number;
         let role: string;
         
-        if(idPessoa < 4) role = 'empresario';
+        if(idPessoa < 5) role = 'empresario';
         else role = 'agricultor';
 
         console.log('Nome: ' + this.pessoas[idPessoa-1].nome + '; idJogo: ' + this.idJogo + '; idPessoa: ' + idPessoa);
