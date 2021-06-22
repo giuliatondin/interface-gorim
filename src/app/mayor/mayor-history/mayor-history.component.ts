@@ -13,7 +13,9 @@ export class MayorHistoryComponent implements OnInit {
     
     idJogo: number;
     idPref: number;
-    history$: Observable<MayorHistory>;
+    history: MayorHistory;
+
+    loadingMessage: string = 'Aguarde um instante enquanto carregamos os dados';
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -27,7 +29,13 @@ export class MayorHistoryComponent implements OnInit {
     }
 
     getHistory(){
-        this.history$ = this.prefHistoryService.getHitory(this.idJogo, this.idPref);
+        this.prefHistoryService.getHitory(this.idJogo, this.idPref).subscribe(
+            (data: MayorHistory) => {
+                if(data != null) this.history = data;
+                else this.loadingMessage = 'Tivemos um problema ao pegar os dados do servidor, por favor, reinicie a página';
+            },
+            err => console.log(err)
+        );
     }
 
     isMaquina(produto: string){

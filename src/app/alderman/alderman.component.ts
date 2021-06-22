@@ -46,20 +46,23 @@ export class AldermanComponent implements OnInit {
 
         this.verService.getInfo(this.idJogo, this.idVer).subscribe(
             (data: Alderman) => {
-                this.infoMundo$ = this.verService.getInfoMundo(this.idJogo);
-                this.nomeCurto = (data.cidade == 'Atlantis') ? 'VerAT' : 'VerCD';
+                if(data != null){
+                    this.infoMundo$ = this.verService.getInfoMundo(this.idJogo);
+                    this.nomeCurto = (data.cidade == 'Atlantis') ? 'VerAT' : 'VerCD';
 
-                this.wsService.changeConnection((this.nomeCurto + this.idJogo), this.nomeCurto, (this.nomeCurto + this.idVer), this.verService);
+                    this.wsService.changeConnection((this.nomeCurto + this.idJogo), this.nomeCurto, (this.nomeCurto + this.idVer), this.verService);
 
-                this.chatInfo = {
-                    nomePessoa: this.nomeCurto,
-                    idPessoa: data.id,
-                    idJogo: this.idJogo,
-                    role: 'vereador',
-                    cidade: data.cidade
-                } as ChatInfo;
+                    this.chatInfo = {
+                        nomePessoa: this.nomeCurto,
+                        idPessoa: data.id,
+                        idJogo: this.idJogo,
+                        role: 'vereador',
+                        cidade: data.cidade
+                    } as ChatInfo;
 
-                this.infoVer = data;
+                    this.infoVer = data;
+                }
+                else this.alertService.warning('Algo deu errado ao carregar os dados, por favor, reinicie a página.');
             },
             err => console.log(err)
         );
@@ -76,25 +79,28 @@ export class AldermanComponent implements OnInit {
             .subscribe(
                 (data: number) => {
                     console.log(data);
-                    if(data > 2) this.liberaBotao = true;
-                    else if(data == 0){
-                        this.subscription.unsubscribe();
-                        this.finalizaJogada(true);
-                    }
+                    if (data == 3) this.finalizaJogada(true, true);
+                    else if(data > 2) this.liberaBotao = true;
+                    else if(data == 0) this.finalizaJogada(true);
                 },
                 err => console.log(err)
             );
     }
 
-    finalizaJogada(finishedByMaster: boolean = false){
+    finalizaJogada(finishedByMaster: boolean = false, gameover: boolean = false){
         this.verService.finalizaJogada(this.idJogo, this.idVer)
             .subscribe(
                 () => {
                     this.subscription.unsubscribe();
-                    if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
-                    else this.alertService.success('Jogada finalizada.', true);
                     this.webStorageService.removeData(['suggestion' + this.idVer + 'idSugestao']);
-                    this.router.navigate([this.idJogo, 'waitingPage', this.idVer]);
+                    if(!gameover){
+                        if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
+                        else this.alertService.success('Jogada finalizada.', true);
+                        this.router.navigate([this.idJogo, 'waitingPage', this.idVer]);
+                    }
+                    this.alertService.warning('O jogo terminou', true);
+                    this.router.navigate([this.idJogo, 'gameover']);
+                        
                 },
                 err => {
                     console.log(err);

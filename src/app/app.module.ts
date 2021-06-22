@@ -15,6 +15,7 @@ import { MasterModule } from './master/master.module';
 import { HomeModule } from './home/home.module';
 import { WaitingPageModule } from './waiting-page/waiting-page.module';
 import { AletrnativeSecondStagePageModule } from './alternative-second-stage-page/alertnative-second-stage-page.module';
+import { GameOverModule } from './gameover/gameover.module';
 
 
 @NgModule({
@@ -25,6 +26,7 @@ import { AletrnativeSecondStagePageModule } from './alternative-second-stage-pag
         BrowserModule,
         AppRoutingModule,
         HomeModule,
+        GameOverModule,
         FarmerModule,
         BusinessmanModule,
         SupervisorModule,

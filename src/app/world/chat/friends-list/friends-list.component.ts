@@ -28,18 +28,20 @@ export class FriendsListComponent implements OnInit {
         this.chatService.loadFriendsList(this.idJogo, this.idPessoa).subscribe(
             (data: PersonSimplified[]) => {
                 console.log(this.friendsList);
-                this.friendsList.clear();
-                console.log(this.friendsList);
-                data.forEach(person => {
-                    console.log('Key: ' + person.nomeCurto);
-                    this.friendsList.set(person.nomeCurto, {friend: person, hasNewMessage: false} as FriendCell);
-                });
-                this.chatService.sharedChatNotifications.subscribe(
-                    (notification: ChatNotification) => this.onChatNotificationReceived(notification)
-                );
-                this.chatService.sharedReadMessages.subscribe(
-                    (friendName: string) => this.onReadMessages(friendName)
-                );
+                if(data != null){
+                    this.friendsList.clear();
+                    console.log(this.friendsList);
+                    data.forEach(person => {
+                        console.log('Key: ' + person.nomeCurto);
+                        this.friendsList.set(person.nomeCurto, {friend: person, hasNewMessage: false} as FriendCell);
+                    });
+                    this.chatService.sharedChatNotifications.subscribe(
+                        (notification: ChatNotification) => this.onChatNotificationReceived(notification)
+                    );
+                    this.chatService.sharedReadMessages.subscribe(
+                        (friendName: string) => this.onReadMessages(friendName)
+                    );
+                }
             }
         );
     }

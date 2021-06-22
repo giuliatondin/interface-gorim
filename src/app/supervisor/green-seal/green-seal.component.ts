@@ -39,7 +39,7 @@ export class GreenSealComponent implements OnInit{
     ngOnInit(){
         this.greenSealService.getInfoAgricultores(this.idJogo, this.cidade).subscribe(
             (data: PersonSimplified[]) => {
-                this.agricultores = data;
+                if(data != null) this.agricultores = data;
             },
             err => console.log(err)
         );

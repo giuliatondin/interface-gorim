@@ -1,6 +1,6 @@
-<div class="history content pt-5 pb-5" *ngIf="(history$ | async) as history">
+<div class="history content pt-5 pb-5">
     <div class="container main__block pt-2 pb-3 pl-3 pr-3">
-        <div class="mb-3">
+        <div class="mb-3"  *ngIf="history != null; else loading">
             <h2 class="text-center pt-2 pb-3">Histórico {{ history.nome }} </h2>
             <mat-accordion *ngFor="let rodada of history.rodadas">
                 <mat-expansion-panel>
@@ -102,5 +102,8 @@
                 </mat-expansion-panel>
             </mat-accordion>
         </div>
+        <ng-template class="mb-3" #loading>
+            <h2>{{ loadingMessage }}</h2>
+        </ng-template>
     </div>
 </div>

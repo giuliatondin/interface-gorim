@@ -7,7 +7,7 @@
                     aria-labelled="sugestao"
                     name="sugestao"
                     (change)="loadSelectOptions($event)"
-                ><!--span class="requiredStar">*</span-->
+                >
                     <div *ngFor="let option of radioOptions; let i=index">
                         <mat-radio-button
                             value="{{ i }}"

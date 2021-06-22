@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatRadioChange } from '@angular/material/radio';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
 import { AlertService } from 'src/app/world/alert/alert.service';
@@ -43,9 +43,6 @@ export class ParcelComponent implements OnInit {
 
     inLineAlertButton: string = 'Nem todos os jogadores começaram o jogo ainda. Aguarde para finalizar a jogada.';
 
-    
-    @Output() tellParentJogadaIsOver: EventEmitter<any> = new EventEmitter();
-
     constructor(
         private produtoService: ProdutoService,
         private formBuilder: FormBuilder,
@@ -62,9 +59,11 @@ export class ParcelComponent implements OnInit {
 
         this.produtoService.sharedProdutos.subscribe(
             (produto: Produto) => {
-                if(produto.nome != ""){
-                    this.quantidades[produto.id-1][produto.preco] += produto.quantidade;
-                    this.webStorageService.setData('agr'+ this.idAgr + 'ParcelQuantidades', this.quantidades);
+                if(produto != null){
+                    if(produto.nome != ""){
+                        this.quantidades[produto.id-1][produto.preco] += produto.quantidade;
+                        this.webStorageService.setData('agr'+ this.idAgr + 'ParcelQuantidades', this.quantidades);
+                    }
                 }
             },
             err => console.log(err)
@@ -257,7 +256,8 @@ export class ParcelComponent implements OnInit {
 
     contaQuantidade(parcela: number, indice: number, event: MatRadioChange){
         if(this.checkedButtons[parcela-1][indice] != 0) {
-            let idProdAntigo, precoAntigo;
+            let idProdAntigo : number;
+            let precoAntigo : number;
             precoAntigo = this.checkedButtons[parcela-1][indice]%10;
             idProdAntigo = Math.floor(this.checkedButtons[parcela-1][indice]/10);
 
@@ -291,7 +291,6 @@ export class ParcelComponent implements OnInit {
     }
 
     verificaFimEtapa(){
-        
         this.subscription = this.counter
             .pipe(
                 flatMap(
@@ -301,14 +300,12 @@ export class ParcelComponent implements OnInit {
             .subscribe(
                 (data: number) => {
                     console.log(data);
-                    if(data > 2) {
+                    if (data == 3) this.finalizarJogada(true, true);
+                    else if(data > 2) {
                         this.liberaBotao = true;
                         this.inLineAlertButton = '';
                     }
-                    else if(data == 0){
-                        this.subscription.unsubscribe();
-                        this.finalizarJogada(true);
-                    }
+                    else if(data == 0) this.finalizarJogada(true);
                 },
                 err => console.log(err)
             );
@@ -326,8 +323,7 @@ export class ParcelComponent implements OnInit {
         return temProdutos;
     }
 
-    finalizarJogada(finishedByMaster: boolean = false){
-        this.tellParentJogadaIsOver.emit(null);
+    finalizarJogada(finishedByMaster: boolean = false, gameover: boolean = false){
         if(
             (
                 !this.hasUnsetProducts() &&
@@ -362,27 +358,33 @@ export class ParcelComponent implements OnInit {
                 parcelas: parcelas,
                 seloVerde: this.parcelasForm.getRawValue().seloVerde
             };
-
-            this.parcelService.postAgricultiristForm(this.idJogo, this.idAgr, postForm)
-                .subscribe(
-                    () => {
-                        if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
-                        else this.alertService.success('Jogada finalizada.', true);
-                        this.subscription.unsubscribe();
-                        this.webStorageService.removeData([
-                            'agr'+ this.idAgr + 'ParcelCheckedButtons',
-                            'agr'+ this.idAgr + 'VendaQuantidadeProdutos',
-                            'agr'+ this.idAgr + 'ParcelPedirSeloVerde',
-                            'agr'+ this.idAgr + 'ParcelQuantidades',
-                            this.idAgr + 'voting'
-                        ]);
-                        this.router.navigate([this.idJogo, 'waitingPage', this.idAgr], { replaceUrl: true });
-                    },
-                    err => {
-                        console.log(err);
-                        this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
-                    }
-                );
+            
+            if (!gameover){
+                this.parcelService.postAgricultiristForm(this.idJogo, this.idAgr, postForm)
+                    .subscribe(
+                        () => {
+                            this.subscription.unsubscribe();
+                            this.webStorageService.removeData([
+                                'agr'+ this.idAgr + 'ParcelCheckedButtons',
+                                'agr'+ this.idAgr + 'VendaQuantidadeProdutos',
+                                'agr'+ this.idAgr + 'ParcelPedirSeloVerde',
+                                'agr'+ this.idAgr + 'ParcelQuantidades',
+                                this.idAgr + 'voting'
+                            ]);
+                                if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
+                                else this.alertService.success('Jogada finalizada.', true);
+                                this.router.navigate([this.idJogo, 'waitingPage', this.idAgr], { replaceUrl: true });
+                        },
+                        err => {
+                            console.log(err);
+                            this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+                        }
+                    );
+            }
+            else{
+                this.alertService.warning('O jogo terminou', true);
+                this.router.navigate([this.idJogo, 'gameover']);
+            }
         }
         else {
             if(this.hasUnsetProducts())

@@ -14,7 +14,9 @@ export class AldermanHistoryComponent implements OnInit {
     idJogo: number;
 
     idVer: number;
-    history$: Observable<AldermanHistory>;
+    history: AldermanHistory;
+
+    loadingMessage: string = 'Aguarde um instante enquanto carregamos os dados';
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -28,7 +30,13 @@ export class AldermanHistoryComponent implements OnInit {
     }
 
     getHistory(){
-        this.history$ = this.empHistoryService.getHitory(this.idJogo, this.idVer);
+        this.empHistoryService.getHitory(this.idJogo, this.idVer).subscribe(
+            (data: AldermanHistory) => {
+                if(data != null) this.history = data;
+                else this.loadingMessage = 'Tivemos um problema ao pegar os dados do servidor, por favor, reinicie a página';
+            },
+            err => console.log(err)
+        );
     }
 
 }

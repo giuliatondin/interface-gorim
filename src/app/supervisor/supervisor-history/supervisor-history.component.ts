@@ -13,7 +13,9 @@ export class SupervisorHistoryComponent implements OnInit {
 
     idJogo: number;
     idFis: number;
-    history$: Observable<SupervisorHistory>;
+    history: SupervisorHistory;
+
+    loadingMessage: string = 'Aguarde um instante enquanto carregamos os dados';
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -27,9 +29,11 @@ export class SupervisorHistoryComponent implements OnInit {
     }
 
     getHistory(){
-        this.history$ = this.fisHistoryService.getHitory(this.idJogo, this.idFis);
         this.fisHistoryService.getHitory(this.idJogo, this.idFis).subscribe(
-            (data: SupervisorHistory) => console.log(data),
+            (data: SupervisorHistory) => {
+                if(data != null) this.history = data;
+                else this.loadingMessage = 'Tivemos um problema ao pegar os dados do servidor, por favor, reinicie a página';
+            },
             err => console.log(err)
         );
     }

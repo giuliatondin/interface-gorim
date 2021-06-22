@@ -45,7 +45,7 @@ export class VotingComponent implements OnInit{
         this.resetForm();
         this.votingService.getInfoPessoas(this.idJogo, this.cidade).subscribe(
             (data: PersonSimplified[]) => {
-                this.candidatosFiscal = data;
+                if(data != null) this.candidatosFiscal = data;
             },
             err => console.log(err)
         );
@@ -96,10 +96,16 @@ export class VotingComponent implements OnInit{
             this.votingForm.get('vereador').value
         ];
         this.votingService.votar(this.idJogo, this.votos).subscribe(
-            () => {
-                this.webStorageService.setData(this.idPessoa + 'voting', this.votos);
-                this.showForm = false
-                this.alertService.success('Votado com sucesso.');
+            (data: boolean) => {
+                if(data){
+                    this.webStorageService.setData(this.idPessoa + 'voting', this.votos);
+                    this.showForm = false;
+                    this.alertService.success('Votado com sucesso.');
+                }
+                else{
+                    this.showForm = true;
+                    this.alertService.warning('Por favor, vote novamente. Algo deu errado.');
+                }
             },
             err => {
                 console.log(err);

@@ -40,18 +40,20 @@ export class AldermanSuggestionComponent implements OnInit {
         this.resetForm();
         this.suggestionService.getInfoPrefeito(this.idJogo, this.idVer).subscribe(
             (data: Mayor) => {
-                let acoes: string[] = [];
-                data.acoesAmbientais.forEach(
-                    acao => acoes.push(acao.tipo)
-                );
-                this.selectData.push(acoes);
-                this.selectData.push(['Baixo', 'Médio', 'Alto']);
-                this.radioOptions.push('Ações Ambientais');
-                let i = 0;
-                do {
-                    i++;
-                    this.radioOptions.push('Taxa ' + i);
-                } while(i < data.taxas.length);
+                if(data != null){
+                    let acoes: string[] = [];
+                    data.acoesAmbientais.forEach(
+                        acao => acoes.push(acao.tipo)
+                    );
+                    this.selectData.push(acoes);
+                    this.selectData.push(['Baixo', 'Médio', 'Alto']);
+                    this.radioOptions.push('Ações Ambientais');
+                    let i = 0;
+                    do {
+                        i++;
+                        this.radioOptions.push('Taxa ' + i);
+                    } while(i < data.taxas.length);
+                }
             },
             err => console.log(err)
         );
@@ -72,7 +74,7 @@ export class AldermanSuggestionComponent implements OnInit {
     enviarSugestao(){        
         let newImposto: Tax = {
             tipo: this.suggestionForm.get('sugestao').value as number - 1,
-            taxa: (this.selector > 0) ? this.suggestionForm.get('especificacao').value : ""
+            taxa: (this.selector > 0) ? this.suggestionForm.get('especificacao').value : ''
         };
 
         let newAcaoAmbiental: string =

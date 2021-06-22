@@ -147,11 +147,13 @@ export class VendaComponent implements OnInit{
             )
             .subscribe(
                 (data: Venda[]) => {
-                    if(this.quantidadeOrcamentos < data.length){
-                        this.quantidadeOrcamentos = data.length;
-                        this.alertService.info('Você tem novos orçamentos');
+                    if(data != null){
+                        if(this.quantidadeOrcamentos < data.length){
+                            this.quantidadeOrcamentos = data.length;
+                            this.alertService.info('Você tem novos orçamentos');
+                        }
+                        this.arrumaOverPurchases(data);
                     }
-                    this.arrumaOverPurchases(data);
                 }
             );
     }

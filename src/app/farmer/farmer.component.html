@@ -1,6 +1,6 @@
 <app-alert></app-alert>
 <div *ngIf="agr != null">    
-    <div class="content pt-5 pb-5"> <!-- *ngIf="(infoAgr$ | async) as agr"> -->
+    <div class="content pt-5 pb-5">
         <div *ngIf="(infoMundo$ | async) as mundo">
             <div class="container main__block pt-2 pb-3 pl-3 pr-3">
             
@@ -29,10 +29,9 @@
                                     [produtos]="produtos"
                                     [idAgr]="idAgr"
                                     [rodada]="mundo.rodada"
-                                    (tellParentJogadaIsOver)="onFinalizarJogada($event)"
                                 ></app-parcel>
                             </mat-tab>
-                            <mat-tab label="Valores dos produtos">
+                            <mat-tab label="Tabelas de Valores">
                                 <app-table-product-values
                                     role='agricultor'
                                     [produtos]="produtos"

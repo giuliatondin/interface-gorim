@@ -3,7 +3,7 @@ import { interval, Observable } from 'rxjs';
 
 import { MasterService } from './master.service';
 import { World } from '../world/world';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { flatMap } from 'rxjs/operators';
 import { AlertService } from '../world/alert/alert.service';
 import { ConfirmingModalService } from '../world/confirming-modal/confirming-modal.service';
@@ -41,7 +41,8 @@ export class MasterComponent implements OnInit {
         private confirmingModalService: ConfirmingModalService,
         private responseModalService: ResponseModalService,
         private webStorageService: WebStorageService,
-        private wsService: WebSocketService
+        private wsService: WebSocketService,
+        private router: Router
     ) { }
 
     ngOnInit(): void {
@@ -148,13 +149,16 @@ export class MasterComponent implements OnInit {
         if(userChoice){
             this.masterService.finalizarEtapa(this.idJogo)
                 .subscribe(
-                    () => {
-                        this.alertService.success('Etapa terminada.');
-                        this.inicioEtapa = new Date().getTime();
-                        this.webStorageService.setData('masterHoraInicioEtapa', this.inicioEtapa);
-                        this.hasUnfinishedPlayers = true;
-                        this.infoMundo$ = this.masterService.getInfoMundo(this.idJogo);
-                        this.putInMundo();
+                    (data: boolean) => {
+                        if(data){
+                            this.alertService.success('Etapa terminada.');
+                            this.inicioEtapa = new Date().getTime();
+                            this.webStorageService.setData('masterHoraInicioEtapa', this.inicioEtapa);
+                            this.hasUnfinishedPlayers = true;
+                            this.infoMundo$ = this.masterService.getInfoMundo(this.idJogo);
+                            this.putInMundo();
+                        }
+                        else this.alertService.danger('Algo deu errado. Etapa não finalizada.');
                     },
                     err => {
                         this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
@@ -162,5 +166,18 @@ export class MasterComponent implements OnInit {
                     }
                 );
         }
+    }
+
+    finalizarJogo(){
+        this.masterService.finalizarJogo(this.idJogo).subscribe(
+            (data: boolean) => {
+                if(data){
+                    this.webStorageService.removeData(['masterHoraInicioEtapa']);
+                    this.alertService.warning('O jogo terminou', true);
+                    this.router.navigate([this.idJogo, 'gameover']);
+                }
+                else this.alertService.danger('Algo deu errado. Tente novamente');
+            }
+        );
     }
 }

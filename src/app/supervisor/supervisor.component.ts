@@ -57,57 +57,60 @@ export class SupervisorComponent implements OnInit {
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
         this.fisService.getInfo(this.idJogo, this.idFis).subscribe(
             (data: Supervisor) => {
-                this.infoMundo$ = this.fisService.getInfoMundo(this.idJogo);
-                this.nomeCurto = (data.cidade == 'Atlantis') ? 'FisfAT' : 'FisCD';
+                if(data != null){
+                    this.infoMundo$ = this.fisService.getInfoMundo(this.idJogo);
+                    this.nomeCurto = (data.cidade == 'Atlantis') ? 'FisfAT' : 'FisCD';
 
-                this.wsService.changeConnection((this.nomeCurto + this.idJogo), this.nomeCurto, (this.nomeCurto + this.idFis), this.fisService);
+                    this.wsService.changeConnection((this.nomeCurto + this.idJogo), this.nomeCurto, (this.nomeCurto + this.idFis), this.fisService);
 
-                this.chatInfo = {
-                    nomePessoa: this.nomeCurto,
-                    idPessoa: data.id,
-                    idJogo: this.idJogo,
-                    role: 'prefeito',
-                    cidade: data.cidade
-                } as ChatInfo;
-        
-                if(this.webStorageService.hasData('fis'+ this.idFis + 'Fines'))
-                    this.fines = this.webStorageService.getData('fis'+ this.idFis + 'Fines') as Fine[];
-                this.webStorageService.setData('fis'+ this.idFis + 'Fines', this.fines);
-        
-                this.fineService.sharedFines.subscribe(
-                    (fine: Fine) => {
-                        if(fine.idPessoa != 0){
-                            this.fines.push(fine);
-                            this.webStorageService.setData('fis'+ this.idFis + 'Fines', this.fines);
-                        }
-                    },
-                    err => console.log(err)
-                );
-                
-                if(this.webStorageService.hasData('fis'+ this.idFis + 'GreenSeals'))
-                    this.greenSeals = this.webStorageService.getData('fis'+ this.idFis + 'GreenSeals') as GreenSeal[];
-                this.webStorageService.setData('fis'+ this.idFis + 'GreenSeals', this.greenSeals);
-        
-                this.greenSealService.sharedGreenSeals.subscribe(
-                    (greenSeal: GreenSeal) => {
-                        if(greenSeal.idAgr != 0){
-                            console.log(greenSeal);
-                            this.greenSeals.push(greenSeal);
-                            this.webStorageService.setData('fis'+ this.idFis + 'GreenSeals', this.greenSeals);
-                        }
-                    },
-                    err => console.log(err)
-                );
-        
-                this.fineService.getInfoPessoas(this.idJogo, data.cidade).subscribe(
-                    (data: PersonSimplified[]) => {
-                        console.log(data);
-                        this.pessoas = data;
-                    },
-                    err => console.log(err)
-                );
+                    this.chatInfo = {
+                        nomePessoa: this.nomeCurto,
+                        idPessoa: data.id,
+                        idJogo: this.idJogo,
+                        role: 'prefeito',
+                        cidade: data.cidade
+                    } as ChatInfo;
+            
+                    if(this.webStorageService.hasData('fis'+ this.idFis + 'Fines'))
+                        this.fines = this.webStorageService.getData('fis'+ this.idFis + 'Fines') as Fine[];
+                    this.webStorageService.setData('fis'+ this.idFis + 'Fines', this.fines);
+            
+                    this.fineService.sharedFines.subscribe(
+                        (fine: Fine) => {
+                            if(fine.idPessoa != 0){
+                                this.fines.push(fine);
+                                this.webStorageService.setData('fis'+ this.idFis + 'Fines', this.fines);
+                            }
+                        },
+                        err => console.log(err)
+                    );
+                    
+                    if(this.webStorageService.hasData('fis'+ this.idFis + 'GreenSeals'))
+                        this.greenSeals = this.webStorageService.getData('fis'+ this.idFis + 'GreenSeals') as GreenSeal[];
+                    this.webStorageService.setData('fis'+ this.idFis + 'GreenSeals', this.greenSeals);
+            
+                    this.greenSealService.sharedGreenSeals.subscribe(
+                        (greenSeal: GreenSeal) => {
+                            if(greenSeal.idAgr != 0){
+                                console.log(greenSeal);
+                                this.greenSeals.push(greenSeal);
+                                this.webStorageService.setData('fis'+ this.idFis + 'GreenSeals', this.greenSeals);
+                            }
+                        },
+                        err => console.log(err)
+                    );
+            
+                    this.fineService.getInfoPessoas(this.idJogo, data.cidade).subscribe(
+                        (data: PersonSimplified[]) => {
+                            console.log(data);
+                            this.pessoas = data;
+                        },
+                        err => console.log(err)
+                    );
 
-                this.infoFis = data;
+                    this.infoFis = data;
+                }
+                else this.alertService.warning('Algo deu errado ao carregar os dados, por favor, reinicie a página.');
             },
             err => console.log(err)
         );
@@ -144,17 +147,15 @@ export class SupervisorComponent implements OnInit {
             .subscribe(
                 (data: number) => {
                     console.log(data);
-                    if(data > 2) this.liberaBotao = true;
-                    else if(data == 0){
-                        this.subscription.unsubscribe();
-                        this.finalizarJogada(true);
-                    }
+                    if(data == 3) this.finalizarJogada(true, true);
+                    else if(data > 2) this.liberaBotao = true;
+                    else if(data == 0) this.finalizarJogada(true);
                 },
                 err => console.log(err)
             );
     }
 
-    finalizarJogada(finishedByMaster: boolean = false){
+    finalizarJogada(finishedByMaster: boolean = false, gameover: boolean = false){
         this.fisService.finalizaJogada(
             this.idJogo,
             this.idFis,
@@ -165,14 +166,18 @@ export class SupervisorComponent implements OnInit {
         ).subscribe(
             () => {
                 this.subscription.unsubscribe();
-                if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
-                else this.alertService.success('Jogada finalizada.', true);
                 this.webStorageService.removeData([
                     'fine' + this.idFis + 'pessoasMultadas',
                     'fis'+ this.idFis + 'Fines',
                     'fis'+ this.idFis + 'GreenSeals'
                 ]);
-                this.router.navigate([this.idJogo, 'waitingPage', this.idFis]);
+                if(!gameover){
+                    if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
+                    else this.alertService.success('Jogada finalizada.', true);
+                    this.router.navigate([this.idJogo, 'waitingPage', this.idFis]);
+                }
+                this.alertService.warning('O jogo terminou', true);
+                this.router.navigate([this.idJogo, 'gameover']);
             },
             err => {
                 console.log(err);

@@ -44,7 +44,9 @@ export class ChatRoomComponent implements OnInit, AfterViewChecked {
         this.isFirstLoad = true;
 
         this.chatService.loadMessages(this.idChatPessoa, this.idChatAmigo).subscribe(
-            (data: Message[]) => this.messages = data,
+            (data: Message[]) => {
+                if(data != null) this.messages = data
+            },
             (err) => console.log(err)
         );
         this.inicializaForm();

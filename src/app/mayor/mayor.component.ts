@@ -132,17 +132,15 @@ export class MayorComponent implements OnInit {
             .subscribe(
                 (data: number) => {
                     console.log(data);
-                    if(data > 2) this.liberaBotao = true;
-                    else if(data == 0){
-                        this.subscription.unsubscribe();
-                        this.finalizarJogada(true);
-                    }
+                    if (data == 3) this.finalizarJogada(true, true);
+                    else if(data > 2) this.liberaBotao = true;
+                    else if(data == 0) this.finalizarJogada(true);
                 },
                 err => console.log(err)
             );
     }
 
-    finalizarJogada(finishedByMaster: boolean = false){
+    finalizarJogada(finishedByMaster: boolean = false, gameover: boolean = false){
         this.prefService.finalizaJogada(
             this.idJogo,
             this.idPref,
@@ -154,8 +152,6 @@ export class MayorComponent implements OnInit {
         .subscribe(
             () => {
                 this.subscription.unsubscribe();
-                if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
-                else this.alertService.success('Jogada finalizada.', true);
                 this.webStorageService.removeData([
                     'envivonmentalAction' + this.idPref + 'formControl',
                     'envivonmentalAction' + this.idPref + 'anyDisabled',
@@ -163,7 +159,13 @@ export class MayorComponent implements OnInit {
                     'pref'+ this.idPref + 'environmentalActions',
                     'pref'+ this.idPref + 'taxes'
                 ]);
-                this.router.navigate([this.idJogo, 'waitingPage', this.idPref]);
+                if(!gameover){
+                    if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
+                    else this.alertService.success('Jogada finalizada.', true);
+                    this.router.navigate([this.idJogo, 'waitingPage', this.idPref]);
+                }
+                this.alertService.warning('O jogo terminou', true);
+                this.router.navigate([this.idJogo, 'gameover']);
             },
             err => {
                 console.log(err);

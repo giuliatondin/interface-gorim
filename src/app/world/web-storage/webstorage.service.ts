@@ -38,4 +38,8 @@ export class WebStorageService {
             }
         );
     }
+
+    clearAll(){
+        window.localStorage.clear();
+    }
 }

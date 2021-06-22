@@ -8,7 +8,7 @@ export class Dictionary {
              */
             ['rodada']:                     'Rodada',
             ['etapa']:                      'Etapa',
-            ['poluicao_mundial']:           'PoluiÁ„o Mundial',
+            ['poluicao_mundial']:           'Polui√ß√£o Mundial',
             ['eleitos']:                    'Eleitos',
             ['terminar_etapa']:             'Terminar etapa',
             ['nome']:                       'Nome',
@@ -21,26 +21,26 @@ export class Dictionary {
             ['valores_produtos']:           'Valores de Produtos',
             ['semente']:                    'Semente',
             ['fertilizante']:               'Fertilizante',
-            ['maquina']:                    'M·quina',
-            ['agrotoxico']:                 'AgrotÛxico',
-            ['hortalica']:                  'HortaliÁa',
+            ['maquina']:                    'M√°quina',
+            ['agrotoxico']:                 'Agrot√≥xico',
+            ['hortalica']:                  'Hortali√ßa',
             ['arroz']:                      'Arroz',
             ['soja']:                       'Soja',
             ['comum']:                      'Comum',
             ['premium']:                    'Premium',
             ['super premium']:              'Super Premium',
-            ['maquinas 1']:                 'Pacote de M·quina 1',
-            ['maquinas 2']:                 'Pacote de M·quina 2',
-            ['maquinas 3']:                 'Pacote de M·quina 3',
+            ['maquinas 1']:                 'Pacote de M√°quina 1',
+            ['maquinas 2']:                 'Pacote de M√°quina 2',
+            ['maquinas 3']:                 'Pacote de M√°quina 3',
             ['pulverizador']:               'Pulverizador',
             ['sim']:                        'Sim',
-            ['nao']:                        'N„o',
+            ['nao']:                        'N√£o',
             ['nenhum']:                     'Nenhum',
             ['baixa']:                      'Baixa',
-            ['media']:                      'MÈdia',
+            ['media']:                      'M√©dia',
             ['alta']:                       'Alta',
             ['marcar_todas']:               'Marcar todas',
-            ['abrir_historico']:            'Abrir histÛrico',
+            ['abrir_historico']:            'Abrir hist√≥rico',
 
             /**
              * TRANSFER
@@ -54,7 +54,7 @@ export class Dictionary {
             ['novo_jogo']:                  'Novo jogo',
             ['qntd_jogadores']:             'Quantidade de jogadores',
             ['pelo_menos']:                 'Pelo menos',
-            ['comecar']:                    'ComeÁar',
+            ['comecar']:                    'Come√ßar',
             ['ingressar']:                  'Ingressar em um jogo',
             ['id_jogo']:                    'ID do jogo',
             ['personagem']:                 'Personagem',
@@ -67,21 +67,21 @@ export class Dictionary {
             ['produtividade_mundial']:      'Produtividade Mundial',
             ['status_jogadores']:           'Status dos jogadores na etapa',
             ['terminou']:                   'Terminou',
-            ['nao_terminou']:               'N„o terminou',
+            ['nao_terminou']:               'N√£o terminou',
 
             /**
              * EMPRESARIO
              */
             ['empresario']:                 'Empresario',
-            ['orcamentos']:                 'OrÁamentos',
-            ['fazer_orcamento']:            'Fazer orÁamento',
+            ['orcamentos']:                 'Or√ßamentos',
+            ['fazer_orcamento']:            'Fazer or√ßamento',
             ['cliente']:                    'Cliente',
             ['quantia']:                    'Quantia',
-            ['preco']:                      'PreÁo',
+            ['preco']:                      'Pre√ßo',
             // TEXTS
-            ['emp_text_sidebar']:           'Respostas dos Agricultores para os orÁamentos',
+            ['emp_text_sidebar']:           'Respostas dos Agricultores para os or√ßamentos',
             // INFOS
-            ['emp_info_sidebar']:           'Ainda n„o h· respostas',
+            ['emp_info_sidebar']:           'Ainda n√£o h√° respostas',
 
             /**
              * AGRICULTOR
@@ -91,15 +91,15 @@ export class Dictionary {
             ['p_x']:                        'P', // usado na interface do fiscal para dar selo verde
             ['pedir_sv']:                   'Pedir Selo Verde',
             // TEXTS
-            ['agr_text_sidebar']:           'OrÁamentos enviados pelos Empres·rios',
+            ['agr_text_sidebar']:           'Or√ßamentos enviados pelos Empres√°rios',
             // INFO
-            ['agr_info_sidebar']:           'Sem orÁamentos. FaÁa um pedido a um Empresario',
+            ['agr_info_sidebar']:           'Sem or√ßamentos. Fa√ßa um pedido a um Empresario',
 
             /**
              * FISCAL
              */
             ['fiscal']:                     'Fiscal Ambiental',
-            ['acoes']:                      'AÁıes', // usado tambÈm no prefeito e no vereador
+            ['acoes']:                      'A√ß√µes', // usado tamb√©m no prefeito e no vereador
             ['multar']:                     'Multar',
             ['tipo_multa']:                 'Tipo de Multa',
             ['selo_verde']:                 'Selo Verde',
@@ -110,35 +110,35 @@ export class Dictionary {
             ['fis_text_sv']:                'Selos verdes a serem processados no fim da jogada',
             ['fis_text_sidebar']:           'Agricultores que pediram Selo Verde',
             // INFO
-            ['fis_info_multa']:             'Ainda n„o foram adicionadas multas',
-            ['fis_info_sv']:                'Ainda n„o foram adicionados Selos Verdes',
+            ['fis_info_multa']:             'Ainda n√£o foram adicionadas multas',
+            ['fis_info_sv']:                'Ainda n√£o foram adicionados Selos Verdes',
 
             /**
              * PREFEITO
              */
             ['prefeito']:                   'Prefeito',
-            ['usar_aa']:                    'Usar AÁ„o Ambiental',
+            ['usar_aa']:                    'Usar A√ß√£o Ambiental',
             ['mudar_taxa']:                 'Mudar taxa de imposto',
-            ['agua']:                       '¡gua',
+            ['agua']:                       '√Ågua',
             ['lixo']:                       'Lixo',
             ['esgoto']:                     'Esgoto',
             ['tipo_taxa']:                  'Tipo',
             // TEXTS
-            ['pref_text_aa']:               'AÁıes Ambientaisa serem aplicadas no fim da jogada',
+            ['pref_text_aa']:               'A√ß√µes Ambientaisa serem aplicadas no fim da jogada',
             ['pref_text_taxa']:             'Taxas a serem mudadas no fim da jogada',
-            ['pref_text_sidebar']:          'Sugestıes do Vereador',
+            ['pref_text_sidebar']:          'Sugest√µes do Vereador',
             // INFO
-            ['pref_info_aa']:               'Ainda n„o foram adicionadas AÁıes Ambientais',
-            ['pref_info_taxa']:             'Ainda n„o foram adicionadas mudanÁas de taxa',
-            ['pref_info_sidebar']:          'Ainda n„o foram enviadas sugestıes',
+            ['pref_info_aa']:               'Ainda n√£o foram adicionadas A√ß√µes Ambientais',
+            ['pref_info_taxa']:             'Ainda n√£o foram adicionadas mudan√ßas de taxa',
+            ['pref_info_sidebar']:          'Ainda n√£o foram enviadas sugest√µes',
 
             /**
              * VEREADOR
              */
             ['vereador']:                   'Vereador',
-            ['fazer_sugestao']:             'Fazer sugest„o para o Prefeito',
+            ['fazer_sugestao']:             'Fazer sugest√£o para o Prefeito',
             // TEXTS
-            ['ver_text_sidebar']:           'Respostas do Prefeito para sugestıes enviadas',
+            ['ver_text_sidebar']:           'Respostas do Prefeito para sugest√µes enviadas',
             // INFO
             ['ver_info_sidebar']:           'Ainda sem respostas'
 
@@ -245,7 +245,7 @@ export class Dictionary {
              * FISCAL
              */
             ['fiscal']:                     'Environmental Supervisor',
-            ['acoes']:                      'Actions', // usado tambÈm no prefeito e no vereador
+            ['acoes']:                      'Actions', // usado tamb√©m no prefeito e no vereador
             ['multar']:                     'Fine',
             ['tipo_multa']:                 'Fine type',
             ['selo_verde']:                 'Green Seal',
