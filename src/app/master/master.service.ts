@@ -26,15 +26,9 @@ export class MasterService{
         );
     }
 
-    getEntrepreuners(idJogo: number){
+    finalizarJogo(idJogo: number){
         return this.httpClient.get(
-            API + '/' + idJogo + MASTER_ROUTE + '/empresarios'
-        );
-    }
-
-    getFarmers(idJogo: number){
-        return this.httpClient.get(
-            API + '/' + idJogo + MASTER_ROUTE + '/agricultores'
+            API + '/' + idJogo + MASTER_ROUTE + '/finalizarJogo'
         );
     }
 

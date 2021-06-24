@@ -29,7 +29,7 @@ export class TransferComponent implements OnInit {
         this.transferService.getInfoPessoas(this.idJogo)
             .subscribe(
                 (data: PersonSimplified[]) => {
-                    this.pessoas = data;
+                    if(data != null) this.pessoas = data;
                 },
                 err => console.log(err)
             );
@@ -48,9 +48,15 @@ export class TransferComponent implements OnInit {
         formData.quantia = aux as unknown as number;
         this.transferService.postTransfer(this.idJogo, formData)
             .subscribe(
-                () => {
-                    this.alertService.success('Transferência enviada.');
-                    this.transferForm.reset();
+                (data: boolean) => {
+                    if(data){
+                        this.alertService.success('Transferência enviada.');
+                        this.transferForm.reset();
+                    }
+                    else {
+                        this.alertService.warning('Transferência não enviada. Tente novamente.');
+                        this.transferForm.reset();
+                    }
                 },
                 err => {
                     this.alertService.danger('Algo deu errado. Por favor, tente novamente.');

@@ -12,7 +12,9 @@ import { FarmerHistoryService } from './farmer-history.service';
 export class FarmerHistoryComponent implements OnInit {
     idJogo: number;
     idAgr: number;
-    history$: Observable<FarmerHistory>;
+    history: FarmerHistory;
+
+    loadingMessage: string = 'Aguarde um instante enquanto carregamos os dados';
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -26,7 +28,12 @@ export class FarmerHistoryComponent implements OnInit {
     }
 
     getHistory(){
-        this.history$ = this.agrHistoryService.getHistory(this.idJogo, this.idAgr);
+        this.agrHistoryService.getHistory(this.idJogo, this.idAgr).subscribe(
+            (data: FarmerHistory) => {
+                if(data != null) this.history = data;
+                else this.loadingMessage = 'Tivemos um problema ao pegar os dados do servidor, por favor, reinicie a página';
+            }
+        );
     }
 
     isMaquina(produto: string){

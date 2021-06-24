@@ -58,49 +58,53 @@ export class BusinessmanComponent implements OnInit {
         this.empService.getInfo(this.idJogo, this.idEmp)
             .subscribe(
                 (data: Businessman) => {
-                    this.emp = data;
-                    this.infoMundo$ = this.empService.getInfoMundo(this.idJogo);
-                    
-                    this.chatInfo = {
-                        nomePessoa: data.nome,
-                        idPessoa: data.id,
-                        idJogo: this.idJogo,
-                        role: 'empresario',
-                        cidade: data.cidade
-                    } as ChatInfo;
-                    
-                    this.webStorageService.setData(
-                        this.idJogo + 'papel',
-                        JSON.stringify(this.chatInfo)
-                    );
-
-                    if(this.wsService.isConnected()){
-                        this.wsService.config(
-                            this.emp.nome + this.idJogo,
-                            this.emp.nome,
-                            this.emp.nome + this.idEmp,
-                            this.empService
+                    if(data != null){
+                        this.emp = data;
+                        this.infoMundo$ = this.empService.getInfoMundo(this.idJogo);
+                        
+                        this.chatInfo = {
+                            nomePessoa: data.nome,
+                            idPessoa: data.id,
+                            idJogo: this.idJogo,
+                            role: 'empresario',
+                            cidade: data.cidade
+                        } as ChatInfo;
+                        
+                        this.webStorageService.setData(
+                            this.idJogo + 'papel',
+                            JSON.stringify(this.chatInfo)
                         );
-                        this.wsService.connect();
-                    }
-                    else {
-                        this.wsService.changeConnection(
-                            this.emp.nome + this.idJogo,
-                            this.emp.nome,
-                            this.emp.nome + this.idEmp,
-                            this.empService
-                        );
-                    }
 
-                    this.arrumaProdutos();
+                        if(this.wsService.isConnected()){
+                            this.wsService.config(
+                                this.emp.nome + this.idJogo,
+                                this.emp.nome,
+                                this.emp.nome + this.idEmp,
+                                this.empService
+                            );
+                            this.wsService.connect();
+                        }
+                        else {
+                            this.wsService.changeConnection(
+                                this.emp.nome + this.idJogo,
+                                this.emp.nome,
+                                this.emp.nome + this.idEmp,
+                                this.empService
+                            );
+                        }
+
+                        this.arrumaProdutos();
+                    }
+                    else this.alertService.warning('Algo deu errado. Por favor, reinicie a página.');
                 }
             );
 
         this.empService.getInfoAgricultores(this.idJogo)
             .subscribe(
                 (data: PersonSimplified[]) => {
-                    this.nomeAgricultores = data;
-                }
+                    if(data != null) this.nomeAgricultores = data;
+                },
+                err => console.log(err)
             );
         
         this.verificaFimEtapa();
@@ -134,20 +138,18 @@ export class BusinessmanComponent implements OnInit {
             .subscribe(
                 (data: number) => {
                     console.log(data);
-                    if(data > 2) {
+                    if (data == 3) this.finalizarJogada(true, true);
+                    else if(data > 2) {
                         this.liberaBotao = true;
                         this.inLineAlertButton = '';
                     }
-                    else if(data == 0){
-                        this.subscription.unsubscribe();
-                        this.finalizarJogada(true);
-                    }
+                    else if(data == 0) this.finalizarJogada(true);
                 },
                 err => console.log(err)
             );
     }
 
-    finalizarJogada(finishedByMaster: boolean = false){
+    finalizarJogada(finishedByMaster: boolean = false, gameover: boolean = false){
         if(
             this.webStorageService.getData(this.idEmp + 'voting') != true ||
             finishedByMaster
@@ -156,13 +158,17 @@ export class BusinessmanComponent implements OnInit {
                 .subscribe(
                     () => {
                         this.subscription.unsubscribe();
-                        if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
-                        else this.alertService.success('Jogada finalizada.', true);
                         this.webStorageService.removeData([
                             'orderProduct' + this.idEmp + 'idOrcamento',
                             this.idEmp + 'voting'
                         ]);
-                        this.router.navigate([this.idJogo, 'waitingPage', this.idEmp]);
+                        if(!gameover){
+                            if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
+                            else this.alertService.success('Jogada finalizada.', true);
+                            this.router.navigate([this.idJogo, 'waitingPage', this.idEmp]);
+                        }
+                        this.alertService.warning('O jogo terminou', true);
+                        this.router.navigate([this.idJogo, 'gameover']);
                     },
                     err => {
                         console.log(err);

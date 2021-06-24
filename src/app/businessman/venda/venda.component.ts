@@ -37,11 +37,13 @@ export class VendaComponent implements OnInit{
             )
             .subscribe(
                 (data: Venda[]) => {
-                    if(this.quantidadeOrcamentos < data.length){
-                        this.quantidadeOrcamentos = data.length;
-                        this.alertService.info('Você tem novas respostas de agricultores');
+                    if(data != null){
+                        if(this.quantidadeOrcamentos < data.length){
+                            this.quantidadeOrcamentos = data.length;
+                            this.alertService.info('Você tem novas respostas de agricultores');
+                        }
+                        this.orcamentos = data;
                     }
-                    this.orcamentos = data;
                 }
             );
     }

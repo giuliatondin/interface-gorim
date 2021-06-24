@@ -20,7 +20,7 @@ export class FarmerComponent implements OnInit {
     infoAgr$: Observable<Farmer>;
     idAgr: number;
 
-    agr: Farmer = null;//{} as Farmer;
+    agr: Farmer = null;
 
     existProducts = true;
 
@@ -63,9 +63,7 @@ export class FarmerComponent implements OnInit {
                     this.agr.nome + this.idAgr,
                     this.agrService
                 );
-                this.wsService.connect(
-                    /*this.agr.nome + this.idAgr*/
-                );
+                this.wsService.connect();
             }
         );
 
@@ -81,10 +79,6 @@ export class FarmerComponent implements OnInit {
     isElectionTurn(rodada: number){
         if((rodada-1)%2 == 0 && rodada != 1) return true;
         return false;
-    }
-
-    onFinalizarJogada($event){
-        //
     }
 
 }

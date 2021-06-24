@@ -32,7 +32,7 @@ export class FineComponent implements OnInit{
     ngOnInit(){
         this.fineService.getInfoPessoas(this.idJogo, this.cidade).subscribe(
             (data: PersonSimplified[]) => {
-                this.pessoas = data;
+                if(data != null) this.pessoas = data;
             },
             err => console.log(err)
         );

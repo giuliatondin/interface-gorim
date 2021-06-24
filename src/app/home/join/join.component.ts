@@ -72,8 +72,11 @@ export class JoinComponent implements OnInit{
         
         this.loginLogoutService.login(this.idJogo, idPessoa, this.pessoas[idPessoa-1].nome).subscribe(
             (data: LoginBodyResponse) => {
-                this.webStorageService.setData('authToken', data.token);
-                this.router.navigate([this.idJogo, role, idPessoa]);//, { replaceUrl: true });
+                if(data != null){
+                    this.webStorageService.setData('authToken', data.token);
+                    this.router.navigate([this.idJogo, role, idPessoa]);//, { replaceUrl: true });
+                }
+                else this.alertService.warning('Tente novamente com outro id');
             },
             err => {
                 console.log(err);

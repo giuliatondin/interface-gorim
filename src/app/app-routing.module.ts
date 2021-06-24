@@ -16,12 +16,16 @@ import { MayorComponent } from './mayor/mayor.component';
 import { MayorHistoryComponent } from './mayor/mayor-history/mayor-history.component';
 import { AldermanComponent } from './alderman/alderman.component';
 import { AldermanHistoryComponent } from './alderman/alderman-history/alderman-history.component';
+import { GameOverComponent } from './gameover/gameover.component';
 
 const routes: Routes = [
     {
-        //Welcome page
-        path: '', 
+        path: '', // home
         component: HomeComponent
+    },
+    {
+        path: ':idJogo/gameover', //gameover
+        component: GameOverComponent
     },
     {
         path: ':idJogo/empresario/:idEmp', //businessman 

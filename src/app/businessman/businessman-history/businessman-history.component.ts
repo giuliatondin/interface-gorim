@@ -12,7 +12,9 @@ import { BusinessmanHistoryService } from './businessman-history.service';
 export class BusinessmanHistoryComponent implements OnInit {
     idJogo: number;
     idEmp: number;
-    history$: Observable<BusinessmanHistory>;
+    history: BusinessmanHistory;
+
+    loadingMessage: string = 'Aguarde um instante enquanto carregamos os dados';
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -22,17 +24,17 @@ export class BusinessmanHistoryComponent implements OnInit {
     ngOnInit(): void {
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
         this.idEmp = this.activatedRoute.snapshot.params.idEmp;
-        this.empHistoryService.getHitory(this.idJogo, this.idEmp).subscribe(
-            (data: BusinessmanHistory) => console.log(data),
-            err => console.log(err)
-        );
         this.getHistory();
     }
 
     getHistory(){
-        this.history$ = this.empHistoryService.getHitory(this.idJogo, this.idEmp);
-
-        
+        this.empHistoryService.getHitory(this.idJogo, this.idEmp).subscribe(
+            (data: BusinessmanHistory) => {
+                if(data != null) this.history = data;
+                else this.loadingMessage = 'Tivemos um problema ao pegar os dados do servidor, por favor, reinicie a página';
+            },
+            err => console.log(err)
+        );
     }
 
 }

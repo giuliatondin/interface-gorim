@@ -71,7 +71,11 @@ export class AlternativeSecondStagePageComponent implements OnInit {
             .subscribe(
                 (data: number) => {
                     console.log(data);
-                    if(data == 0){
+                    if(data == 3){
+                        this.subscription.unsubscribe();
+                        this.router.navigate([this.idJogo, 'gameover']);
+                    }
+                    else if(data == 0){
                         this.subscription.unsubscribe();
                         this.router.navigate([this.idJogo, this.chatInfo.role, this.idPessoa]);
                     }

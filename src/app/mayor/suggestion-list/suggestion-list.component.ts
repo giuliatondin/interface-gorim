@@ -34,11 +34,13 @@ export class SuggestionListComponent implements OnInit{
             )
             .subscribe(
                 (data: AldermanSuggestion[]) => {
-                    if(this.quantidadeSugestoes < data.length){
-                        this.quantidadeSugestoes = data.length;
-                        this.alertService.info('Você tem novas sugestões do Vereador.');
+                    if(data != null){
+                        if(this.quantidadeSugestoes < data.length){
+                            this.quantidadeSugestoes = data.length;
+                            this.alertService.info('Você tem novas sugestões do Vereador.');
+                        }
+                        this.suggestions = data;
                     }
-                    this.suggestions = data;
                 }
             );
     }

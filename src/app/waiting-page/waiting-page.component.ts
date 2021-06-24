@@ -45,17 +45,11 @@ export class WaitingPageComponent implements OnInit{
         this.waitingPageService.getInfoMundo(this.idJogo)
             .subscribe(
                 (data: World) => {
-                    this.infoMundo = data;
-                    this.verificaFimEtapa();
-
-                    // this.wsService.config(
-                    //     this.chatInfo.nomePessoa + this.idJogo,
-                    //     this.chatInfo.nomePessoa,
-                    //     this.waitingPageService
-                    // );
-                    // this.wsService.connect(
-                    //     this.chatInfo.nomePessoa + this.chatInfo.idPessoa
-                    // );
+                    if(data != null){
+                        this.infoMundo = data;
+                        this.verificaFimEtapa();
+                    }
+                    else this.alertService.warning('Algo deu errado ao carregar os dados, por favor, reinicie a página.');
                 },
                 err => console.log(err)
             );
@@ -71,7 +65,6 @@ export class WaitingPageComponent implements OnInit{
             )
             .subscribe(
                 (response: number) => {
-                    console.log(response);
                     if(response == 0) {
                         this.subscription.unsubscribe();
                         if(this.infoMundo.etapa == 1){
@@ -101,20 +94,6 @@ export class WaitingPageComponent implements OnInit{
 
                                         if(id%2 == 0) nome += 'CD';
                                         else nome += 'AT';
-                                        // this.loginLogoutService.logout();
-                                        // this.loginLogoutService.login(this.idJogo, id, nome).subscribe(
-                                        //     (data: LoginBodyResponse) => {
-                                        //         this.webStorageService.setData('authToken', data.token);
-                                        //         this.router.navigate([this.idJogo, papel, id]);
-                                        //     },
-                                        //     err => console.log(err)
-                                        // );
-                                        /*this.wsService.disconnect().subscribe(
-                                            (connected: boolean) => {
-                                                if(!connected)
-                                                    this.router.navigate([this.idJogo, papel, id]);
-                                            }
-                                        );*/
                                         this.router.navigate([this.idJogo, papel, id]);
                                     }
                                 }
@@ -126,9 +105,12 @@ export class WaitingPageComponent implements OnInit{
                                 this.loginLogoutService.logout();
                                 this.loginLogoutService.login(this.idJogo, this.chatInfo.idPessoa, this.chatInfo.nomePessoa);
                             }
-                            console.log(this.chatInfo);
                             this.router.navigate([this.idJogo, this.chatInfo.role, this.chatInfo.idPessoa]);
                         }
+                    }
+                    else if(response == 3){
+                        this.alertService.warning('O jogo terminou.');
+                        this.router.navigate([this.idJogo, 'gameover']);
                     }
                 },
                 err => console.log(err)

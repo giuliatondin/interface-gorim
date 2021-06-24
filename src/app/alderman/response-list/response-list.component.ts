@@ -34,11 +34,13 @@ export class ResponseListComponent implements OnInit {
             )
             .subscribe(
                 (data: AldermanSuggestion[]) => {
-                    if(this.quantidadeRespostas < data.length){
-                        this.quantidadeRespostas = data.length;
-                        this.alertService.info('Você tem novas respostas do Prefeito.');
+                    if(data != null){
+                        if(this.quantidadeRespostas < data.length){
+                            this.quantidadeRespostas = data.length;
+                            this.alertService.info('Você tem novas respostas do Prefeito.');
+                        }
+                        this.responses = data;
                     }
-                    this.responses = data;
                 }
             );
     }

@@ -23,9 +23,11 @@ export class RightSideBarComponent implements OnInit {
         this.masterService.verificaFinalizados(this.idJogo, this.etapa)
             .subscribe(
                 (data: boolean[]) => {
-                    this.finalizadosEtapa = data;
-                    this.verificaFinalizados();
-                    this.getInfoPessoas();
+                    if(data != null){
+                        this.finalizadosEtapa = data;
+                        this.verificaFinalizados();
+                        this.getInfoPessoas();
+                    }
                 },
                 err => console.log(err)
             );
@@ -43,8 +45,10 @@ export class RightSideBarComponent implements OnInit {
             )
             .subscribe(
                 (data: boolean[]) => {
-                    this.finalizadosEtapa = data;
-                    this.getInfoPessoas();
+                    if(data != null){
+                        this.finalizadosEtapa = data;
+                        this.getInfoPessoas();
+                    }
                 },
                 err => console.log(err)
             );
