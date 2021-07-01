@@ -23,8 +23,8 @@ export class TableProductValuesComponent implements OnInit {
             (prod: ProdutoSimplified) => {
                 if(prod.setor == "semente") this.sementes.push(prod)
                 else if(prod.setor == "fertilizante") this.fertilizantes.push(prod);
-                else if(prod.setor == "maquina") this.maquinas.push(prod);
-                else if(prod.setor == "agrotoxico") this.agrotoxicos.push(prod);
+                else if(prod.setor == "máquina") this.maquinas.push(prod);
+                else if(prod.setor == "agrotóxico") this.agrotoxicos.push(prod);
             }
         );
     }

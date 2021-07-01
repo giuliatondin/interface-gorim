@@ -51,11 +51,11 @@ export class TableValuesComponent implements OnInit{
     }
 
     isMaquina(){
-        return (this.tipoEmpresario == "maquina") ? true : false;
+        return (this.tipoEmpresario == "máquina") ? true : false;
     }
 
     isAgrotoxico(){
-        return (this.tipoEmpresario == "agrotoxico") ? true : false;
+        return (this.tipoEmpresario == "agrotóxico") ? true : false;
     }
 
     isFiscal(){
