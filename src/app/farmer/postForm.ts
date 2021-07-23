@@ -1,4 +1,4 @@
-import { Parcel } from './parcel';
+import { Parcel } from './parcel/parcel';
 
 export interface PostForm{
     parcelas: Parcel[];

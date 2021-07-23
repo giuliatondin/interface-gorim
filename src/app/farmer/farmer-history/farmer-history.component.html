@@ -54,24 +54,24 @@
                     </div>
                     <h3><span style="color: grey;">Info Pessoal</span></h3>
                     <div class="row align-items-center">
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-6 mb-3">
                             <div class="history-list-info">Saldo Atual: D${{ rodada.saldoAtual }}</div>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="history-list-info">Poluição Pessoal: {{ rodada.poluicaoPessoal }}</div>
+                        <div class="col-md-6 mb-3">
+                            <div class="history-list-info">Poluição Pessoal: {{ rodada.poluicaoPessoal | number:'.0-2' }}</div>
                         </div>
                     </div>
                     <h3><span style="color: grey;">Info Mundo</span></h3>
                     <div class="row align-items-center">
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-6 mb-3">
                             <div class="history-list-info">Poluição Causada no Mundo: {{ rodada.poluicaoCausadaMundo }}%</div>
                         </div>
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-6 mb-3">
                             <div class="history-list-info">Poluição Mundial: {{ rodada.poluicaoMundial | number:'.0-2' }}%</div>
                         </div>
                     </div>
                     <div class="container row">
-                        <div class="row mb-3">
+                        <div class="row col-md-12 mb-3">
                             <div class="col-md-12">
                                 <b>Ações Ambientais utilizadas pelo Prefeito:</b>
                             </div>
@@ -86,7 +86,7 @@
                                 </div>
                             </ng-template>
                         </div>
-                        <div class="row mb-3">
+                        <div class="row col-md-12 mb-3">
                             <div class="col-md-12">
                                 <b>Taxas de imposto modificadas pelo Prefeito:</b>
                             </div>

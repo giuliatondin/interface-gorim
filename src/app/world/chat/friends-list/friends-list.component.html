@@ -11,7 +11,7 @@
             <div class="list-area">
                 <ul class="friends-listing">
                     <li *ngFor="let friendCell of getFriendsList()">
-                        <button type="button" class="btn btn-light w-100" (click)="openNewRoom(friendCell.friend.nome)">
+                        <button type="button" class="btn btn-light w-100" (click)="openNewRoom(friendCell.friend.nomeCurto)">
                             <div class="container">
                                 <div class="row">
                                     <div class="col-sm">{{ friendCell.friend.nome }}</div>

@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { interval, Observable, Subscription } from 'rxjs';
-import { flatMap } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+
 import { AlertService } from '../world/alert/alert.service';
 import { ChatInfo } from '../world/chat/chat-info';
+import { EC_GAME_STATUS, EC_SUGESTAO_RESPOSTA, GS_FIM_JOGO, GS_MESTRE_TERMINOU_ETAPA, GS_TODOS_JOGADORES_NA_ETAPA } from '../world/constants/constants';
+import { ECGameStatusMessage, GameNotification } from '../world/models/game-notification';
 import { WebSocketService } from '../world/web-socket/web-socket.service';
 import { WebStorageService } from '../world/web-storage/webstorage.service';
 import { World } from '../world/world';
 import { Alderman } from './alderman';
+import { AldermanSuggestion } from './alderman-suggestion/alderman-suggestion';
 import { AldermanService } from './alderman.service';
 
 @Component({
@@ -25,11 +28,11 @@ export class AldermanComponent implements OnInit {
     infoMundo$: Observable<World>;
 
     liberaBotao: boolean = false;
-
-    counter: Observable<number> = interval(10 * 1000);
-    subscription: Subscription;
+    inLineAlertButton: string = 'Nem todos os jogadores começaram o jogo ainda. Aguarde para finalizar a jogada.';
 
     chatInfo: ChatInfo;
+
+    private notificationSubscription: Subscription;
     
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -44,13 +47,16 @@ export class AldermanComponent implements OnInit {
         this.idVer = this.activatedRoute.snapshot.params.idVer;
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
 
+        let etapa: number = 2;
+        this.webStorageService.setData(this.idJogo + 'etapa', etapa);
+
         this.verService.getInfo(this.idJogo, this.idVer).subscribe(
             (data: Alderman) => {
                 if(data != null){
                     this.infoMundo$ = this.verService.getInfoMundo(this.idJogo);
                     this.nomeCurto = (data.cidade == 'Atlantis') ? 'VerAT' : 'VerCD';
 
-                    this.wsService.changeConnection((this.nomeCurto + this.idJogo), this.nomeCurto, (this.nomeCurto + this.idVer), this.verService);
+                    this.wsService.changeConnection((this.nomeCurto + this.idJogo), (this.nomeCurto + this.idVer));
 
                     this.chatInfo = {
                         nomePessoa: this.nomeCurto,
@@ -60,53 +66,73 @@ export class AldermanComponent implements OnInit {
                         cidade: data.cidade
                     } as ChatInfo;
 
+                    this.notificationSubscription = this.wsService.sharedNewGameNotification.subscribe(
+                        (notification: GameNotification) => {
+                            if(notification != null){
+                                if(notification.code == EC_SUGESTAO_RESPOSTA){
+                                    let suggestionResponse: AldermanSuggestion = notification.message as AldermanSuggestion;
+                                    this.verService.nextNewSuggestionResponses(suggestionResponse);
+                                }
+                                else if(notification.code == EC_GAME_STATUS){
+                                    let gameStatus: ECGameStatusMessage = notification.message as ECGameStatusMessage;
+                                    if (gameStatus.etapa == 2) this.processaGameStatus(gameStatus.status);
+                                }
+                            }
+                        }
+                    );
+
+                    this.verService.verificaTodosComecaramEtapa(this.idJogo, 2).subscribe(
+                        (data: number) => {
+                            if(data == 0) this.processaGameStatus(GS_TODOS_JOGADORES_NA_ETAPA);
+                            else if(data == -2 || data == GS_FIM_JOGO) this.finalizaJogada(true, true);
+                        },
+                        err => console.log(err)
+                    );
+
                     this.infoVer = data;
                 }
                 else this.alertService.warning('Algo deu errado ao carregar os dados, por favor, reinicie a página.');
             },
             err => console.log(err)
         );
-        this.verificaFimEtapa();
     }
 
-    verificaFimEtapa(){
-        this.subscription = this.counter
-            .pipe(
-                flatMap(
-                    () => this.verService.verificaFimEtapa(this.idJogo, 2)
-                )
-            )
-            .subscribe(
-                (data: number) => {
-                    console.log(data);
-                    if (data == 3) this.finalizaJogada(true, true);
-                    else if(data > 2) this.liberaBotao = true;
-                    else if(data == 0) this.finalizaJogada(true);
-                },
-                err => console.log(err)
-            );
+    processaGameStatus(status: number){
+        if (status == GS_FIM_JOGO) this.finalizaJogada(true, true);
+        else if(status == GS_TODOS_JOGADORES_NA_ETAPA){
+            this.liberaBotao = true;
+            this.inLineAlertButton = '';
+        }
+        else if(status == GS_MESTRE_TERMINOU_ETAPA) this.finalizaJogada(true);
     }
 
     finalizaJogada(finishedByMaster: boolean = false, gameover: boolean = false){
-        this.verService.finalizaJogada(this.idJogo, this.idVer)
-            .subscribe(
+        if(gameover) {
+            this.webStorageService.removeData(['suggestion' + this.idVer + 'idSugestao']);
+            
+            this.alertService.warning('O jogo terminou', true);
+                    
+            this.notificationSubscription.unsubscribe();
+            this.router.navigate([this.idJogo, 'gameover']);
+        }
+        else {
+            this.webStorageService.setData('hasMasterFinishedStage', finishedByMaster);
+            this.verService.finalizaJogada(this.idJogo, this.idVer).subscribe(
                 () => {
-                    this.subscription.unsubscribe();
                     this.webStorageService.removeData(['suggestion' + this.idVer + 'idSugestao']);
-                    if(!gameover){
-                        if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
-                        else this.alertService.success('Jogada finalizada.', true);
-                        this.router.navigate([this.idJogo, 'waitingPage', this.idVer]);
-                    }
-                    this.alertService.warning('O jogo terminou', true);
-                    this.router.navigate([this.idJogo, 'gameover']);
-                        
+                    
+                    this.notificationSubscription.unsubscribe();
+
+                    if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
+                    else this.alertService.success('Jogada finalizada.', true);
+                    this.router.navigate([this.idJogo, 'waitingPage', this.idVer]);
                 },
                 err => {
                     console.log(err);
-                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+                    this.alertService.danger('Algo deu errado. Por favor, fale com o mestre.');
                 }
             );
+        }
     }
 
 

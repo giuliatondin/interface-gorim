@@ -42,27 +42,30 @@ export class TransferComponent implements OnInit {
     }
 
     submitTransferForm(){
-        let formData = this.transferForm.getRawValue() as Transfer;
-        let aux = formData.quantia.toString();
-        if(aux.includes(',')) aux = aux.replace(',', '.');
-        formData.quantia = aux as unknown as number;
-        this.transferService.postTransfer(this.idJogo, formData)
-            .subscribe(
-                (data: boolean) => {
-                    if(data){
-                        this.alertService.success('Transferência enviada.');
-                        this.transferForm.reset();
+        if (this.transferForm.valid){
+            let formData = this.transferForm.getRawValue() as Transfer;
+            let aux = formData.quantia.toString();
+            if(aux.includes(',')) aux = aux.replace(',', '.');
+            formData.quantia = aux as unknown as number;
+            this.transferService.postTransfer(this.idJogo, formData)
+                .subscribe(
+                    (data: boolean) => {
+                        if(data){
+                            this.alertService.success('Transferência enviada.');
+                            this.transferForm.reset();
+                        }
+                        else {
+                            this.alertService.warning('Transferência não enviada. Tente novamente.');
+                            this.transferForm.reset();
+                        }
+                    },
+                    err => {
+                        this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+                        console.log(err);
                     }
-                    else {
-                        this.alertService.warning('Transferência não enviada. Tente novamente.');
-                        this.transferForm.reset();
-                    }
-                },
-                err => {
-                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
-                    console.log(err);
-                }
-            );
+                );
+        }
+        else this.alertService.warning('Esqueceu de algum campo do formulário em branco?');
     }
 
 }

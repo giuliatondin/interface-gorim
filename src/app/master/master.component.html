@@ -47,14 +47,14 @@
                 <div class="row align-items-center justify-content-center">
                     
                     <button
-                        (click)="openModal()"
+                        (click)="openModal(0)"
                         class="mt-3 btn btn--primary"
                     >
                         Terminar etapa
                     </button>
                     <button
                         class="mt-3 btn btn-danger"
-                        (click)="finalizarJogo()"
+                        (click)="openModal(1)"
                     >
                         Finalizar jogo
                     </button>
@@ -64,6 +64,7 @@
                 <app-rightsidebar
                     [idJogo]="idJogo"
                     [etapa]="mundo.etapa"
+                    [quantidadeJogadores]="mundo.quantidadeJogadores"
                 ></app-rightsidebar>
             </div>
         </div>

@@ -27,12 +27,9 @@ export class FriendsListComponent implements OnInit {
         this.friendsList = new Map<string, FriendCell>();
         this.chatService.loadFriendsList(this.idJogo, this.idPessoa).subscribe(
             (data: PersonSimplified[]) => {
-                console.log(this.friendsList);
                 if(data != null){
                     this.friendsList.clear();
-                    console.log(this.friendsList);
                     data.forEach(person => {
-                        console.log('Key: ' + person.nomeCurto);
                         this.friendsList.set(person.nomeCurto, {friend: person, hasNewMessage: false} as FriendCell);
                     });
                     this.chatService.sharedChatNotifications.subscribe(

@@ -46,42 +46,45 @@ export class JoinComponent implements OnInit{
         if(!isNaN(idJogo) && idJogo != null){
             this.joinService.getInfoPessoas(this.jogoForm.get('idJogo').value).subscribe(
                 (data: PersonSimplified[]) => {
-                    console.log(data);
                     if(data != null){
                         this.pessoas = data;
                         this.showPessoas = true;
                         this.idJogo = idJogo;
                     }
+                    else {
+                        this.alertService.warning('O ID inserido não existe. Verifique e tente novamente.');
+                    }
                 },
                 err => {
                     console.log(err);
-                    this.alertService.danger('O ID inserido não existe. Por favor, tente novamente.');
+                    this.alertService.danger('Servidor indisponível. Tente novamente mais tarde.');
                 }
             );
         }
     }
 
     joinGame(){
-        let idPessoa: number = this.joinForm.get('personagem').value as number;
-        let role: string;
-        
-        if(idPessoa < 5) role = 'empresario';
-        else role = 'agricultor';
-
-        console.log('Nome: ' + this.pessoas[idPessoa-1].nome + '; idJogo: ' + this.idJogo + '; idPessoa: ' + idPessoa);
-        
-        this.loginLogoutService.login(this.idJogo, idPessoa, this.pessoas[idPessoa-1].nome).subscribe(
-            (data: LoginBodyResponse) => {
-                if(data != null){
-                    this.webStorageService.setData('authToken', data.token);
-                    this.router.navigate([this.idJogo, role, idPessoa]);//, { replaceUrl: true });
+        if(this.joinForm.valid){
+            let idPessoa: number = this.joinForm.get('personagem').value as number;
+            let role: string;
+            
+            if(idPessoa < 5) role = 'empresario';
+            else role = 'agricultor';
+            
+            this.loginLogoutService.login(this.idJogo, idPessoa, this.pessoas[idPessoa-1].nome).subscribe(
+                (data: LoginBodyResponse) => {
+                    if(data != null){
+                        this.webStorageService.setData('authToken', data.token);
+                        this.router.navigate([this.idJogo, role, idPessoa]);//, { replaceUrl: true });
+                    }
+                    else this.alertService.warning('Tente novamente com outro id');
+                },
+                err => {
+                    console.log(err);
+                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
                 }
-                else this.alertService.warning('Tente novamente com outro id');
-            },
-            err => {
-                console.log(err);
-                this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
-            }
-        );
+            );
+        }
+        else this.alertService.warning('Escolha o seu personagem!');
     }
 }

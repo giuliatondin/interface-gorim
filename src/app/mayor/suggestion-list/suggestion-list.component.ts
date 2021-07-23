@@ -1,8 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { interval } from 'rxjs';
-import { flatMap } from 'rxjs/operators';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { AldermanSuggestion } from 'src/app/alderman/alderman-suggestion/alderman-suggestion';
 import { AlertService } from 'src/app/world/alert/alert.service';
+import { MayorService } from '../mayor.service';
 import { SuggestionListService } from './suggestion-list.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { SuggestionListService } from './suggestion-list.service';
     templateUrl: './suggestion-list.component.html',
     styleUrls: [ './suggestion-list.component.scss' ]
 })
-export class SuggestionListComponent implements OnInit{
+export class SuggestionListComponent implements OnInit, OnDestroy {
 
     @Input() idJogo: number;
     @Input() idPref: number;
@@ -18,31 +18,41 @@ export class SuggestionListComponent implements OnInit{
     quantidadeSugestoes: number = 0;
     suggestions: AldermanSuggestion[] = [];
 
+    private suggestionsSubscription: Subscription;
+
     constructor(
         private suggestionListService: SuggestionListService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private prefService: MayorService
     ){ }
 
     ngOnInit(){
-        this.getSuggestions();
+        this.suggestionListService.getSuggestions(this.idJogo, this.idPref).subscribe(
+            (data: AldermanSuggestion[]) => {
+                if(data != null){
+                    if(this.quantidadeSugestoes < data.length){
+                        this.quantidadeSugestoes = data.length;
+                        this.alertService.info('Você tem novas sugestões do Vereador.');
+                    }
+                    this.suggestions = data;
+                }
+            }
+        );
+
+        this.suggestionsSubscription = this.prefService.sharedNewSuggestion.subscribe(
+            (newSuggestion: AldermanSuggestion) => {
+                if(newSuggestion != null){
+                    this.quantidadeSugestoes++;
+                    this.suggestions.push(newSuggestion);
+                    this.alertService.info('Você tem novas sugestões do Vereador.');
+                }
+
+            }
+        );
     }
 
-    getSuggestions(){
-        interval(10 * 1000)
-            .pipe(
-                flatMap(() => this.suggestionListService.getSuggestions(this.idJogo, this.idPref))
-            )
-            .subscribe(
-                (data: AldermanSuggestion[]) => {
-                    if(data != null){
-                        if(this.quantidadeSugestoes < data.length){
-                            this.quantidadeSugestoes = data.length;
-                            this.alertService.info('Você tem novas sugestões do Vereador.');
-                        }
-                        this.suggestions = data;
-                    }
-                }
-            );
+    ngOnDestroy(){
+        this.suggestionsSubscription.unsubscribe();
     }
 
     isTaxSuggestion(response: AldermanSuggestion){
@@ -56,13 +66,12 @@ export class SuggestionListComponent implements OnInit{
             () => {
                 this.alertService.success('Resposta enviada.');
                 this.quantidadeSugestoes--;
-                this.suggestionListService.getSuggestions(this.idJogo, this.idPref).subscribe(
-                    (data: AldermanSuggestion[]) => {
-                        console.log(data);
-                        this.suggestions = data;
-                    },
-                    err => console.log(err)
+                let aux: AldermanSuggestion[] = [];
+                this.suggestions.forEach(
+                    x => { if(x != response) aux.push(x); }
                 );
+                console.log(aux);
+                this.suggestions = aux;
             },
             err => {
                 console.log(err);

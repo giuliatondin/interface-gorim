@@ -80,12 +80,13 @@ export class ChatRoomListComponent implements OnInit, AfterViewInit {
         return 'col --chat-room room-' + (index+1);
     }
 
-    isRoomOpened(value: string): boolean{
+    isRoomOpened(value: string): boolean {
+        let isOpened: boolean = false;
         this.openedRooms.forEach(
-            room => {
-                if(room == value) return true;
+            (room: string) => {
+                if(room == value) isOpened = true;
             }
         );
-        return false;
+        return isOpened;
     }
 }

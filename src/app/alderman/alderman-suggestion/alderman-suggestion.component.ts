@@ -71,37 +71,40 @@ export class AldermanSuggestionComponent implements OnInit {
         this.selector = (event.value == '0') ? 0 : 1;
     }
 
-    enviarSugestao(){        
-        let newImposto: Tax = {
-            tipo: this.suggestionForm.get('sugestao').value as number - 1,
-            taxa: (this.selector > 0) ? this.suggestionForm.get('especificacao').value : ''
-        };
+    enviarSugestao(){
+        if(this.suggestionForm.valid){
+            let newImposto: Tax = {
+                tipo: this.suggestionForm.get('sugestao').value as number - 1,
+                taxa: (this.selector > 0) ? this.suggestionForm.get('especificacao').value : ''
+            };
 
-        let newAcaoAmbiental: string =
-            (this.selector == 0) ? this.suggestionForm.get('especificacao').value : '';
+            let newAcaoAmbiental: string =
+                (this.selector == 0) ? this.suggestionForm.get('especificacao').value : '';
 
-        this.suggestionService.postSuggestion(
-            this.idJogo,
-            this.idVer,
-            {
-                tipoSugestao: this.selector,
-                aceito: false,
-                idSugestao: this.idSugestao,
-                imposto: newImposto,
-                acaoAmbiental: newAcaoAmbiental
-            } as AldermanSuggestion
-        ).subscribe(
-            () => {
-                this.resetForm();
-                this.idSugestao++;
-                this.webStorageService.setData('suggestion' + this.idVer + 'idSugestao', this.idSugestao);
-                this.alertService.success('Sugestão enviada ao Prefeito.');
-            },
-            err => {
-                console.log(err);
-                this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
-            }
-        );
+            this.suggestionService.postSuggestion(
+                this.idJogo,
+                this.idVer,
+                {
+                    tipoSugestao: this.selector,
+                    aceito: false,
+                    idSugestao: this.idSugestao,
+                    imposto: newImposto,
+                    acaoAmbiental: newAcaoAmbiental
+                } as AldermanSuggestion
+            ).subscribe(
+                () => {
+                    this.resetForm();
+                    this.idSugestao++;
+                    this.webStorageService.setData('suggestion' + this.idVer + 'idSugestao', this.idSugestao);
+                    this.alertService.success('Sugestão enviada ao Prefeito.');
+                },
+                err => {
+                    console.log(err);
+                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+                }
+            );
+        }
+        else this.alertService.warning('Preencha todos os campos do formulário!');
     }
 
 }

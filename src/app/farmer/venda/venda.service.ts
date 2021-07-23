@@ -44,7 +44,6 @@ export class VendaService {
         idAgr: number,
         orcamento: Venda
     ){
-        console.log("Apagando");
         return this.httpClient.post(
             API + '/' + idJogo + AGR_ROUTE + 'delete/' + orcamento.idEmp + '/' + idAgr,
             orcamento.idOrcamento

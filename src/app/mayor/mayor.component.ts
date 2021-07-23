@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { interval, Observable, Subscription } from 'rxjs';
-import { flatMap } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+
 import { WebStorageService } from '../world/web-storage/webstorage.service';
 import { AlertService } from '../world/alert/alert.service';
 import { World } from '../world/world';
@@ -12,6 +12,9 @@ import { PostForm, Tax } from './postForm';
 import { TaxesService } from './taxes/taxes.service';
 import { WebSocketService } from '../world/web-socket/web-socket.service';
 import { ChatInfo } from '../world/chat/chat-info';
+import { ECGameStatusMessage, GameNotification } from '../world/models/game-notification';
+import { EC_GAME_STATUS, EC_SUGESTAO, GS_FIM_JOGO, GS_MESTRE_TERMINOU_ETAPA, GS_TODOS_JOGADORES_NA_ETAPA } from '../world/constants/constants';
+import { AldermanSuggestion } from '../alderman/alderman-suggestion/alderman-suggestion';
 
 @Component({
     selector: 'app-mayor',
@@ -31,11 +34,13 @@ export class MayorComponent implements OnInit {
     taxes: Tax[] = [];
 
     liberaBotao: boolean = false;
-
-    counter: Observable<number> = interval(10 * 1000);
-    subscription: Subscription;
+    inLineAlertButton: string = 'Nem todos os jogadores começaram o jogo ainda. Aguarde para finalizar a jogada.';
 
     chatInfo: ChatInfo;
+
+    private actionsSubscription: Subscription;
+    private taxesSubscription: Subscription;
+    private notificationSubscription: Subscription;
 
     constructor(
         private prefService: MayorService,
@@ -54,11 +59,14 @@ export class MayorComponent implements OnInit {
 
         this.infoMundo$ = this.prefService.getInfoMundo(this.idJogo);
 
+        let etapa: number = 2;
+        this.webStorageService.setData(this.idJogo + 'etapa', etapa);
+
         this.prefService.getInfo(this.idJogo, this.idPref).subscribe(
             (data: Mayor) => {
                 this.nomeCurto = (data.cidade == 'Atlantis') ? 'PrefAT' : 'PrefCD';
 
-                this.wsService.changeConnection((this.nomeCurto + this.idJogo), this.nomeCurto, (this.nomeCurto + this.idPref), this.prefService);
+                this.wsService.changeConnection((this.nomeCurto + this.idJogo), (this.nomeCurto + this.idPref));
 
                 this.chatInfo = {
                     nomePessoa: this.nomeCurto,
@@ -67,6 +75,29 @@ export class MayorComponent implements OnInit {
                     role: 'prefeito',
                     cidade: data.cidade
                 } as ChatInfo;
+
+                this.notificationSubscription = this.wsService.sharedNewGameNotification.subscribe(
+                    (notification: GameNotification) => {
+                        if(notification != null){
+                            if(notification.code == EC_SUGESTAO){
+                                let newSuggestion: AldermanSuggestion = notification.message as AldermanSuggestion;
+                                this.prefService.nextSuggestion(newSuggestion);
+                            }
+                            else if(notification.code == EC_GAME_STATUS){
+                                let gameStatus: ECGameStatusMessage = notification.message as ECGameStatusMessage;
+                                if (gameStatus.etapa == 2) this.processaGameStatus(gameStatus.status);
+                            }
+                        }
+                    }
+                );
+                    
+                this.prefService.verificaTodosComecaramEtapa(this.idJogo, 2).subscribe(
+                    (data: number) => {
+                        if(data == 0) this.processaGameStatus(GS_TODOS_JOGADORES_NA_ETAPA);
+                        else if(data == -2 || data == GS_FIM_JOGO) this.finalizarJogada(true, true);
+                    },
+                    err => console.log(err)
+                );
                 
                 this.infoPref = data;
             },
@@ -77,7 +108,7 @@ export class MayorComponent implements OnInit {
             this.environmentalActions = this.webStorageService.getData('pref'+ this.idPref + 'environmentalActions') as number[];
         this.webStorageService.setData('pref'+ this.idPref + 'environmentalActions', this.environmentalActions);
 
-        this.environmentalActService.sharedEnvironmentalAction.subscribe(
+        this.actionsSubscription = this.environmentalActService.sharedEnvironmentalAction.subscribe(
             (data: number) => {
                 if(data > -1){
                     this.environmentalActions.push(data);
@@ -91,7 +122,7 @@ export class MayorComponent implements OnInit {
             this.taxes = this.webStorageService.getData('pref'+ this.idPref + 'taxes') as Tax[];
         this.webStorageService.setData('pref'+ this.idPref + 'taxes', this.taxes);
 
-        this.taxesService.sharedTaxes.subscribe(
+        this.taxesSubscription = this.taxesService.sharedTaxes.subscribe(
             (taxes: Tax[]) => {
                 taxes.forEach(
                     (data: Tax) =>{
@@ -104,8 +135,6 @@ export class MayorComponent implements OnInit {
             },
             err => console.log(err)
         );
-
-        this.verificaFimEtapa();
     }
 
     removeAction(acao: number){
@@ -122,25 +151,17 @@ export class MayorComponent implements OnInit {
         this.webStorageService.setData('pref'+ this.idPref + 'taxes', this.taxes);
     }
 
-    verificaFimEtapa(){
-        this.subscription = this.counter
-            .pipe(
-                flatMap(
-                    () => this.prefService.verificaFimEtapa(this.idJogo, 2)
-                )
-            )
-            .subscribe(
-                (data: number) => {
-                    console.log(data);
-                    if (data == 3) this.finalizarJogada(true, true);
-                    else if(data > 2) this.liberaBotao = true;
-                    else if(data == 0) this.finalizarJogada(true);
-                },
-                err => console.log(err)
-            );
+    processaGameStatus(status: number){
+        if (status == GS_FIM_JOGO) this.finalizarJogada(true, true);
+        else if(status == GS_TODOS_JOGADORES_NA_ETAPA){
+            this.liberaBotao = true;
+            this.inLineAlertButton = '';
+        }
+        else if(status == GS_MESTRE_TERMINOU_ETAPA) this.finalizarJogada(true);
     }
 
     finalizarJogada(finishedByMaster: boolean = false, gameover: boolean = false){
+        this.webStorageService.setData('hasMasterFinishedStage', finishedByMaster);
         this.prefService.finalizaJogada(
             this.idJogo,
             this.idPref,
@@ -148,10 +169,8 @@ export class MayorComponent implements OnInit {
                 impostos: this.taxes,
                 idAcoesAmbientais: this.environmentalActions
             } as PostForm
-        )
-        .subscribe(
+        ).subscribe(
             () => {
-                this.subscription.unsubscribe();
                 this.webStorageService.removeData([
                     'envivonmentalAction' + this.idPref + 'formControl',
                     'envivonmentalAction' + this.idPref + 'anyDisabled',
@@ -159,13 +178,19 @@ export class MayorComponent implements OnInit {
                     'pref'+ this.idPref + 'environmentalActions',
                     'pref'+ this.idPref + 'taxes'
                 ]);
+                this.actionsSubscription.unsubscribe();
+                this.taxesSubscription.unsubscribe();
+                this.notificationSubscription.unsubscribe();
                 if(!gameover){
                     if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
                     else this.alertService.success('Jogada finalizada.', true);
+
                     this.router.navigate([this.idJogo, 'waitingPage', this.idPref]);
                 }
-                this.alertService.warning('O jogo terminou', true);
-                this.router.navigate([this.idJogo, 'gameover']);
+                else{
+                    this.alertService.warning('O jogo terminou', true);
+                    this.router.navigate([this.idJogo, 'gameover']);
+                }
             },
             err => {
                 console.log(err);

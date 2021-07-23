@@ -1,7 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { Observable, interval } from 'rxjs';
-import { flatMap } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
 import { Produto } from 'src/app/world/models/produto';
 
 import { Venda } from './venda';
@@ -9,13 +8,16 @@ import { VendaService } from './venda.service';
 import { ProdutoService } from '../produto.service';
 import { WebStorageService } from '../../world/web-storage/webstorage.service';
 import { AlertService } from 'src/app/world/alert/alert.service';
+import { FarmerService } from '../farmer.service';
+import { GameNotification } from 'src/app/world/models/game-notification';
+import { EC_ORCAMENTO } from 'src/app/world/constants/constants';
 
 @Component({
     selector: 'app-vendacard',
     templateUrl: './venda.component.html',
     styleUrls: [ './venda.component.scss' ]
 })
-export class VendaComponent implements OnInit{
+export class VendaComponent implements OnInit, OnDestroy{
 
     @Input() idJogo: number;
     @Input() idAgr: number;
@@ -31,24 +33,49 @@ export class VendaComponent implements OnInit{
     overPurchases: Venda[] = [];
     quantidadeOrcamentos: number = 0;
 
+    private notificationSubscription: Subscription;
+
     constructor(
         private vendaService: VendaService,
+        private agrService: FarmerService,
         private produtoService: ProdutoService,
         private webStorageService: WebStorageService,
         private alertService: AlertService
-    ){
-        //
-    }
+    ){ }
 
-    ngOnInit(){
-        console.log(this.webStorageService.hasData('agr'+ this.idAgr + 'VendaQuantidadeProdutos'));
-        
+    ngOnInit(){        
         this.quantidadeProdutos = (this.webStorageService.hasData('agr'+ this.idAgr + 'VendaQuantidadeProdutos')) ?
             this.webStorageService.getData('agr'+ this.idAgr + 'VendaQuantidadeProdutos') as number[] :
             [0, 0, 0, 0];
         this.webStorageService.setData('agr'+ this.idAgr + 'VendaQuantidadeProdutos', this.quantidadeProdutos);
 
-        this.getOrcamentos();
+        this.vendaService.getOrcamentos(this.idJogo, this.idAgr).subscribe(
+            (data: Venda[]) => {
+                if(data != null){
+                    if(this.quantidadeOrcamentos < data.length){
+                        this.quantidadeOrcamentos = data.length;
+                        this.alertService.info('Novos orçamentos!');
+                    }
+                    this.arrumaOverPurchases(data);
+                }
+            }
+        );
+
+        this.notificationSubscription = this.agrService.sharedGameNotification.subscribe(
+            (notification: GameNotification) => {
+                if(notification != null && notification.code == EC_ORCAMENTO){
+                    let orcamento: Venda = notification.message as Venda;
+                    this.quantidadeOrcamentos++;
+                    let aux: Venda[] = this.orcamentos;
+                    aux.push(orcamento);
+                    this.arrumaOverPurchases(aux);
+                }
+            }
+        );
+    }
+
+    ngOnDestroy(){
+        this.notificationSubscription.unsubscribe()
     }
 
     getIndiceProduto(idEmp: number, idProduto: number){
@@ -75,62 +102,55 @@ export class VendaComponent implements OnInit{
                 else if(orc.idOrcamento > (this.quantidadeJogadores*100-1)) this.overPurchases.push(orc);
 
                 else if (orc.quantidade > (6 - quantidadeJaComprada)){
-                    // Se sim
-                        // Separar para quantidade comprável (orcamentoDivididoCompravel e orcamentoDivididoNaoCompravel)
-                        let quantidadePossivel = 6 - quantidadeJaComprada;
-                        
-                        let orcamentoDivididoNaoCompravel: Venda = {
-                            nomeAgr: orc.nomeAgr,
-                            idAgr: orc.idAgr,
-                            nomeEmp: orc.nomeEmp,
-                            idEmp: orc.idEmp,
-                            nomeProduto: orc.nomeProduto,
-                            idProduto: orc.idProduto,
-                            sucesso: orc.sucesso,
-                            idOrcamento: (orc.idOrcamento + (this.quantidadeJogadores*100)),
-                            preco: orc.preco,
-                            quantidade: (orc.quantidade - quantidadePossivel)
-                        };
+                    // Se sim, vai criar orcamento sintético para a quantidade a mais
+                    // Separar para quantidade comprável (orcamentoDivididoCompravel e orcamentoDivididoNaoCompravel)
+                    let quantidadePossivel = 6 - quantidadeJaComprada;
+                    
+                    let orcamentoDivididoNaoCompravel: Venda = {
+                        nomeAgr: orc.nomeAgr,
+                        idAgr: orc.idAgr,
+                        nomeEmp: orc.nomeEmp,
+                        idEmp: orc.idEmp,
+                        nomeProduto: orc.nomeProduto,
+                        idProduto: orc.idProduto,
+                        sucesso: orc.sucesso,
+                        idOrcamento: (orc.idOrcamento + (this.quantidadeJogadores*100)),
+                        preco: orc.preco,
+                        quantidade: (orc.quantidade - quantidadePossivel)
+                    };
 
-                        // Remover orc de data
-                        this.vendaService.apagarOrcamento(this.idJogo, this.idAgr, orc)
-                            .subscribe(
+                    // Remover orc de data
+                    this.vendaService.apagarOrcamento(this.idJogo, this.idAgr, orc).subscribe(
+                        () => {
+                            this.overPurchases.push(orcamentoDivididoNaoCompravel);
+                            this.vendaService.adicionaOverOrcamento(this.idJogo, this.idAgr, orcamentoDivididoNaoCompravel).subscribe(
                                 () => {
-                                    this.overPurchases.push(orcamentoDivididoNaoCompravel);
-                                    this.vendaService.adicionaOverOrcamento(this.idJogo, this.idAgr, orcamentoDivididoNaoCompravel)
-                                        .subscribe(
-                                            () => {
-                                                // if(quantidadePossivel > 0) this.orcamentos(orcamentoDivididoCompravel)
-                                                if(quantidadePossivel > 0){
-                                                    let orcamentoDivididoCompravel: Venda = {
-                                                        nomeAgr: orc.nomeAgr,
-                                                        idAgr: orc.idAgr,
-                                                        nomeEmp: orc.nomeEmp,
-                                                        idEmp: orc.idEmp,
-                                                        nomeProduto: orc.nomeProduto,
-                                                        idProduto: orc.idProduto,
-                                                        sucesso: orc.sucesso,
-                                                        idOrcamento: orc.idOrcamento,
-                                                        preco: orc.preco,
-                                                        quantidade: quantidadePossivel
-                                                    };
-                                                    this.vendaService.adicionaOverOrcamento(this.idJogo, this.idAgr, orcamentoDivididoCompravel)
-                                                        .subscribe(
-                                                            () => 
-                                                            this.orcamentos.push(orcamentoDivididoCompravel),
-                                                            err => console.log(err)
-                                                        )
-                                                }
-                                                // this.overPurchases(orcamentoDivididoNaoCompravel)
-                                            },
+                                    // if(quantidadePossivel > 0) this.orcamentos(orcamentoDivididoCompravel)
+                                    if(quantidadePossivel > 0){
+                                        let orcamentoDivididoCompravel: Venda = {
+                                            nomeAgr: orc.nomeAgr,
+                                            idAgr: orc.idAgr,
+                                            nomeEmp: orc.nomeEmp,
+                                            idEmp: orc.idEmp,
+                                            nomeProduto: orc.nomeProduto,
+                                            idProduto: orc.idProduto,
+                                            sucesso: orc.sucesso,
+                                            idOrcamento: orc.idOrcamento,
+                                            preco: orc.preco,
+                                            quantidade: quantidadePossivel
+                                        };
+                                        this.vendaService.adicionaOverOrcamento(this.idJogo, this.idAgr, orcamentoDivididoCompravel).subscribe(
+                                            () => this.orcamentos.push(orcamentoDivididoCompravel),
                                             err => console.log(err)
                                         );
-                                    
+                                    }
                                 },
                                 err => console.log(err)
-                            )
-
-                        
+                            );
+                            
+                        },
+                        err => console.log(err)
+                    );
                 }
                 else{
                     // Se não, this.orcamentos(orc)
@@ -140,24 +160,6 @@ export class VendaComponent implements OnInit{
         );
     }
 
-    getOrcamentos(){
-        interval(10 * 1000)
-            .pipe(
-                flatMap(() => this.vendaService.getOrcamentos(this.idJogo, this.idAgr))
-            )
-            .subscribe(
-                (data: Venda[]) => {
-                    if(data != null){
-                        if(this.quantidadeOrcamentos < data.length){
-                            this.quantidadeOrcamentos = data.length;
-                            this.alertService.info('Você tem novos orçamentos');
-                        }
-                        this.arrumaOverPurchases(data);
-                    }
-                }
-            );
-    }
-
     apagarOrcamento(orcamento: Venda): Observable<any>{
         this.quantidadeOrcamentos--;
         return this.vendaService.apagarOrcamento(this.idJogo, this.idAgr, orcamento);
@@ -165,36 +167,33 @@ export class VendaComponent implements OnInit{
 
     salvarCompra(venda: Venda, resposta: boolean){
         venda.sucesso = resposta;
-        this.apagarOrcamento(venda)
-            .subscribe(
-                () => {
-                    this.vendaService.adicionaVendaById(this.idJogo, venda.idEmp, venda)
-                        .subscribe(
-                            () => {
-                                if(venda.sucesso){
-                                    this.quantidadeProdutos[this.getIndiceProduto(venda.idEmp, venda.idProduto)] += venda.quantidade;
-                                    this.webStorageService.setData('agr'+ this.idAgr + 'VendaQuantidadeProdutos', this.quantidadeProdutos);
-                                    this.alertService.success('Produto comprado.');
-                                }
-                                else this.alertService.warning('Produto cancelado.');
-                                this.vendaService.getOrcamentos(this.idJogo, this.idAgr)
-                                    .subscribe(
-                                        (data: Venda[]) => {
-                                            this.arrumaOverPurchases(data);
-                                        }
-                                    );
-                            },
-                            err => {
-                                this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
-                                console.log(err);
+        this.apagarOrcamento(venda).subscribe(
+            () => {
+                this.vendaService.adicionaVendaById(this.idJogo, venda.idEmp, venda).subscribe(
+                    () => {
+                        if(venda.sucesso){
+                            this.quantidadeProdutos[this.getIndiceProduto(venda.idEmp, venda.idProduto)] += venda.quantidade;
+                            this.webStorageService.setData('agr'+ this.idAgr + 'VendaQuantidadeProdutos', this.quantidadeProdutos);
+                            this.alertService.success('Produto comprado.');
+                        }
+                        else this.alertService.warning('Produto cancelado.');
+                        this.vendaService.getOrcamentos(this.idJogo, this.idAgr).subscribe(
+                            (data: Venda[]) => {
+                                this.arrumaOverPurchases(data);
                             }
-                        )
-                },
-                err => {
-                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
-                    console.log(err);
-                }
-            );
+                        );
+                    },
+                    err => {
+                        this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+                        console.log(err);
+                    }
+                );
+            },
+            err => {
+                this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+                console.log(err);
+            }
+        );
         if (resposta) this.sendProdutoSibilingComponent(venda);
     }
 

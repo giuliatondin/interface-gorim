@@ -1,4 +1,4 @@
-<ng-container *ngIf="isPrefeito()">
+<ng-container *ngIf="isPrefeito() || isVereador()">
     <div class="tableValues pt-3">
         <div class="pb-3">
             <h3>Ações Ambientais</h3>
@@ -189,7 +189,7 @@
                             <td>40</td>
                         </tr>
                         <tr>
-                            <th>Pulverizador**</th>
+                            <th>Pulverizador*</th>
                             <td>10</td>
                             <td>20</td>
                             <td>30</td>
@@ -236,7 +236,7 @@
                 <h3>Poluição</h3>
             </ng-container>
             <ng-container *ngIf="isFiscal() || isPrefeito() || isVereador()">
-                <h4>Gerada por empresarios</h4>
+                <h4>Gerada por empresários</h4>
             </ng-container>
             <div class="table-responsive">
                 <table class="table table-bordered text-center">
@@ -246,7 +246,7 @@
                             <th scope="col">Valor</th>
                         </tr>
                     </thead>
-                    <tbody *ngIf="(isEmpresario() && isSemente()) || ((isFiscal() || isPrefeito() || isVereador()) && isFromAtlantis())">
+                    <tbody *ngIf="(isEmpresario() && isSemente()) || ((isPrefeito() || isVereador()) && isFromAtlantis()) || isFiscal()">
                         <tr *ngIf="isFiscal() || isPrefeito() || isVereador()">
                             <th colspan="2">Sementes</th>
                         </tr>
@@ -263,7 +263,7 @@
                             <td>3</td>
                         </tr>
                     </tbody>
-                    <tbody *ngIf="(isEmpresario() && isFertilizante()) || ((isFiscal() || isPrefeito() || isVereador()) && isFromCidadela())">
+                    <tbody *ngIf="(isEmpresario() && isFertilizante()) || ((isPrefeito() || isVereador()) && isFromCidadela()) || isFiscal()">
                         <tr *ngIf="isFiscal() || isPrefeito() || isVereador()">
                             <th colspan="2">Fertilizantes</th>
                         </tr>
@@ -280,7 +280,7 @@
                             <td>3</td>
                         </tr>
                     </tbody>
-                    <tbody *ngIf="(isEmpresario() && isMaquina()) || ((isFiscal() || isPrefeito() || isVereador()) && isFromAtlantis())">
+                    <tbody *ngIf="(isEmpresario() && isMaquina()) || ((isPrefeito() || isVereador()) && isFromAtlantis()) || isFiscal()">
                         <tr *ngIf="isFiscal() || isPrefeito() || isVereador()">
                             <th colspan="2">Máquinas</th>
                         </tr>
@@ -301,8 +301,8 @@
                             <td>40</td>
                         </tr>
                     </tbody>
-                    <tbody *ngIf="(isEmpresario() && isAgrotoxico()) || ((isFiscal() || isPrefeito() || isVereador()) && isFromCidadela())">
-                        <tr *ngIf="isFiscal() || isPrefeito()">
+                    <tbody *ngIf="(isEmpresario() && isAgrotoxico()) || ((isPrefeito() || isVereador()) && isFromCidadela()) || isFiscal()">
+                        <tr *ngIf="isFiscal() || isPrefeito() || isVereador()">
                             <th colspan="2">Agrotóxicos</th>
                         </tr>
                         <tr>
@@ -359,7 +359,7 @@
                             <td>D$ (3 x poluição)</td>
                         </tr>
                         <tr *ngIf="!isEmpresario()">
-                            <td colspan="3">* Valor baseado na média de poluição de todas as parcelas de terra do Agricultor.</td>
+                            <td colspan="3">* Se agricultor, levar em consideração o valor da média de poluição de todas as parcelas de terra.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -385,19 +385,19 @@
                             <td>Alto</td>
                         </tr>
                         <tr>
-                            <td><b>Não produtores</b> (pr = 0)</td>
+                            <td><b>Tipo 1</b> (pr = 0)</td>
                             <td>D$5</td>
                             <td>D$10</td>
                             <td>D$15</td>
                         </tr>
                         <tr>
-                            <td><b>Pequenos produtores</b> (0 < pr <= 200)</td>
+                            <td><b>Tipo 2</b> (0 < pr <= 200)</td>
                             <td>5% de pr</td>
                             <td>10% de pr</td>
                             <td>15% de pr</td>
                         </tr>
                         <tr>
-                            <td><b>Grandes produtores</b> (200 < pr)</td>
+                            <td><b>Tipo 3</b> (200 < pr)</td>
                             <td>25% de pr</td>
                             <td>30% de pr</td>
                             <td>35% de pr</td>

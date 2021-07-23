@@ -1,10 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 
-import { ChatService } from "./chat.service";
-import { environment } from "src/environments/environment";
 import { ChatInfo } from "./chat-info";
-
-const API_WS = environment.ApiUrl + '/ws';
 
 @Component({
     selector: 'app-chat',
@@ -20,9 +16,7 @@ export class ChatComponent implements OnInit{
     role: string;
     cidade: string;
 
-    constructor(
-        private chatService: ChatService
-    ) { }
+    constructor( ) { }
 
     ngOnInit(){
         this.nomePessoa = this.chatInfo.nomePessoa;

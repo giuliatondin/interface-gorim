@@ -1094,10 +1094,11 @@
     </div>
     <button
         class="btn btn--secondary mt-3"
-        type="submit"
+        (click)="finalizarJogada()"
         [disabled]="!liberaBotao"
     >Finalizar jogada</button>
     <app-inline-alert
-        [message]="inLineAlertButton"
+        *ngIf="inLineAlertButtonMessage != ''"
+        [message]="inLineAlertButtonMessage"
     ></app-inline-alert>
 </form>

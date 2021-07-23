@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { interval, Observable, Subscription } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
 import { ChatInfo } from '../world/chat/chat-info';
+import { EC_GAME_STATUS, GS_FIM_JOGO, GS_JOGADORES_ACABARAM_ETAPA, GS_MESTRE_TERMINOU_ETAPA } from '../world/constants/constants';
+import { ECGameStatusMessage, GameNotification } from '../world/models/game-notification';
 import { WebSocketService } from '../world/web-socket/web-socket.service';
 import { WebStorageService } from '../world/web-storage/webstorage.service';
 import { World } from '../world/world';
@@ -22,8 +24,10 @@ export class AlternativeSecondStagePageComponent implements OnInit {
 
     mundo$: Observable<World>;
 
-    counter: Observable<number> = interval(10 * 1000);
-    subscription: Subscription;
+    private hasMasterFinishedStage: boolean = false;
+    private hasEveryoneFinishedStage: boolean = false;
+
+    private notificationSubscription: Subscription;
     
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -38,49 +42,64 @@ export class AlternativeSecondStagePageComponent implements OnInit {
         this.idPessoa = this.activatedRoute.snapshot.params.idPessoa;
         
         let info = JSON.parse(this.webStorageService.getData(this.idJogo + 'papel')) as ChatInfo;
-        if(this.wsService.isConnected()){
+        if(!this.wsService.isConnected()){
             this.wsService.config(
                 info.nomePessoa + this.idJogo,
-                info.nomePessoa,
-                info.nomePessoa + info.idPessoa,
-                this.alternativePageService
+                info.nomePessoa + info.idPessoa
             );
             this.wsService.connect();
         }
         else {
             this.wsService.changeConnection(
                 info.nomePessoa + this.idJogo,
-                info.nomePessoa,
-                info.nomePessoa + info.idPessoa,
-                this.alternativePageService
+                info.nomePessoa + info.idPessoa
             );
         }
         this.chatInfo = info;
 
+        this.notificationSubscription = this.wsService.sharedNewGameNotification.subscribe(
+            (notification: GameNotification) => {
+                if(notification != null && notification.code == EC_GAME_STATUS){
+                    let gameStatus: ECGameStatusMessage = notification.message as ECGameStatusMessage;
+                    this.processaGameStatus(gameStatus.status);
+                }
+            }
+        );
+
+        if(this.webStorageService.hasData('hasMasterFinishedStage'))
+            this.hasMasterFinishedStage = this.webStorageService.getData('hasMasterFinishedStage');
+
+        if(this.webStorageService.hasData('hasEveryoneFinishedStage'))
+            this.hasEveryoneFinishedStage = this.webStorageService.getData('hasEveryoneFinishedStage');
+        
+        if(this.hasMasterFinishedStage && this.hasEveryoneFinishedStage) this.finalizaEtapa();
+            
         this.mundo$ = this.alternativePageService.getInfoMundo(this.idJogo);
-        this.verificaFimEtapa();
     }
 
-    verificaFimEtapa(){
-        this.subscription = this.counter
-            .pipe(
-                flatMap(
-                    () => this.alternativePageService.verificaFimEtapa(this.idJogo, 2)
-                )
-            )
-            .subscribe(
-                (data: number) => {
-                    console.log(data);
-                    if(data == 3){
-                        this.subscription.unsubscribe();
-                        this.router.navigate([this.idJogo, 'gameover']);
-                    }
-                    else if(data == 0){
-                        this.subscription.unsubscribe();
-                        this.router.navigate([this.idJogo, this.chatInfo.role, this.idPessoa]);
-                    }
-                },
-                err => console.log(err)
-            );
+    processaGameStatus(status: number){
+        if(status == GS_FIM_JOGO){
+            this.router.navigate([this.idJogo, 'gameover']);
+            this.notificationSubscription.unsubscribe()
+        }
+        else if(status == GS_MESTRE_TERMINOU_ETAPA){
+            this.hasMasterFinishedStage = true;
+            this.webStorageService.setData('hasMasterFinishedStage', true);
+
+            if(this.hasEveryoneFinishedStage) this.finalizaEtapa();
+        }
+        else if(status == GS_JOGADORES_ACABARAM_ETAPA){
+            this.hasEveryoneFinishedStage = true;
+            this.webStorageService.setData('hasEveryoneFinishedStage', true);
+
+            if(this.hasMasterFinishedStage) this.finalizaEtapa();
+        }
     }
+
+    finalizaEtapa(){
+        this.webStorageService.removeData(['hasMasterFinishedStage', 'hasEveryoneFinishedStage']);
+        this.notificationSubscription.unsubscribe();
+        this.router.navigate([this.idJogo, this.chatInfo.role, this.idPessoa]);
+    }
+    
 }

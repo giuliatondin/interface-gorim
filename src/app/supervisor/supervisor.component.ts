@@ -1,18 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { interval, Observable, Subscription } from 'rxjs';
-import { flatMap } from 'rxjs/operators';
-import { WebStorageService } from '../world/web-storage/webstorage.service';
+import { Observable, Subscription } from 'rxjs';
+
 import { AlertService } from '../world/alert/alert.service';
+import { ChatInfo } from '../world/chat/chat-info';
+import { EC_GAME_STATUS, GS_FIM_JOGO, GS_MESTRE_TERMINOU_ETAPA, GS_TODOS_JOGADORES_NA_ETAPA } from '../world/constants/constants';
+import { ECGameStatusMessage, GameNotification } from '../world/models/game-notification';
 import { PersonSimplified } from '../world/models/person.simplified';
+import { WebSocketService } from '../world/web-socket/web-socket.service';
+import { WebStorageService } from '../world/web-storage/webstorage.service';
 import { World } from '../world/world';
 import { FineService } from './fine/fine.service';
 import { GreenSealService } from './green-seal/green-seal.service';
 import { Fine, GreenSeal, PostForm } from './postForm';
 import { Supervisor } from './supervisor';
 import { SupervisorService } from './supervisor.service';
-import { ChatInfo } from '../world/chat/chat-info';
-import { WebSocketService } from '../world/web-socket/web-socket.service';
 
 @Component({
     selector: 'app-supervisor',
@@ -35,11 +37,13 @@ export class SupervisorComponent implements OnInit {
     greenSeals: GreenSeal[] = [];
 
     liberaBotao: boolean = false;
-
-    counter: Observable<number> = interval(10 * 1000);
-    subscription: Subscription;
+    inLineAlertButton: string = 'Nem todos os jogadores começaram o jogo ainda. Aguarde para finalizar a jogada.';
 
     chatInfo: ChatInfo;
+
+    private finesSubscription: Subscription;
+    private greenSealSubscription: Subscription;
+    private notificationSubscription: Subscription;
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -55,27 +59,40 @@ export class SupervisorComponent implements OnInit {
     ngOnInit(){
         this.idFis = this.activatedRoute.snapshot.params.idFis;
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
+        
+        let etapa: number = 2;
+        this.webStorageService.setData(this.idJogo + 'etapa', etapa);
+
         this.fisService.getInfo(this.idJogo, this.idFis).subscribe(
             (data: Supervisor) => {
                 if(data != null){
                     this.infoMundo$ = this.fisService.getInfoMundo(this.idJogo);
-                    this.nomeCurto = (data.cidade == 'Atlantis') ? 'FisfAT' : 'FisCD';
+                    this.nomeCurto = (data.cidade == 'Atlantis') ? 'FisAT' : 'FisCD';
 
-                    this.wsService.changeConnection((this.nomeCurto + this.idJogo), this.nomeCurto, (this.nomeCurto + this.idFis), this.fisService);
+                    this.wsService.changeConnection((this.nomeCurto + this.idJogo), (this.nomeCurto + this.idFis));
 
                     this.chatInfo = {
                         nomePessoa: this.nomeCurto,
                         idPessoa: data.id,
                         idJogo: this.idJogo,
-                        role: 'prefeito',
+                        role: 'fiscal',
                         cidade: data.cidade
                     } as ChatInfo;
-            
+                    
+                    this.notificationSubscription = this.wsService.sharedNewGameNotification.subscribe(
+                        (notification: GameNotification) => {
+                            if(notification != null && notification.code == EC_GAME_STATUS){
+                                let gameStatus: ECGameStatusMessage = notification.message as ECGameStatusMessage;
+                                if (gameStatus.etapa == 2) this.processaGameStatus(gameStatus.status);
+                            }
+                        }
+                    );
+
                     if(this.webStorageService.hasData('fis'+ this.idFis + 'Fines'))
                         this.fines = this.webStorageService.getData('fis'+ this.idFis + 'Fines') as Fine[];
                     this.webStorageService.setData('fis'+ this.idFis + 'Fines', this.fines);
             
-                    this.fineService.sharedFines.subscribe(
+                    this.finesSubscription = this.fineService.sharedFines.subscribe(
                         (fine: Fine) => {
                             if(fine.idPessoa != 0){
                                 this.fines.push(fine);
@@ -89,10 +106,9 @@ export class SupervisorComponent implements OnInit {
                         this.greenSeals = this.webStorageService.getData('fis'+ this.idFis + 'GreenSeals') as GreenSeal[];
                     this.webStorageService.setData('fis'+ this.idFis + 'GreenSeals', this.greenSeals);
             
-                    this.greenSealService.sharedGreenSeals.subscribe(
+                    this.greenSealSubscription = this.greenSealService.sharedGreenSeals.subscribe(
                         (greenSeal: GreenSeal) => {
                             if(greenSeal.idAgr != 0){
-                                console.log(greenSeal);
                                 this.greenSeals.push(greenSeal);
                                 this.webStorageService.setData('fis'+ this.idFis + 'GreenSeals', this.greenSeals);
                             }
@@ -102,8 +118,15 @@ export class SupervisorComponent implements OnInit {
             
                     this.fineService.getInfoPessoas(this.idJogo, data.cidade).subscribe(
                         (data: PersonSimplified[]) => {
-                            console.log(data);
                             this.pessoas = data;
+                        },
+                        err => console.log(err)
+                    );
+                    
+                    this.fisService.verificaTodosComecaramEtapa(this.idJogo, 2).subscribe(
+                        (data: number) => {
+                            if(data == 0) this.processaGameStatus(GS_TODOS_JOGADORES_NA_ETAPA);
+                            else if(data == -2 || data == GS_FIM_JOGO) this.finalizarJogada(true, true);
                         },
                         err => console.log(err)
                     );
@@ -114,8 +137,6 @@ export class SupervisorComponent implements OnInit {
             },
             err => console.log(err)
         );
-
-        this.verificaFimEtapa();
     }
 
     removeFine(fine: Fine){
@@ -137,25 +158,18 @@ export class SupervisorComponent implements OnInit {
         });
     }
 
-    verificaFimEtapa(){
-        this.subscription = this.counter
-            .pipe(
-                flatMap(
-                    () => this.fisService.verificaFimEtapa(this. idJogo, 2)
-                )
-            )
-            .subscribe(
-                (data: number) => {
-                    console.log(data);
-                    if(data == 3) this.finalizarJogada(true, true);
-                    else if(data > 2) this.liberaBotao = true;
-                    else if(data == 0) this.finalizarJogada(true);
-                },
-                err => console.log(err)
-            );
+    processaGameStatus(status: number){
+        console.log('status: ' + status);
+        if(status == GS_FIM_JOGO) this.finalizarJogada(true, true);
+        else if(status == GS_TODOS_JOGADORES_NA_ETAPA){
+            this.liberaBotao = true;
+            this.inLineAlertButton = '';
+        }
+        else if(status == GS_MESTRE_TERMINOU_ETAPA) this.finalizarJogada(true);
     }
 
     finalizarJogada(finishedByMaster: boolean = false, gameover: boolean = false){
+        this.webStorageService.setData('hasMasterFinishedStage', finishedByMaster);
         this.fisService.finalizaJogada(
             this.idJogo,
             this.idFis,
@@ -165,19 +179,23 @@ export class SupervisorComponent implements OnInit {
             } as PostForm
         ).subscribe(
             () => {
-                this.subscription.unsubscribe();
                 this.webStorageService.removeData([
                     'fine' + this.idFis + 'pessoasMultadas',
                     'fis'+ this.idFis + 'Fines',
                     'fis'+ this.idFis + 'GreenSeals'
                 ]);
+                this.greenSealSubscription.unsubscribe();
+                this.finesSubscription.unsubscribe();
+                this.notificationSubscription.unsubscribe();
                 if(!gameover){
                     if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
                     else this.alertService.success('Jogada finalizada.', true);
                     this.router.navigate([this.idJogo, 'waitingPage', this.idFis]);
                 }
-                this.alertService.warning('O jogo terminou', true);
-                this.router.navigate([this.idJogo, 'gameover']);
+                else {
+                    this.alertService.warning('O jogo terminou', true);
+                    this.router.navigate([this.idJogo, 'gameover']);
+                }
             },
             err => {
                 console.log(err);

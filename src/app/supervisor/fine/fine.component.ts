@@ -72,16 +72,19 @@ export class FineComponent implements OnInit{
     }
 
     salvarMulta(){
-        let newFine: Fine = this.fineForm.getRawValue() as Fine;
-        let foiMultada: boolean = this.foiMultada(newFine.idPessoa);
-        if(newFine.idPessoa != 0 && !foiMultada){
-            this.pessoasMultadas.push(newFine.idPessoa);
-            this.webStorageService.setData('fine' + this.idFis + 'pessoasMultadas', this.pessoasMultadas);
-            this.fineService.nextFine(newFine);
-            this.alertService.success('Multa registrada.');
-            this.resetForm();
+        if(this.fineForm.valid){
+            let newFine: Fine = this.fineForm.getRawValue() as Fine;
+            let foiMultada: boolean = this.foiMultada(newFine.idPessoa);
+            if(newFine.idPessoa != 0 && !foiMultada){
+                this.pessoasMultadas.push(newFine.idPessoa);
+                this.webStorageService.setData('fine' + this.idFis + 'pessoasMultadas', this.pessoasMultadas);
+                this.fineService.nextFine(newFine);
+                this.alertService.success('Multa registrada.');
+                this.resetForm();
+            }
+            else if(foiMultada) this.alertService.warning('Não pode multar duas vezes a mesma pessoa.');
         }
-        else if(foiMultada) this.alertService.warning('Não pode multar duas vezes a mesma pessoa.');
+        else this.alertService.warning('Preencha todos os campos do formulário!');
     }
 
 }

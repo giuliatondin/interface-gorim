@@ -15,12 +15,6 @@ export class AlternativeSecondStagePageService {
         private httpClient: HttpClient
     ){ }
 
-    verificaFimEtapa(idJogo: number, etapa: number){
-        return this.httpClient.get(
-            API + '/' + idJogo + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
-        );
-    }
-
     getInfoMundo(idJogo: number){
         return this.httpClient.get<World>(
             API + '/' + idJogo + MASTER_ROUTE + '/infoMundo'

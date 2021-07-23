@@ -29,12 +29,6 @@ export class SupervisorService {
             API + '/'+ idJogo + MASTER_ROUTE + '/infoMundo'
         );
     }
-    
-    verificaFimEtapa(idJogo: number, etapa: number){
-        return this.httpClient.get(
-            API + '/' + idJogo + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
-        );
-    }
 
     finalizaJogada(
         idJogo: number,
@@ -45,5 +39,11 @@ export class SupervisorService {
             API + '/' + idJogo + SUPERVISOR_ROUTE + '/' + idFis,
             postForm
         )
+    }
+
+    verificaTodosComecaramEtapa(idJogo: number, etapa: number){
+        return this.httpClient.get(
+            API + '/' + idJogo + MASTER_ROUTE + '/verificaTodosComecaramEtapa/' + etapa
+        );
     }
 }

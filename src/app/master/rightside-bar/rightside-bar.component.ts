@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { interval } from 'rxjs';
-import { flatMap } from 'rxjs/operators';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { EC_GAME_STATUS, EC_PESSOA_COMECOU_JOGADA, EC_PESSOA_FINALIZOU_JOGADA, GS_JOGADORES_ACABARAM_ETAPA, GS_MESTRE_TERMINOU_ETAPA } from 'src/app/world/constants/constants';
+import { ECGameStatusMessage, ECPessoaComecouJogadaInterface, ECPessoaFinalizouJogadaInterface, GameNotification } from 'src/app/world/models/game-notification';
 import { PersonSimplified } from 'src/app/world/models/person.simplified';
 import { MasterService } from '../master.service';
 
@@ -9,49 +10,72 @@ import { MasterService } from '../master.service';
     templateUrl: './rightside-bar.component.html',
     styleUrls: [ './rightside-bar.component.scss' ]
 })
-export class RightSideBarComponent implements OnInit {
+export class RightSideBarComponent implements OnInit, OnDestroy {
     @Input() idJogo: number;
     @Input() etapa: number;
-    finalizadosEtapa: boolean[] = [];
+    @Input() quantidadeJogadores: number;
+
+    finalizadosEtapa: number[] = [];
     pessoas: PersonSimplified[] = [];
+
+    private todosTerminaramEtapa: boolean = false;
+    private mestreTerminouEtapa: boolean = false;
+
+    private notificationSubscription: Subscription;
 
     constructor(
         private masterService: MasterService
     ){ }
 
     ngOnInit(){
-        this.masterService.verificaFinalizados(this.idJogo, this.etapa)
-            .subscribe(
-                (data: boolean[]) => {
-                    if(data != null){
-                        this.finalizadosEtapa = data;
-                        this.verificaFinalizados();
-                        this.getInfoPessoas();
+        this.getInfoPessoas();
+        this.masterService.verificaFinalizados(this.idJogo, this.etapa).subscribe(
+            (data: number[]) => this.finalizadosEtapa = data
+        );
+
+        this.notificationSubscription = this.masterService.sharedGameNotification.subscribe(
+            (gameNotification: GameNotification) => {
+                if(gameNotification != null){
+                    if(gameNotification.code == EC_GAME_STATUS){
+                        let notificationMessage: ECGameStatusMessage = gameNotification.message as ECGameStatusMessage;
+                        if(notificationMessage.status == GS_JOGADORES_ACABARAM_ETAPA) this.todosTerminaramEtapa = true;
+                        else if(notificationMessage.status == GS_MESTRE_TERMINOU_ETAPA) this.mestreTerminouEtapa = true;
+
+                        if(this.mestreTerminouEtapa && this.todosTerminaramEtapa){
+                            this.todosTerminaramEtapa = false;
+                            this.mestreTerminouEtapa = false;
+                            this.getInfoPessoas();
+                        }
                     }
-                },
-                err => console.log(err)
-            );
+                    else if(gameNotification.code == EC_PESSOA_COMECOU_JOGADA){
+                        let pessoComecouEtapa: ECPessoaComecouJogadaInterface = gameNotification.message as ECPessoaComecouJogadaInterface;
+                        let diffToIndex: number;
+                        if(pessoComecouEtapa.etapa == 1) diffToIndex = 1;
+                        else diffToIndex = this.quantidadeJogadores + 1;
+                        
+                        this.finalizadosEtapa[pessoComecouEtapa.idPessoa - diffToIndex] = 0;
+                    }
+                    else if(gameNotification.code == EC_PESSOA_FINALIZOU_JOGADA){
+                        let pessoComecouEtapa: ECPessoaFinalizouJogadaInterface = gameNotification.message as ECPessoaFinalizouJogadaInterface;
+                        let diffToIndex: number;
+                        if(pessoComecouEtapa.etapa == 1) diffToIndex = 1;
+                        else diffToIndex = this.quantidadeJogadores + 1;
+                        
+                        this.finalizadosEtapa[pessoComecouEtapa.idPessoa - diffToIndex] = 1;
+                    }
+                }
+            }
+        );
     }
 
-    getColour(finalizado: boolean){
-        if(finalizado) return 'finalizado';
+    ngOnDestroy(){
+        this.notificationSubscription.unsubscribe();
+    }
+
+    getColour(finalizado: number){
+        if(finalizado == -1) return 'naoEntrou';
+        else if(finalizado == 1) return 'finalizado';
         else return 'naoFinalizado';
-    }
-
-    verificaFinalizados(){
-        interval(10 * 1000)
-            .pipe(
-                flatMap(() => this.masterService.verificaFinalizados(this.idJogo, this.etapa))
-            )
-            .subscribe(
-                (data: boolean[]) => {
-                    if(data != null){
-                        this.finalizadosEtapa = data;
-                        this.getInfoPessoas();
-                    }
-                },
-                err => console.log(err)
-            );
     }
 
     getInfoPessoas(){
@@ -59,6 +83,8 @@ export class RightSideBarComponent implements OnInit {
             .subscribe(
                 (data: PersonSimplified[]) => {
                     this.pessoas = data;
+                    this.finalizadosEtapa = [];
+                    for (let i = 0; i < this.pessoas.length; i++) this.finalizadosEtapa.push(-1);
                 },
                 err => console.log(err)
             )

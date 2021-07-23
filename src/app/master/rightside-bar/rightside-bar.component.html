@@ -1,7 +1,8 @@
 <div class="d-inline-block w-100 border border-dark rounded p-1 container side-bars">
     <h4>Finalizados Etapa</h4>
-    <small><p><span class="pr-2 {{ getColour(true) }} mr-1"></span>Terminou</p></small>
-    <small><p><span class="pr-2 {{ getColour(false) }} mr-1"></span>Não terminou</p></small>
+    <small><p><span class="pr-2 {{ getColour(-1) }} mr-1"></span>Não entrou na etapa</p></small>
+    <small><p><span class="pr-2 {{ getColour(1) }} mr-1"></span>Terminou</p></small>
+    <small><p><span class="pr-2 {{ getColour(0) }} mr-1"></span>Não terminou</p></small>
     <div class="container" *ngFor="let pessoa of pessoas; let i=index">
         <hr>
         <div class="row">

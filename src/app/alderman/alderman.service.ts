@@ -1,8 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { GameNotification } from '../world/models/game-notification';
 import { World } from '../world/world';
 import { Alderman } from './alderman';
+import { AldermanSuggestion } from './alderman-suggestion/alderman-suggestion';
 
 const API = environment.ApiUrl + '/request/api';
 const VER_ROUTE = '/vereador';
@@ -13,9 +16,17 @@ const MASTER_ROUTE = '/mestre';
 })
 export class AldermanService {
 
+    private newSuggestionResponse = new BehaviorSubject<AldermanSuggestion>(null);
+    sharedSuggestions = this.newSuggestionResponse.asObservable();
+
     constructor(
         private httpClient: HttpClient
     ){ }
+
+    nextNewSuggestionResponses(newSuggestionResponse: AldermanSuggestion) {
+        if(newSuggestionResponse)
+            this.newSuggestionResponse.next(newSuggestionResponse);
+    }
 
     getInfo(idJogo: number, idVer: number){
         return this.httpClient.get<Alderman>(
@@ -28,17 +39,17 @@ export class AldermanService {
             API + '/' + idJogo + MASTER_ROUTE + '/infoMundo'
         );
     }
-    
-    verificaFimEtapa(idJogo: number, etapa: number){
-        return this.httpClient.get(
-            API + '/' + idJogo + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
-        );
-    }
 
     finalizaJogada(idJogo: number, idVer: number){
         return this.httpClient.post(
             API + '/' + idJogo + VER_ROUTE + '/' + idVer,
             null
+        );
+    }
+
+    verificaTodosComecaramEtapa(idJogo: number, etapa: number){
+        return this.httpClient.get(
+            API + '/' + idJogo + MASTER_ROUTE + '/verificaTodosComecaramEtapa/' + etapa
         );
     }
 }

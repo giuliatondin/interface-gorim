@@ -1,9 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { BehaviorSubject } from 'rxjs';
+
 import { PostForm } from './postForm';
 import { World } from '../world/world';
 import { Mayor } from './mayor';
+import { AldermanSuggestion } from '../alderman/alderman-suggestion/alderman-suggestion';
 
 const API = environment.ApiUrl + '/request/api';
 const MAYOR_ROUTE = '/prefeito';
@@ -14,9 +17,17 @@ const MASTER_ROUTE = '/mestre';
 })
 export class MayorService {
     
+    private newSuggestion = new BehaviorSubject<AldermanSuggestion>(null);
+    sharedNewSuggestion = this.newSuggestion.asObservable();
+    
     constructor(
         private httpClient: HttpClient
     ){ }
+
+    nextSuggestion(newSuggestion: AldermanSuggestion) {
+        if(newSuggestion)
+            this.newSuggestion.next(newSuggestion);
+    }
 
     getInfo(idJogo: number, idPref: number){
         return this.httpClient.get<Mayor>(
@@ -29,12 +40,6 @@ export class MayorService {
             API + '/' + idJogo + MASTER_ROUTE + '/infoMundo'
         );
     }
-    
-    verificaFimEtapa(idJogo: number, etapa: number){
-        return this.httpClient.get(
-            API + '/' + idJogo + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
-        );
-    }
 
     finalizaJogada(
         idJogo: number,
@@ -45,5 +50,11 @@ export class MayorService {
             API + '/' + idJogo + MAYOR_ROUTE + '/' + idPref,
             postForm
         )
+    }
+
+    verificaTodosComecaramEtapa(idJogo: number, etapa: number){
+        return this.httpClient.get(
+            API + '/' + idJogo + MASTER_ROUTE + '/verificaTodosComecaramEtapa/' + etapa
+        );
     }
 }

@@ -4,4 +4,5 @@ export interface ChatInfo {
     idJogo: number;
     role: string;
     cidade: string;
+    quantidadeJogadores: number;
 }

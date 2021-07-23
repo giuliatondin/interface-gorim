@@ -32,6 +32,8 @@ export class BusinessmanHistoryComponent implements OnInit {
             (data: BusinessmanHistory) => {
                 if(data != null) this.history = data;
                 else this.loadingMessage = 'Tivemos um problema ao pegar os dados do servidor, por favor, reinicie a página';
+
+                console.log(data);
             },
             err => console.log(err)
         );

@@ -78,15 +78,15 @@
                             <div class="container" *ngFor="let empresario of etapa.empresarios">
                                 <div class="row align-items-center">
                                     <div class="col-md-12 mb-12">
-                                        <div class="history-list-info"><h4>Nome: {{ empresario.nome }}</h4></div>
+                                        <div class="history-list-info"><b>Nome: {{ empresario.nome }}</b></div>
                                     </div>
                                 </div>
                                 <div class="row align-items-center">
                                     <div class="col-md-4 mb-4">
-                                        <div class="history-list-info">Produtividade: {{ empresario.produtividade }}</div>
+                                        <div class="history-list-info">Produtividade: D${{ empresario.produtividade }}</div>
                                     </div>
                                     <div class="col-md-4 mb-4">
-                                        <div class="history-list-info">Poluição: {{ empresario.poluicao }}</div>
+                                        <div class="history-list-info">Poluição: {{ empresario.poluicao | number:'.0-2' }}</div>
                                     </div>
                                     <div class="col-md-4 mb-4" *ngIf="etapa.etapa == 2">
                                         <div class="history-list-info">Multa aplicada: {{ empresario.multa }}</div>
@@ -98,40 +98,42 @@
                             <div class="container" *ngFor="let agricultor of etapa.agricultores">
                                 <div class="row align-items-center">
                                     <div class="col-md-12 mb-12">
-                                        <div class="history-list-info"><h4>Nome: {{ agricultor.nome }}</h4></div>
+                                        <div class="history-list-info"><b>Nome: {{ agricultor.nome }}</b></div>
                                     </div>
                                 </div>
                                 <div class="row align-items-center">
                                     <div class="col-md-4 mb-4">
-                                        <div class="history-list-info">Produtividade: {{ agricultor.produtividade }}</div>
+                                        <div class="history-list-info">Produtividade: D${{ agricultor.produtividade }}</div>
                                     </div>
                                     <div class="col-md-4 mb-4">
-                                        <div class="history-list-info">Poluição: {{ agricultor.poluicaoMedia }}</div>
+                                        <div class="history-list-info">Poluição: {{ agricultor.poluicaoMedia | number:'.0-2' }}</div>
                                     </div>
                                     <div class="col-md-4 mb-4" *ngIf="etapa.etapa == 2">
-                                        <div class="history-list-info">Multa aplicada: {{ agricultor.multa }}</div>
+                                        <div class="history-list-info">Multa: D${{ agricultor.multa }}</div>
                                     </div>
                                 </div>
                                 <h5><span style="color: lightblue;">Parcelas</span></h5>
                                 <div class="row align-items-center">
-                                    <div class="col-md-4 mb-4" *ngFor="let parcela of agricultor.parcelas; let i=index">
-                                        <div class="history-list-info">
-                                            Parcela: {{ i+1 }}
-                                        </div><br>
-                                        <div class="history-list-info">
-                                            Selo Verde: <span *ngIf="parcela.seloVerde; else seloVerde">Sim</span><ng-template #seloVerde>Não</ng-template>
-                                        </div><br>
-                                        <div class="history-list-info" *ngIf="parcela.semente">
-                                            Semente: {{parcela.semente}}
-                                        </div><br>
-                                        <div class="history-list-info" *ngIf="parcela.fertilizante">
-                                            Fertilizante: {{parcela.fertilizante}}
-                                        </div><br>
-                                        <div class="history-list-info" *ngIf="parcela.maqAgr">
-                                            <span *ngIf="isMaquina(parcela.maqAgr); else agrotoxico">Máquina:</span><ng-template #agrotoxico>Agrotóxico:</ng-template> {{parcela.agrMaq}}
-                                        </div><br>
-                                        <div class="history-list-info" *ngIf="parcela.pulverizador">
-                                            Pulverizador: Sim
+                                    <div class="row align-items-center">
+                                        <div class="col-md-4 mb-4 light-border" *ngFor="let parcela of agricultor.parcelas; let i=index">
+                                            <div class="history-list-info">
+                                                <b>Parcela {{ i+1 }}</b>
+                                            </div><br>
+                                            <div class="history-list-info">
+                                                Selo Verde: <span *ngIf="parcela.seloVerde; else seloVerde">Sim</span><ng-template #seloVerde>Não</ng-template>
+                                            </div><br>
+                                            <div class="history-list-info" *ngIf="parcela.semente">
+                                                Semente: {{parcela.semente}}
+                                            </div><br>
+                                            <div class="history-list-info" *ngIf="parcela.fertilizante">
+                                                Fertilizante: {{parcela.fertilizante}}
+                                            </div><br>
+                                            <div class="history-list-info" *ngIf="parcela.maqAgr">
+                                                <span *ngIf="isMaquina(parcela.maqAgr); else agrotoxico">Máquina:</span><ng-template #agrotoxico>Agrotóxico:</ng-template> {{parcela.maqAgr}}
+                                            </div><br>
+                                            <div class="history-list-info" *ngIf="parcela.pulverizador">
+                                                Pulverizador: Sim
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

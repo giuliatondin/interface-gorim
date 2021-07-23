@@ -1,19 +1,20 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatRadioChange } from '@angular/material/radio';
 import { Router } from '@angular/router';
-import { interval, Subscription } from 'rxjs';
-import { flatMap } from 'rxjs/operators';
 import { AlertService } from 'src/app/world/alert/alert.service';
+import { Subscription } from 'rxjs';
 
 import { Produto } from 'src/app/world/models/produto';
 import { ProdutoSimplified } from 'src/app/world/models/produto.simplified';
 import { ProdutoService } from '../produto.service';
 import { WebStorageService } from '../../world/web-storage/webstorage.service';
 import { Parcel, Prod } from './parcel';
-import { ParcelService } from './parcel.service';
-import { PostForm } from './postForm';
+import { PostForm } from '../postForm';
+import { FarmerService } from '../farmer.service';
+import { ECGameStatusMessage, GameNotification } from 'src/app/world/models/game-notification';
+import { EC_GAME_STATUS, GS_FIM_JOGO, GS_MESTRE_TERMINOU_ETAPA, GS_TODOS_JOGADORES_NA_ETAPA } from 'src/app/world/constants/constants';
 
 @Component({
     selector: 'app-parcel',
@@ -34,30 +35,29 @@ export class ParcelComponent implements OnInit {
 
     checkedButtons = [];
     pedirSeloVerde: boolean;
+
     liberaBotao: boolean;
+    inLineAlertButtonMessage: string = 'Nem todos os jogadores começaram o jogo ainda. Aguarde para finalizar a jogada.';
 
-    percentDone: number = 0;
-    
-    counter = interval(10 * 1000);
-    subscription: Subscription;
-
-    inLineAlertButton: string = 'Nem todos os jogadores começaram o jogo ainda. Aguarde para finalizar a jogada.';
+    private produtoSubscription: Subscription;
+    private notificationSubscription: Subscription;
 
     constructor(
         private produtoService: ProdutoService,
+        private agrService: FarmerService,
         private formBuilder: FormBuilder,
         private webStorageService: WebStorageService,
-        private parcelService: ParcelService,
         private router: Router,
         private alertService: AlertService
     ) { }
 
     ngOnInit(): void {
+        //console.clear();
         this.liberaBotao = false;
 
         this.iniciaArrays();
 
-        this.produtoService.sharedProdutos.subscribe(
+        this.produtoSubscription = this.produtoService.sharedProdutos.subscribe(
             (produto: Produto) => {
                 if(produto != null){
                     if(produto.nome != ""){
@@ -205,7 +205,23 @@ export class ParcelComponent implements OnInit {
             }),
         });
 
-        this.verificaFimEtapa();
+        this.notificationSubscription = this.agrService.sharedGameNotification.subscribe(
+            (notification: GameNotification) => {
+                console.log(notification);
+                if(notification != null && notification.code == EC_GAME_STATUS){
+                    let gameStatus: ECGameStatusMessage = notification.message as ECGameStatusMessage;
+                    if (gameStatus.etapa == 1) this.processaGameStatus(gameStatus.status);
+                }
+            }
+        );
+                    
+        this.agrService.verificaTodosComecaramEtapa(this.idJogo, 1).subscribe(
+            (data: number) => {
+                if(data == 0) this.processaGameStatus(GS_TODOS_JOGADORES_NA_ETAPA);
+                else if(data == -2 || data == GS_FIM_JOGO) this.finalizarJogada(true, true);
+            },
+            err => console.log(err)
+        );
     }
 
     iniciaArrays(){
@@ -239,9 +255,9 @@ export class ParcelComponent implements OnInit {
                 [0, 0, 0, 0]  // p6
             ];
 
-        this.pedirSeloVerde = (this.webStorageService.hasData('agr'+ this.idAgr + 'ParcelPedirSeloVerde')) ?
-            this.webStorageService.getData('agr'+ this.idAgr + 'ParcelPedirSeloVerde') as boolean :
-            false;
+        this.pedirSeloVerde = (this.webStorageService.hasData('agr'+ this.idAgr + 'ParcelPedirSeloVerde'))
+            ? this.webStorageService.getData('agr'+ this.idAgr + 'ParcelPedirSeloVerde') as boolean
+            : false;
         
         this.webStorageService.setData('agr'+ this.idAgr + 'ParcelCheckedButtons', this.checkedButtons);
         this.webStorageService.setData('agr'+ this.idAgr + 'ParcelQuantidades', this.quantidades);
@@ -290,25 +306,13 @@ export class ParcelComponent implements OnInit {
         this.webStorageService.setData('agr'+ this.idAgr + 'ParcelPedirSeloVerde', this.pedirSeloVerde);
     }
 
-    verificaFimEtapa(){
-        this.subscription = this.counter
-            .pipe(
-                flatMap(
-                    () => this.parcelService.verificaFimEtapa(this.idJogo, 1)
-                )
-            )
-            .subscribe(
-                (data: number) => {
-                    console.log(data);
-                    if (data == 3) this.finalizarJogada(true, true);
-                    else if(data > 2) {
-                        this.liberaBotao = true;
-                        this.inLineAlertButton = '';
-                    }
-                    else if(data == 0) this.finalizarJogada(true);
-                },
-                err => console.log(err)
-            );
+    processaGameStatus(status: number){
+        if (status == GS_FIM_JOGO) this.finalizarJogada(true, true);
+        else if(status == GS_TODOS_JOGADORES_NA_ETAPA) {
+            this.liberaBotao = true;
+            this.inLineAlertButtonMessage = '';
+        }
+        else if(status == GS_MESTRE_TERMINOU_ETAPA) this.finalizarJogada(true);
     }
 
     hasUnsetProducts(){
@@ -323,14 +327,22 @@ export class ParcelComponent implements OnInit {
         return temProdutos;
     }
 
-    finalizarJogada(finishedByMaster: boolean = false, gameover: boolean = false){
-        if(
-            (
-                !this.hasUnsetProducts() &&
-                (this.webStorageService.getData(this.idAgr + 'voting') != true) 
-            ) ||
+    isElectionTurn(){
+        if((this.rodada-1)%2 == 0 && this.rodada != 1) return true;
+        else return false;
+    }
+
+    shouldLetFinish(finishedByMaster: boolean){
+        return (
+            (this.isElectionTurn() && this.webStorageService.hasData(this.idAgr + 'voting')) ||
+            !this.isElectionTurn() ||
             finishedByMaster
-        ){
+        );
+    }
+
+    finalizarJogada(finishedByMaster: boolean = false, gameover: boolean = false){
+        console.log('finishedByMaster=' + finishedByMaster);
+        if(this.shouldLetFinish(finishedByMaster)){
             let parcelas: Parcel[] = [];
             this.checkedButtons.forEach(
                 parcela => {
@@ -353,44 +365,34 @@ export class ParcelComponent implements OnInit {
                 }
             );
 
-            
             let postForm: PostForm = {
                 parcelas: parcelas,
                 seloVerde: this.parcelasForm.getRawValue().seloVerde
             };
             
             if (!gameover){
-                this.parcelService.postAgricultiristForm(this.idJogo, this.idAgr, postForm)
-                    .subscribe(
-                        () => {
-                            this.subscription.unsubscribe();
-                            this.webStorageService.removeData([
-                                'agr'+ this.idAgr + 'ParcelCheckedButtons',
-                                'agr'+ this.idAgr + 'VendaQuantidadeProdutos',
-                                'agr'+ this.idAgr + 'ParcelPedirSeloVerde',
-                                'agr'+ this.idAgr + 'ParcelQuantidades',
-                                this.idAgr + 'voting'
-                            ]);
-                                if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
-                                else this.alertService.success('Jogada finalizada.', true);
-                                this.router.navigate([this.idJogo, 'waitingPage', this.idAgr], { replaceUrl: true });
-                        },
-                        err => {
-                            console.log(err);
-                            this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
-                        }
-                    );
+                this.webStorageService.setData('hasMasterFinishedStage', finishedByMaster);
+
+                if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
+                else this.alertService.success('Jogada finalizada.', true);
+
+                this.produtoSubscription.unsubscribe();
+                this.notificationSubscription.unsubscribe();
+
+                this.agrService.nextPostForm(postForm);
             }
             else{
                 this.alertService.warning('O jogo terminou', true);
+                this.produtoSubscription.unsubscribe();
+                this.notificationSubscription.unsubscribe();
                 this.router.navigate([this.idJogo, 'gameover']);
             }
         }
         else {
             if(this.hasUnsetProducts())
-                this.inLineAlertButton = 'É preciso colocar todos os produtos comprados em parcelas antes de terminar a etapa.';
-            else if(this.webStorageService.getData(this.idAgr + 'voting') == false)
-                this.inLineAlertButton = 'É preciso votar para terminar a etapa.';
+                this.inLineAlertButtonMessage = 'É preciso colocar todos os produtos comprados em parcelas antes de terminar a etapa.';
+            else if(!this.webStorageService.hasData(this.idAgr + 'voting'))
+                this.inLineAlertButtonMessage = 'É preciso votar para terminar a etapa.';
         }
 
     }

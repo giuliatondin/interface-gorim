@@ -1,10 +1,13 @@
 import { Injectable } from "@angular/core";
-import { Client, CompatClient, IFrame, IPublishParams, Stomp, StompSubscription } from '@stomp/stompjs';
+import { Client, IPublishParams, StompSubscription } from '@stomp/stompjs';
 
 import { environment } from "src/environments/environment";
 import { Message } from "../chat/message";
 import { ChatService } from "../chat/chat.service";
-import { Observable, of } from "rxjs";
+import { GameNotification, WSMessage } from "../models/game-notification";
+import { BehaviorSubject } from "rxjs";
+import { WSMT_CHAT, WSMT_GAME } from "../constants/constants";
+import { ChatNotification } from "../chat/chat-notification";
 
 const WebSocketURL = environment.WebSocketURL;
 
@@ -14,11 +17,12 @@ const WebSocketURL = environment.WebSocketURL;
 export class WebSocketService {
     private stompClient: Client = new Client();
     private idChatPessoa: string = '';
-    private nomePessoa: string;
-    private personService: any;
 
     private isItFirsTime: boolean = true;
     private subscription: StompSubscription = null;
+
+    private newGameNotification = new BehaviorSubject<GameNotification>(null);
+    sharedNewGameNotification = this.newGameNotification.asObservable();
 
     constructor(
         private chatService: ChatService
@@ -39,17 +43,9 @@ export class WebSocketService {
         }
         else return false;
     }
-    /**
-     * Três modos de fazer:
-     * * Deixar como estava e colocar um timer dentro de um while até o websocket estar DISCONNECTED
-     * * Criar um destrutor e chamar o destrutor, próxima página chamar o construtor
-     * * Fazer que nem vi no site
-     */
-    config(idChatPessoa: string, nomePessoa: string, password: string, personService){
-        console.log('idChatPessoa: ' + idChatPessoa + '; nomePessoa: ' + nomePessoa + '; password: ' + password);
+    
+    config(idChatPessoa: string, password: string){
         this.idChatPessoa = idChatPessoa.toLowerCase();
-        this.nomePessoa = nomePessoa;
-        this.personService = personService;
         var that = this;
         this.stompClient.configure({
             brokerURL: WebSocketURL,
@@ -73,17 +69,24 @@ export class WebSocketService {
                 this.subscription = this.stompClient.subscribe(
                     '/user/' + this.idChatPessoa + '/queue/messages',
                     (notification) => {
-                        if(that.isChatNotification(notification))
-                            that.chatService.nextChatNotification(notification);
-                        else if(that.isGameNotification(notification))
-                            //
-                            return;
+                        var notificationParsed = JSON.parse(notification.body) as WSMessage;
+                        console.log(notification);
+                        if(that.isChatNotification(notificationParsed)){
+                            let chatNotification: ChatNotification = notificationParsed.c as ChatNotification;
+                            console.log(chatNotification);
+                            that.chatService.nextChatNotification(chatNotification);
+                        }
+                        else if(that.isGameNotification(notificationParsed)){
+                            let gameNotification: GameNotification = notificationParsed.c as GameNotification;
+                            console.log(gameNotification);
+                            that.nextGameNotification(gameNotification);
+                        }
                     }
                 );
               }
             },
             onDisconnect: (frame) => {
-              console.log(">>>> Disconnected", frame);
+              console.log(">>>> DISCONNECTED", frame);
             },
             onWebSocketClose: (frame) => {
               console.log(">>>>> CLOSED", frame);
@@ -103,52 +106,61 @@ export class WebSocketService {
         }
     }
 
+    private nextGameNotification(newGameNotification){
+        if (newGameNotification != null) this.newGameNotification.next(newGameNotification);
+    }
+
     connect(){
         this.stompClient.activate();
     }
 
-    changeConnection(idChatPessoa: string, nomePessoa: string, password: string, personService){
+    disconnect(){
+        this.stompClient.deactivate();
+    }
+
+    changeConnection(idChatPessoa: string, password: string){
         if((this.subscription != null) && (this.idChatPessoa != idChatPessoa)){
             this.chatService.nextCloseChatRoom('FECHAR_TODAS_AS_JANELAS');
     
             this.idChatPessoa = idChatPessoa.toLowerCase();
-            this.nomePessoa = nomePessoa;
-            this.personService = personService;
             this.subscription.unsubscribe();
     
             let that = this;
             this.subscription = this.stompClient.subscribe(
                 '/user/' + this.idChatPessoa + '/queue/messages',
                 (notification) => {
-                    if(that.isChatNotification(notification))
-                        that.chatService.nextChatNotification(notification);
-                    else if(that.isGameNotification(notification))
-                        //
-                        return;
+                    var notificationParsed = JSON.parse(notification.body) as WSMessage;
+                    console.log(notification);
+                    if(that.isChatNotification(notificationParsed)){
+                        let chatNotification: ChatNotification = notificationParsed.c as ChatNotification;
+                        console.log(chatNotification);
+                        that.chatService.nextChatNotification(chatNotification);
+                    }
+                    else if(that.isGameNotification(notificationParsed)){
+                        let gameNotification: GameNotification = notificationParsed.c as GameNotification;
+                        console.log(gameNotification);
+                        that.nextGameNotification(gameNotification);
+                    }
                 }
             );
         }
         else if((this.subscription == null) && (this.idChatPessoa != idChatPessoa)){
-            this.config(idChatPessoa, nomePessoa, password, personService);
+            this.config(idChatPessoa, password);
             this.connect();
         }
     }
 
-    isChatNotification(msg): boolean {
-        return true;
+    isChatNotification(msg: WSMessage): boolean {
+        if(msg.t === WSMT_CHAT) return true;
+        else return false
     }
 
     isGameNotification(msg): boolean {
-        return false;
+        if(msg.t === WSMT_GAME) return true;
+        else return false
     }
 
     sendMessage(message: Message){
-        console.log('Enviando mensagem para ' + message.recipientId);
-        console.log({
-            destination: '/app/chat',
-            body: JSON.stringify(message)
-        } as IPublishParams);
-
         this.stompClient.publish(
             {
                 destination: '/app/chat',

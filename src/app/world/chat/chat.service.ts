@@ -48,10 +48,10 @@ export class ChatService {
         this.friendName.next(friendName);
     }
 
-    nextChatNotification(chatNotification){
-        var notification = JSON.parse(chatNotification.body);
-        if(notification != {} as ChatNotification)
-            this.chatNotifications.next(notification);
+    nextChatNotification(chatNotification: ChatNotification){
+        //var notification = JSON.parse(chatNotification.body);
+        if(chatNotification != {} as ChatNotification)
+            this.chatNotifications.next(chatNotification);
     }
 
     nextReadMessages(friendName: string){
@@ -65,7 +65,6 @@ export class ChatService {
 
     nextSentMessages(message: Message){
         this.sentMessages.next(message);
-        console.log(message);
     }
 
     loadMessages(requesterId: string, friendId: string){
@@ -79,6 +78,7 @@ export class ChatService {
     }
 
     loadFriendsList(idJogo: number, idPessoa: number){
+        console.log(API + '/request/api/' + idJogo + CHAT_HTTP_ROUTE + '/listaContatoChat/' + idPessoa);
         return this.httpClient.get<PersonSimplified[]>(
             API + '/request/api/' + idJogo + CHAT_HTTP_ROUTE + '/listaContatoChat/' + idPessoa
         );

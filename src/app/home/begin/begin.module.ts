@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { BeginComponent } from './begin.component';
 import { BeginService } from './begin.service';
+import { WorldModule } from 'src/app/world/world.module';
 
 @NgModule({
     declarations: [
@@ -16,7 +17,8 @@ import { BeginService } from './begin.service';
         FormsModule,
         ReactiveFormsModule,
         RouterModule,
-        HttpClientModule
+        HttpClientModule,
+        WorldModule
     ],
     exports: [
         BeginComponent

@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ConfirmingModal } from './confirming-modal';
-import { ConfirmingModalService } from './confirming-modal.service';
 import { ResponseModalService } from './response-modal.service';
 
 @Component({

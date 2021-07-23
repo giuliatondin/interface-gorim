@@ -72,28 +72,31 @@ export class GreenSealComponent implements OnInit{
     }
 
     salvarGreenSeal(){
-        let idAgr = this.greenSealForm.get('idAgr').value;
-        
-        let parcelas = [];
-        let i = 1;
-        this.parcelas.forEach(
-            parcela => {
-                if(parcela.checked){
-                    parcelas.push(i);
-                    parcela.checked = false;
+        if (this.greenSealForm.valid){
+            let idAgr = this.greenSealForm.get('idAgr').value;
+            
+            let parcelas = [];
+            let i = 1;
+            this.parcelas.forEach(
+                parcela => {
+                    if(parcela.checked){
+                        parcelas.push(i);
+                        parcela.checked = false;
+                    }
+                    i++;
                 }
-                i++;
-            }
-        );
+            );
 
-        if(idAgr != 0 && parcelas.length > 0){
-            this.greenSealService.nextGreenSeal({
-                idAgr: idAgr,
-                atribuir: this.greenSealForm.get('atribuir').value as boolean,
-                parcelas: parcelas
-            } as GreenSeal);
-            this.alertSerice.success('Registrado.');
-            this.resetForm();
+            if(idAgr != 0 && parcelas.length > 0){
+                this.greenSealService.nextGreenSeal({
+                    idAgr: idAgr,
+                    atribuir: this.greenSealForm.get('atribuir').value as boolean,
+                    parcelas: parcelas
+                } as GreenSeal);
+                this.alertSerice.success('Registrado.');
+                this.resetForm();
+            }
         }
+        else this.alertSerice.warning('Preencha todos os campos do formulário!');
     }
 }

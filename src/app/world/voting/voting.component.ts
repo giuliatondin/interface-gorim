@@ -89,29 +89,31 @@ export class VotingComponent implements OnInit{
     }
 
     votar(){
-        console.log(this.votingForm.getRawValue());
-        this.votos = [
-            this.votingForm.get('fiscalAmbiental').value,
-            this.votingForm.get('prefeito').value,
-            this.votingForm.get('vereador').value
-        ];
-        this.votingService.votar(this.idJogo, this.votos).subscribe(
-            (data: boolean) => {
-                if(data){
-                    this.webStorageService.setData(this.idPessoa + 'voting', this.votos);
-                    this.showForm = false;
-                    this.alertService.success('Votado com sucesso.');
+        if(this.votingForm.valid){
+            this.votos = [
+                this.votingForm.get('fiscalAmbiental').value,
+                this.votingForm.get('prefeito').value,
+                this.votingForm.get('vereador').value
+            ];
+            this.votingService.votar(this.idJogo, this.votos).subscribe(
+                (data: boolean) => {
+                    if(data){
+                        this.webStorageService.setData(this.idPessoa + 'voting', this.votos);
+                        this.showForm = false;
+                        this.alertService.success('Votado com sucesso.');
+                    }
+                    else{
+                        this.showForm = true;
+                        this.alertService.warning('Por favor, vote novamente. Algo deu errado.');
+                    }
+                },
+                err => {
+                    console.log(err);
+                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+                    this.resetForm();
                 }
-                else{
-                    this.showForm = true;
-                    this.alertService.warning('Por favor, vote novamente. Algo deu errado.');
-                }
-            },
-            err => {
-                console.log(err);
-                this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
-                this.resetForm();
-            }
-        );
+            );
+        }
+        else this.alertService.warning('Você deve fazer os três votos');
     }
 }

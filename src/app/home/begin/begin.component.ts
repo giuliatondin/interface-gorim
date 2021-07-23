@@ -18,6 +18,9 @@ export class BeginComponent implements OnInit{
     beginForm: FormGroup;
     beginFormButtonDisabled: boolean = false;
 
+    shouldShowMessage: boolean = false;
+    messageType: String;
+
     constructor(
         private formBuilder: FormBuilder,
         private router: Router,
@@ -38,17 +41,22 @@ export class BeginComponent implements OnInit{
         });
     }
 
+    showMessage(){
+        this.messageType = 'info';
+        this.shouldShowMessage = true;
+    }
+
     comecarJogo(){
         if(this.beginForm.valid){
             const quantidadeJogadores: number = this.beginForm.get('quantidadeJogadores').value;
             this.beginFormButtonDisabled = true;
+            this.shouldShowMessage = false;
             this.beginService.iniciaJogada(quantidadeJogadores).subscribe(
                 (data: number) => {
                     const idJogo = data;
                     if(idJogo > 0){
                         this.loginLogoutService.login(idJogo, 0, 'mestre').subscribe(
                             (data: LoginBodyResponse) => {
-                                console.log(data);
                                 this.weStorageService.setData('authToken', data.token);
                                 this.router.navigate([idJogo, 'mestre'], { replaceUrl: true });
                             },
@@ -68,6 +76,9 @@ export class BeginComponent implements OnInit{
                     this.beginFormButtonDisabled = false;
                 }
             );
+        }
+        else {
+            this.messageType = 'danger';
         }
     }
 }

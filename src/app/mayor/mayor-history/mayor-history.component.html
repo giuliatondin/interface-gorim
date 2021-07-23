@@ -1,6 +1,6 @@
 <div class="history content pt-5 pb-5">
     <div class="container main__block pt-2 pb-3 pl-3 pr-3">
-        <div class="mb-3"  *ngIf="history != null; else loading">
+        <div class="mb-3" *ngIf="history != null; else loading">
             <h2 class="text-center pt-2 pb-3">Histórico {{ history.nome }} (Prefeito) </h2>
             <mat-accordion *ngFor="let rodada of history.rodadas">
                 <mat-expansion-panel>
@@ -116,7 +116,7 @@
                                         <div class="history-list-info">Imposto: D${{ empresario.imposto }}</div>
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <div class="history-list-info">Poluição: {{ empresario.poluicao }}</div>
+                                        <div class="history-list-info">Poluição: {{ empresario.poluicao | number:'.0-2' }}</div>
                                     </div>
                                     <div class="col-md-3 mb-3" *ngIf="etapa.etapa == 2">
                                         <div class="history-list-info">Multa: D${{ empresario.multa }}</div>
@@ -139,7 +139,7 @@
                                         <div class="history-list-info">Imposto: D${{ agricultor.imposto }}</div>
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <div class="history-list-info">Poluição: {{ agricultor.poluicaoMedia }}</div>
+                                        <div class="history-list-info">Poluição: {{ agricultor.poluicaoMedia | number:'.0-2' }}</div>
                                     </div>
                                     <div class="col-md-3 mb-3" *ngIf="etapa.etapa == 2">
                                         <div class="history-list-info">Multa: D${{ agricultor.multa }}</div>
@@ -147,9 +147,9 @@
                                 </div>
                                 <h5><span style="color: lightblue;">Parcelas</span></h5>
                                 <div class="row align-items-center">
-                                    <div class="col-md-4 mb-4" *ngFor="let parcela of agricultor.parcelas; let i=index">
+                                    <div class="col-md-4 mb-4 light-border" *ngFor="let parcela of agricultor.parcelas; let i=index">
                                         <div class="history-list-info">
-                                            Parcela: {{ i+1 }}
+                                            <b>Parcela {{ i+1 }}</b>
                                         </div><br>
                                         <div class="history-list-info">
                                             Selo Verde: <span *ngIf="parcela.seloVerde; else seloVerde">Sim</span><ng-template #seloVerde>Não</ng-template>
@@ -161,7 +161,7 @@
                                             Fertilizante: {{parcela.fertilizante}}
                                         </div><br>
                                         <div class="history-list-info" *ngIf="parcela.maqAgr">
-                                            <span *ngIf="isMaquina(parcela.maqAgr); else agrotoxico">Máquina:</span><ng-template #agrotoxico>Agrotóxico:</ng-template> {{parcela.agrMaq}}
+                                            <span *ngIf="isMaquina(parcela.maqAgr); else agrotoxico">Máquina:</span><ng-template #agrotoxico>Agrotóxico:</ng-template> {{parcela.maqAgr}}
                                         </div><br>
                                         <div class="history-list-info" *ngIf="parcela.pulverizador">
                                             Pulverizador: Sim

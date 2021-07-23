@@ -35,7 +35,6 @@ export class OrderProductComponent implements OnInit {
         if(this.webStorageService.hasData('orderProduct' + this.idEmp + 'idOrcamento'))
             this.idOrcamento = this.webStorageService.getData('orderProduct' + this.idEmp + 'idOrcamento');
         this.webStorageService.setData('orderProduct' + this.idEmp + 'idOrcamento', this.idOrcamento);
-        console.log(this.produtos);
     }
 
     resetForm(){
@@ -72,28 +71,27 @@ export class OrderProductComponent implements OnInit {
     }
 
     adicionarOrcamento(){
-
-        this.orderProductService
-            .adicionarOrcamento(
-                this.idJogo,
-                this.idOrcamento,
-                this.orcamentoForm.get('idAgr').value,
-                this.orcamentoForm.getRawValue() as Venda
-            )
-            .subscribe(
-                () => {
-                    this.orcamentoForm.reset();
-                    this.resetForm();
-                    this.alertService.success('Orçamento enviado para o agricultor.');
-                    this.idOrcamento++;
-                },
-                err => {
-                    console.log(err);
-                    this.orcamentoForm.reset();
-                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
-                }
-            );
-
+        if (this.orcamentoForm.valid){
+            this.orderProductService.adicionarOrcamento(
+                    this.idJogo,
+                    this.idOrcamento,
+                    this.orcamentoForm.get('idAgr').value,
+                    this.orcamentoForm.getRawValue() as Venda
+                ).subscribe(
+                    () => {
+                        this.orcamentoForm.reset();
+                        this.resetForm();
+                        this.alertService.success('Orçamento enviado para o agricultor.');
+                        this.idOrcamento++;
+                    },
+                    err => {
+                        console.log(err);
+                        this.orcamentoForm.reset();
+                        this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+                    }
+                );
+        }
+        else this.alertService.warning('Por favor, preencha todos os campos do formulário para enviar um orçamento.');
     }
 
 }

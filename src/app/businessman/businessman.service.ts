@@ -5,6 +5,8 @@ import { environment } from 'src/environments/environment';
 import { Businessman } from './businessman';
 import { World } from '../world/world';
 import { PersonSimplified } from '../world/models/person.simplified';
+import { BehaviorSubject } from 'rxjs';
+import { GameNotification } from '../world/models/game-notification';
 
 const API = environment.ApiUrl + '/request/api';
 const EMP_ROUTE = '/empresario';
@@ -15,10 +17,18 @@ const MASTER_ROUTE = '/mestre';
 })
 export class BusinessmanService{
     
+    private gameNotification = new BehaviorSubject<GameNotification>(null);
+    sharedGameNotification = this.gameNotification.asObservable();
+
     constructor(
         private httpClient: HttpClient
     ){
         //
+    }
+
+    nextGameNotification(newGameSatatus: GameNotification) {
+        if(newGameSatatus != null)
+            this.gameNotification.next(newGameSatatus);
     }
 
     getInfo(
@@ -44,12 +54,6 @@ export class BusinessmanService{
             2
         );
     }
-    
-    verificaFimEtapa(idJogo: number, etapa: number){
-        return this.httpClient.get(
-            API + '/' + idJogo + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
-        );
-    }
 
     finalizaJogada(
         idJogo: number,
@@ -59,5 +63,11 @@ export class BusinessmanService{
             API + '/' + idJogo + EMP_ROUTE + '/' + idEmp,
             {idEmp}
         )
+    }
+
+    verificaTodosComecaramEtapa(idJogo: number, etapa: number){
+        return this.httpClient.get(
+            API + '/' + idJogo + MASTER_ROUTE + '/verificaTodosComecaramEtapa/' + etapa
+        );
     }
 }

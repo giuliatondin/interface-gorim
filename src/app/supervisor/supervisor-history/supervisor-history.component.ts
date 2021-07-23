@@ -39,7 +39,7 @@ export class SupervisorHistoryComponent implements OnInit {
     }
 
     isMaquina(produto: string){
-        if(produto.includes("comum") || produto.includes("premium")) return false;
+        if(produto.toLowerCase().includes("Comum") || produto.toLowerCase().includes("premium")) return false;
         return true;
     }
 

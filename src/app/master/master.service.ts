@@ -4,6 +4,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { World } from '../world/world';
 import { PersonSimplified } from '../world/models/person.simplified';
+import { BehaviorSubject } from 'rxjs';
+import { GameNotification } from '../world/models/game-notification';
 
 const API = environment.ApiUrl + '/request/api';
 const MASTER_ROUTE = '/mestre';
@@ -11,7 +13,13 @@ const MASTER_ROUTE = '/mestre';
 @Injectable({
     providedIn: 'root'
 })
-export class MasterService{
+export class MasterService {
+
+    private gameFinished = new BehaviorSubject<boolean>(false);
+    sharedGameStatus = this.gameFinished.asObservable();
+
+    private gameNotification = new BehaviorSubject<GameNotification>(null);
+    sharedGameNotification = this.gameNotification.asObservable();
     
     constructor(
         private httpClient : HttpClient
@@ -19,9 +27,19 @@ export class MasterService{
         //
     }
 
-    finalizarEtapa(idJogo: number){
+    nextGameStatus(gameFinished: boolean) {
+        if(gameFinished)
+            this.gameFinished.next(gameFinished);
+    }
+
+    nextGameNotification(newGameNotification: GameNotification){
+        if(this.gameNotification != null)
+            this.gameNotification.next(newGameNotification);
+    }
+
+    finalizarEtapa(idJogo: number, rodada: number, etapa: number){
         return this.httpClient.post(
-            API + '/' + idJogo + MASTER_ROUTE + '/finalizarEtapa',
+            API + '/' + idJogo + MASTER_ROUTE + '/finalizarEtapa/' + rodada + '/' + etapa,
             null
         );
     }
@@ -35,13 +53,14 @@ export class MasterService{
     getInfoMundo(
         idJogo: number
     ){
+        console.log(API + '/' + idJogo + MASTER_ROUTE + '/infoMundo');
         return this.httpClient.get<World>(
             API + '/' + idJogo + MASTER_ROUTE + '/infoMundo'
         );
     }
 
     verificaFinalizados(idJogo: number, etapa: number){
-        return this.httpClient.post<boolean[]>(
+        return this.httpClient.post<number[]>(
             API + '/' + idJogo + MASTER_ROUTE + '/verificaFinalizados',
             etapa
         )
@@ -52,12 +71,6 @@ export class MasterService{
             API + '/' + idJogo + MASTER_ROUTE + '/infoPessoasByEtapa',
             etapa
         )
-    }
-
-    getSituacaoEtapa(idJogo: number, etapa: number){
-        return this.httpClient.get(
-            API + '/' + idJogo + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
-        );
     }
 
     changeFlagFimEtapa(idJogo: number){

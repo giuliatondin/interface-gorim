@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { interval, Observable } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
 
 import { MasterService } from './master.service';
 import { World } from '../world/world';
 import { ActivatedRoute, Router } from '@angular/router';
-import { flatMap } from 'rxjs/operators';
 import { AlertService } from '../world/alert/alert.service';
 import { ConfirmingModalService } from '../world/confirming-modal/confirming-modal.service';
 import { ConfirmingModal } from '../world/confirming-modal/confirming-modal';
@@ -12,19 +11,19 @@ import { ResponseModalService } from '../world/confirming-modal/response-modal.s
 import { WebStorageService } from '../world/web-storage/webstorage.service';
 import { ChatInfo } from '../world/chat/chat-info';
 import { WebSocketService } from '../world/web-socket/web-socket.service';
+import { ECGameStatusMessage, GameNotification } from '../world/models/game-notification';
+import { EC_GAME_STATUS, GS_JOGADORES_ACABARAM_ETAPA, GS_TODOS_JOGADORES_NA_ETAPA } from '../world/constants/constants';
 
 @Component({
     selector: 'app-master',
     templateUrl: './master.component.html',
     styleUrls: ['./master.component.scss']
 })
-export class MasterComponent implements OnInit {
+export class MasterComponent implements OnInit, OnDestroy {
 
     infoMundo$: Observable<World>;
     mundo: World;
     idJogo: number;
-
-    hasUnfinishedPlayers: boolean;
 
     apareceBotao: boolean = false;
 
@@ -33,6 +32,14 @@ export class MasterComponent implements OnInit {
     chatInfo: ChatInfo;
     mestreNome: string = 'Mestre';
     mestreId: number = 0;
+
+    isFinalizarJogoButton: boolean = false;
+
+    private modalSubscription: Subscription;
+    private notificationSubscription: Subscription;
+
+    hasUnfinishedPlayers: boolean;
+    private hasMasterFinishedStage: boolean = false;
 
     constructor(
         private masterService: MasterService,
@@ -45,7 +52,7 @@ export class MasterComponent implements OnInit {
         private router: Router
     ) { }
 
-    ngOnInit(): void {
+    ngOnInit(){
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
         this.hasUnfinishedPlayers = true;
         this.infoMundo$ = this.masterService.getInfoMundo(this.idJogo);
@@ -55,20 +62,36 @@ export class MasterComponent implements OnInit {
             this.inicioEtapa = this.webStorageService.getData('masterHoraInicioEtapa');
         this.webStorageService.setData('masterHoraInicioEtapa', this.inicioEtapa);
 
-        this.responseModalService.sharedResponse.subscribe(
+        this.modalSubscription = this.responseModalService.sharedResponse.subscribe(
             (response: boolean) => {
-                if(response != null) this.finalizarEtapa(response);
+                if(response != null){
+                    if (response){
+                        if(this.isFinalizarJogoButton) this.finalizarJogo();
+                        this.finalizarEtapa();
+                    }
+                    else this.isFinalizarJogoButton = false;
+                }
             },
             err => console.log(err)
         );
         
         this.wsService.config(
             this.mestreNome + this.idJogo,
-            this.mestreNome,
-            this.mestreNome + this.mestreId,
-            this.masterService
+            this.mestreNome + this.mestreId
         );
         this.wsService.connect();
+
+        this.notificationSubscription = this.wsService.sharedNewGameNotification.subscribe(
+            (notification: GameNotification) => {
+                if(notification != null){
+                    this.masterService.nextGameNotification(notification);
+                    if(notification.code == EC_GAME_STATUS){
+                        let gameStatus = notification.message as ECGameStatusMessage;
+                        this.processaSituacaoEtapa(gameStatus.status);
+                    }
+                }
+            }
+        );
 
         this.chatInfo = {
             cidade: '',
@@ -79,99 +102,84 @@ export class MasterComponent implements OnInit {
         } as ChatInfo;
     }
 
+    ngOnDestroy(){
+        this.modalSubscription.unsubscribe();
+        this.notificationSubscription.unsubscribe();
+    }
+
     putInMundo(){
         this.infoMundo$.subscribe(
             (data: World) => {
                 this.mundo = data;
-                this.getSituacaoEtapa();
             },
             err => console.log(err)
         );
     }
     
-    getSituacaoEtapa(){
-        interval(10 * 1000)
-            .pipe(
-                flatMap(
-                    () => this.masterService.getSituacaoEtapa(this.idJogo, this.mundo.etapa)
-                )
-            )
-            .subscribe(
-                (data: number) => {
-                    console.log(data);
-                    if(data == 0){
-                        this.apareceBotao = false;
-                    }
-                    else if(data == 2){
-                        this.apareceBotao = true;
-                        this.masterService.changeFlagFimEtapa(this.idJogo)
-                            .subscribe(
-                                () => this.alertService.info('Todos os jogadores começaram a etapa.'),
-                                err => console.log(err)
-                            );
-                    }
-                    else if(data == 3){
-                        this.hasUnfinishedPlayers = false;
-                    }
-                    else if(data == 1 && (new Date().getTime()) > (this.inicioEtapa + (1000*60*2) ) ){
-                        console.log('Passou de 2 minutos');
-                        this.apareceBotao = true;
-                        this.masterService.changeFlagFimEtapa(this.idJogo)
-                            .subscribe(
-                                () => this.alertService.info('O jogador ainda não conectou, mas foi liberado para os outros jogadores terminarem a etapa, se quiserem.'),
-                                err => console.log(err)
-                            );
-                    }
-                    else if(data == 1 && (new Date().getTime()) > (this.inicioEtapa + (1000*60*1) ) ){
-                        console.log('Mais de um minuto');
-                        this.alertService.info('Algo de errado aconteceu com um jogador e ele ainda não começou a etapa.');
-                    }
-                },
-                err => console.log(err)
-            );
+    processaSituacaoEtapa(status: number){
+        console.log(status);
+        if(status == GS_TODOS_JOGADORES_NA_ETAPA){
+            this.hasUnfinishedPlayers = true;
+            this.alertService.info('Todos os jogadores estão na etapa.');
+        }
+        else if(status == GS_JOGADORES_ACABARAM_ETAPA){
+            this.hasUnfinishedPlayers = false;
+            this.alertService.info('Todos os jogadores acabaram a jogada. Termine a etapa pelo botão!');
+            if (this.hasMasterFinishedStage){
+                this.infoMundo$ = this.masterService.getInfoMundo(this.idJogo);
+                this.putInMundo();
+                this.hasUnfinishedPlayers = true;
+                this.hasMasterFinishedStage = false;
+            }
+        }
     }
 
-    receiveUserChoice($event: boolean){
-        this.finalizarEtapa($event);
-    }
+    openModal(botao: number){
+        if (botao === 1) this.isFinalizarJogoButton = true;
+        let strModalContent: string;
 
-    openModal(){
+        if (botao === 0 && this.hasUnfinishedPlayers) strModalContent = 'Parece que ainda há jogadores que não terminaram a jogada. Deseja encerrar a etapa mesmo assim?';
+        else strModalContent = 'Esta ação não pode ser desfeita. Finalizar assim mesmo?';
+
         const confirmingModal: ConfirmingModal = {
-            modalTitle: 'Encerrar etapa',
-            modalContent: 'Parece que ainda há jogadores que não terminaram a jogada. Deseja encerrar a etapa mesmo assim?',
+            modalTitle: (botao === 0) ? 'Encerrar etapa' : 'Finalizar Jogo',
+            modalContent: strModalContent,
             modalConfirmBtnText: 'Sim',
             modalCancelBtnText: 'Não'
         };
         this.confirmingModalService.openModal(confirmingModal, 'master-modal');
     }
 
-    finalizarEtapa(userChoice: boolean){
-        if(userChoice){
-            this.masterService.finalizarEtapa(this.idJogo)
-                .subscribe(
-                    (data: boolean) => {
-                        if(data){
-                            this.alertService.success('Etapa terminada.');
-                            this.inicioEtapa = new Date().getTime();
-                            this.webStorageService.setData('masterHoraInicioEtapa', this.inicioEtapa);
-                            this.hasUnfinishedPlayers = true;
+    finalizarEtapa(){
+        this.masterService.finalizarEtapa(this.idJogo, this.mundo.rodada, this.mundo.etapa)
+            .subscribe(
+                (data: boolean) => {
+                    if(data){
+                        this.hasMasterFinishedStage = true;
+                        if(!this.hasUnfinishedPlayers){
                             this.infoMundo$ = this.masterService.getInfoMundo(this.idJogo);
                             this.putInMundo();
+                            this.hasMasterFinishedStage = false;
+                            this.hasUnfinishedPlayers = true;
                         }
-                        else this.alertService.danger('Algo deu errado. Etapa não finalizada.');
-                    },
-                    err => {
-                        this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
-                        console.log(err);
+                        this.alertService.success('Etapa terminada.');
+                        this.inicioEtapa = new Date().getTime();
+                        this.webStorageService.setData('masterHoraInicioEtapa', this.inicioEtapa);
                     }
-                );
-        }
+                    else this.alertService.danger('Algo deu errado. Etapa não finalizada.');
+                },
+                err => {
+                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+                    console.log(err);
+                }
+            );
     }
 
     finalizarJogo(){
         this.masterService.finalizarJogo(this.idJogo).subscribe(
             (data: boolean) => {
                 if(data){
+                    this.masterService.nextGameStatus(true);
                     this.webStorageService.removeData(['masterHoraInicioEtapa']);
                     this.alertService.warning('O jogo terminou', true);
                     this.router.navigate([this.idJogo, 'gameover']);

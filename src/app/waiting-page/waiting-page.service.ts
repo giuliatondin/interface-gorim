@@ -39,12 +39,6 @@ export class WaitingPageService{
         )
     }
 
-    verificaFimEtapa(idJogo: number, etapa: number){
-        return this.httpClient.get(
-            API + '/' + idJogo + MASTER_ROUTE + '/verificaFimEtapa/' + etapa
-        );
-    }
-
     getInfoEmpresario(idJogo: number, idPessoa: number){
         return this.empService.getInfo(idJogo, idPessoa);
     }
@@ -63,5 +57,11 @@ export class WaitingPageService{
 
     getInfoVereador(idJogo: number, idPessoa: number){
         return this.verService.getInfo(idJogo, idPessoa);
+    }
+
+    verificaTodosTerminaramEtapa(idJogo: number, etapa: number){
+        return this.httpClient.get(
+            API + '/' + idJogo + MASTER_ROUTE + '/verificaTodosTerminaramEtapa/' + etapa
+        );
     }
 }

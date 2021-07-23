@@ -44,6 +44,9 @@
                             (click)="finalizaJogada()"
                             [disabled]="!liberaBotao"
                         >Finalizar jogada</button>
+                        <app-inline-alert
+                            [message]="inLineAlertButton"
+                        ></app-inline-alert>
                     </div>
                 </div>
                 

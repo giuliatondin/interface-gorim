@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AlertService } from '../world/alert/alert.service';
+import { WebSocketService } from '../world/web-socket/web-socket.service';
 import { WebStorageService } from '../world/web-storage/webstorage.service';
 import { GameOver } from './gameover';
 import { GameOverService } from './gameover.service';
@@ -19,11 +20,13 @@ export class GameOverComponent implements OnInit {
         private gameOverService: GameOverService,
         private activatedRoute: ActivatedRoute,
         private alertService: AlertService,
-        private webStorageService: WebStorageService
+        private webStorageService: WebStorageService,
+        private wsService: WebSocketService
     ){ }
 
     ngOnInit(): void {
         this.idJogo = this.activatedRoute.snapshot.params.idJogo;
+        this.wsService.disconnect();
         this.gameOverService.getGameOverData(this.idJogo).subscribe(
             (data: GameOver) => {
                 if(data != null && !this.isEmpty(data)) this.gameoverData = data;
@@ -43,8 +46,7 @@ export class GameOverComponent implements OnInit {
             isNaN(gameoverData.rodada) &&
             !gameoverData.resumoJogadores
         ) return true;
-        console.log('falso');
-        return false;
+        else return false;
     }
 
 }
