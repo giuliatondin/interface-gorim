@@ -4,9 +4,10 @@ import { Observable, Subscription } from 'rxjs';
 
 import { AlertService } from '../world/alert/alert.service';
 import { ChatInfo } from '../world/chat/chat-info';
-import { EC_GAME_STATUS, GS_FIM_JOGO, GS_MESTRE_TERMINOU_ETAPA, GS_TODOS_JOGADORES_NA_ETAPA } from '../world/constants/constants';
+import { EC_GAME_STATUS, GS_FIM_JOGO, GS_JOGADORES_ACABARAM_ETAPA, GS_MESTRE_TERMINOU_ETAPA, GS_TODOS_JOGADORES_NA_ETAPA } from '../world/constants/constants';
 import { ECGameStatusMessage, GameNotification } from '../world/models/game-notification';
 import { PersonSimplified } from '../world/models/person.simplified';
+import { SharedDataWrap } from '../world/models/shared-data-wrap';
 import { WebSocketService } from '../world/web-socket/web-socket.service';
 import { WebStorageService } from '../world/web-storage/webstorage.service';
 import { World } from '../world/world';
@@ -44,6 +45,11 @@ export class SupervisorComponent implements OnInit {
     private finesSubscription: Subscription;
     private greenSealSubscription: Subscription;
     private notificationSubscription: Subscription;
+
+    private mestreTerminouEtapa: boolean = false;
+    private todosTerminaramEtapa: boolean = false;
+
+    private stageStartTime = Date.now();
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -93,8 +99,9 @@ export class SupervisorComponent implements OnInit {
                     this.webStorageService.setData('fis'+ this.idFis + 'Fines', this.fines);
             
                     this.finesSubscription = this.fineService.sharedFines.subscribe(
-                        (fine: Fine) => {
-                            if(fine.idPessoa != 0){
+                        (wrap: SharedDataWrap) => {
+                            if(wrap != null && wrap.time > this.stageStartTime){
+                                let fine: Fine = wrap.data as Fine;
                                 this.fines.push(fine);
                                 this.webStorageService.setData('fis'+ this.idFis + 'Fines', this.fines);
                             }
@@ -107,8 +114,9 @@ export class SupervisorComponent implements OnInit {
                     this.webStorageService.setData('fis'+ this.idFis + 'GreenSeals', this.greenSeals);
             
                     this.greenSealSubscription = this.greenSealService.sharedGreenSeals.subscribe(
-                        (greenSeal: GreenSeal) => {
-                            if(greenSeal.idAgr != 0){
+                        (wrap: SharedDataWrap) => {
+                            if((wrap != null) && (wrap.time > this.stageStartTime)){
+                                let greenSeal: GreenSeal = wrap.data as GreenSeal;
                                 this.greenSeals.push(greenSeal);
                                 this.webStorageService.setData('fis'+ this.idFis + 'GreenSeals', this.greenSeals);
                             }
@@ -126,7 +134,7 @@ export class SupervisorComponent implements OnInit {
                     this.fisService.verificaTodosComecaramEtapa(this.idJogo, 2).subscribe(
                         (data: number) => {
                             if(data == 0) this.processaGameStatus(GS_TODOS_JOGADORES_NA_ETAPA);
-                            else if(data == -2 || data == GS_FIM_JOGO) this.finalizarJogada(true, true);
+                            else if(data == -2 || data == GS_FIM_JOGO) this.finalizarJogo();
                         },
                         err => console.log(err)
                     );
@@ -160,16 +168,14 @@ export class SupervisorComponent implements OnInit {
 
     processaGameStatus(status: number){
         console.log('status: ' + status);
-        if(status == GS_FIM_JOGO) this.finalizarJogada(true, true);
-        else if(status == GS_TODOS_JOGADORES_NA_ETAPA){
-            this.liberaBotao = true;
-            this.inLineAlertButton = '';
-        }
-        else if(status == GS_MESTRE_TERMINOU_ETAPA) this.finalizarJogada(true);
+        if(status == GS_FIM_JOGO) this.finalizarJogo();
+        else if(status == GS_TODOS_JOGADORES_NA_ETAPA) this.alertService.info('Todos entraram na etapa.');
+        else if(status == GS_MESTRE_TERMINOU_ETAPA) this.finalizarJogada();
+        else if(status == GS_JOGADORES_ACABARAM_ETAPA) this.proximaEtapa();
     }
 
-    finalizarJogada(finishedByMaster: boolean = false, gameover: boolean = false){
-        this.webStorageService.setData('hasMasterFinishedStage', finishedByMaster);
+    finalizarJogada(){
+        this.mestreTerminouEtapa = true;
         this.fisService.finalizaJogada(
             this.idJogo,
             this.idFis,
@@ -179,28 +185,40 @@ export class SupervisorComponent implements OnInit {
             } as PostForm
         ).subscribe(
             () => {
-                this.webStorageService.removeData([
-                    'fine' + this.idFis + 'pessoasMultadas',
-                    'fis'+ this.idFis + 'Fines',
-                    'fis'+ this.idFis + 'GreenSeals'
-                ]);
-                this.greenSealSubscription.unsubscribe();
-                this.finesSubscription.unsubscribe();
-                this.notificationSubscription.unsubscribe();
-                if(!gameover){
-                    if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
-                    else this.alertService.success('Jogada finalizada.', true);
-                    this.router.navigate([this.idJogo, 'waitingPage', this.idFis]);
-                }
-                else {
-                    this.alertService.warning('O jogo terminou', true);
-                    this.router.navigate([this.idJogo, 'gameover']);
-                }
+                if(this.todosTerminaramEtapa) this.proximaEtapa();
             },
             err => {
                 console.log(err);
                 this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
             }
         );
+    }
+
+    proximaEtapa(){
+        this.todosTerminaramEtapa = true;
+        if(this.mestreTerminouEtapa){
+            this.mestreTerminouEtapa = false;
+            this.webStorageService.removeData([
+                'fine' + this.idFis + 'pessoasMultadas',
+                'fis'+ this.idFis + 'Fines',
+                'fis'+ this.idFis + 'GreenSeals'
+            ]);
+            this.greenSealSubscription.unsubscribe();
+            this.finesSubscription.unsubscribe();
+            this.notificationSubscription.unsubscribe();
+
+            this.alertService.success('Jogada finalizada.', true);
+            //this.router.navigate([this.idJogo, 'waitingPage', this.idVer]);
+
+            let infoFirstStage: ChatInfo = JSON.parse(this.webStorageService.getData(this.idJogo + 'papel')) as ChatInfo;
+            this.router.navigate([this.idJogo, infoFirstStage.role, infoFirstStage.idPessoa]);
+        }
+    }
+
+    finalizarJogo(){
+        this.alertService.warning('O jogo terminou', true);
+                
+        this.notificationSubscription.unsubscribe();
+        this.router.navigate([this.idJogo, 'gameover']);
     }
 }

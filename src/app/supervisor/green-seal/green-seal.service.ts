@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { PersonSimplified } from 'src/app/world/models/person.simplified';
+import { SharedDataWrap } from 'src/app/world/models/shared-data-wrap';
 import { environment } from 'src/environments/environment';
 import { GreenSeal } from '../postForm';
 
@@ -13,11 +14,7 @@ const MASTER_ROUTE = '/mestre';
 })
 export class GreenSealService {
     
-    private greenSeal = new BehaviorSubject<GreenSeal>({
-        idAgr: 0,
-        parcelas: [],
-        atribuir: false
-    });
+    private greenSeal = new BehaviorSubject<SharedDataWrap>(null);
     sharedGreenSeals = this.greenSeal.asObservable();
 
     constructor(
@@ -25,7 +22,10 @@ export class GreenSealService {
     ){ }
 
     nextGreenSeal(greenSeal: GreenSeal) {
-        this.greenSeal.next(greenSeal);
+        if(greenSeal != null){
+            let wrap: SharedDataWrap = {time: Date.now(), data: greenSeal} as SharedDataWrap;
+            this.greenSeal.next(wrap);
+        }
     }
 
     getInfoAgricultores(idJogo: number, cidade: string){

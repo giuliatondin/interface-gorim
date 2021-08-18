@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { PersonSimplified } from '../models/person.simplified';
 
@@ -12,14 +11,9 @@ const MASTER_ROUTE = '/mestre';
 })
 export class VotingService {
     
-    private voto = new BehaviorSubject<number[]>([-1]);
-    sharedVoto = this.voto.asObservable();
-    
     constructor(
         private httpClient: HttpClient
-    ){
-        //
-    }
+    ){ }
 
     getInfoPessoas(idJogo: number, cidade: string){
         return this.httpClient.get<PersonSimplified[]>(
@@ -32,9 +26,5 @@ export class VotingService {
             API + '/' + idJogo + MASTER_ROUTE + '/votar',
             votos
         );
-    }
-
-    nextVoto(voto: number[]) {
-        this.voto.next(voto);
     }
 }

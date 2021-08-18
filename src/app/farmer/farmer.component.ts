@@ -10,9 +10,10 @@ import { WebStorageService } from '../world/web-storage/webstorage.service';
 import { WebSocketService } from '../world/web-socket/web-socket.service';
 import { ChatInfo } from '../world/chat/chat-info';
 import { ECGameStatusMessage, GameNotification } from '../world/models/game-notification';
-import { EC_GAME_STATUS, GS_JOGADORES_ACABARAM_ETAPA, GS_MESTRE_TERMINOU_ETAPA } from '../world/constants/constants';
+import { EC_GAME_STATUS, GS_FIM_JOGO, GS_JOGADORES_ACABARAM_ETAPA, GS_MESTRE_TERMINOU_ETAPA, GS_TODOS_JOGADORES_NA_ETAPA } from '../world/constants/constants';
 import { PostForm } from './postForm';
 import { AlertService } from '../world/alert/alert.service';
+import { SharedDataWrap } from '../world/models/shared-data-wrap';
 
 @Component({
     selector: 'app-farmer',
@@ -36,6 +37,12 @@ export class FarmerComponent implements OnInit, OnDestroy {
     chatInfo: ChatInfo;
 
     private notificationSubscription: Subscription;
+    private formSubscription: Subscription;
+
+    private mestreTerminouEtapa: boolean = false;
+    private todosTerminaramEtapa: boolean = false;
+
+    private stageStartTime = Date.now();
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -55,7 +62,7 @@ export class FarmerComponent implements OnInit, OnDestroy {
         let etapa: number = 1;
         this.webStorageService.setData(this.idJogo + 'etapa', etapa);
         
-        this.agrService.getInfo(this. idJogo, this.idAgr).subscribe(
+        this.agrService.getInfo(this.idJogo, this.idAgr).subscribe(
             (data: Farmer) => {
                 this.agr = data;
 
@@ -90,23 +97,28 @@ export class FarmerComponent implements OnInit, OnDestroy {
                             this.agrService.nextGameNotification(notification);
                             if(notification != null && notification.code == EC_GAME_STATUS){
                                 let gameStatus: ECGameStatusMessage = notification.message as ECGameStatusMessage;
-                                if(
-                                    gameStatus.etapa == 1 &&
-                                    (gameStatus.status == GS_JOGADORES_ACABARAM_ETAPA || gameStatus.status == GS_MESTRE_TERMINOU_ETAPA)
-                                ){
-                                    //
-                                }
+                                if (gameStatus.etapa == 1) this.processaGameStatus(gameStatus.status);
                             }
                         }
                     }
                 );
 
-                this.agrService.sharedPostForm.subscribe(
-                    (newForm: PostForm) => {
-                        if (newForm != null){
-                            this.finalizaEtapa(newForm);
+                this.formSubscription = this.agrService.sharedPostForm.subscribe(
+                    (newForm: SharedDataWrap) => {
+                        if (newForm != null && newForm.time > this.stageStartTime){
+                            console.log('FarmerCompinent.ngOnInit.formSubscription');
+                            this.mestreTerminouEtapa = true;
+                            this.finalizaEtapa(newForm.data);
                         }
                     }
+                );
+                    
+                this.agrService.verificaTodosComecaramEtapa(this.idJogo, 1).subscribe(
+                    (data: number) => {
+                        if(data == 0) this.processaGameStatus(GS_TODOS_JOGADORES_NA_ETAPA);
+                        else if(data == GS_FIM_JOGO) this.finalizarJogo();
+                    },
+                    err => console.log(err)
                 );
             }
         );
@@ -121,6 +133,13 @@ export class FarmerComponent implements OnInit, OnDestroy {
     ngOnDestroy(){
         console.log("NgOnDestroy###");
         this.notificationSubscription.unsubscribe();
+        this.formSubscription.unsubscribe();
+    }
+
+    processaGameStatus(status: number){
+        if (status == GS_FIM_JOGO) this.finalizarJogo();
+        else if(status == GS_TODOS_JOGADORES_NA_ETAPA) this.alertService.info('Todos entraram na etapa.');
+        else if(status == GS_JOGADORES_ACABARAM_ETAPA) this.proximaEtapa();
     }
 
     isElectionTurn(rodada: number){
@@ -129,24 +148,58 @@ export class FarmerComponent implements OnInit, OnDestroy {
     }
 
     finalizaEtapa(postForm: PostForm){
-        this.agrService.postAgricultiristForm(this.idJogo, this.idAgr, postForm).subscribe(
-            () => {
-                console.log("Finaliza etapa?");
-                this.webStorageService.removeData([
-                    'agr'+ this.idAgr + 'ParcelCheckedButtons',
-                    'agr'+ this.idAgr + 'VendaQuantidadeProdutos',
-                    'agr'+ this.idAgr + 'ParcelPedirSeloVerde',
-                    'agr'+ this.idAgr + 'ParcelQuantidades',
-                    this.idAgr + 'voting'
-                ]);
+        if(this.mestreTerminouEtapa){
+            this.agrService.postAgricultiristForm(this.idJogo, this.idAgr, postForm).subscribe(
+                () => {
+                    if(this.todosTerminaramEtapa) this.proximaEtapa();
+                },
+                err => {
+                    console.log(err);
+                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+                }
+            );
+        }
+    }
 
-                this.router.navigate([this.idJogo, 'waitingPage', this.idAgr], { replaceUrl: true });
-            },
-            err => {
-                console.log(err);
-                this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
-            }
-        );
+    proximaEtapa(){
+        this.todosTerminaramEtapa = true;
+        if(this.mestreTerminouEtapa){
+            this.mestreTerminouEtapa = false;
+            console.log("Finaliza etapa?");
+            this.webStorageService.removeData([
+                'agr'+ this.idAgr + 'ParcelCheckedButtons',
+                'agr'+ this.idAgr + 'VendaQuantidadeProdutos',
+                'agr'+ this.idAgr + 'ParcelPedirSeloVerde',
+                'agr'+ this.idAgr + 'ParcelQuantidades',
+                this.idAgr + 'voting'
+            ]);
+
+            //this.router.navigate([this.idJogo, 'waitingPage', this.idAgr], { replaceUrl: true });
+            this.agrService.getPapelSegundaEtapa(this.idJogo, this.idAgr).subscribe(
+                (idProximaEtapa: number) => {
+                    this.alertService.info('A segunta etapa vai começar.');
+                    if(idProximaEtapa == 0)
+                        this.router.navigate([this.idJogo, 'segundaEtapa', this.idAgr]);
+                    else {
+                        let id = Math.floor(idProximaEtapa/10);
+                        let papel: string;
+
+                        if(idProximaEtapa%10 == 0) papel = 'fiscalAmbiental';
+                        else if(idProximaEtapa%10 == 1) papel = 'prefeito';
+                        else papel = 'vereador';
+
+                        this.router.navigate([this.idJogo, papel, id]);
+                    }
+                }
+            );
+        }
+        
+    }
+
+    finalizarJogo(){
+        this.alertService.warning('O jogo terminou', true);
+        this.notificationSubscription.unsubscribe();
+        this.router.navigate([this.idJogo, 'gameover']);
     }
 
 }

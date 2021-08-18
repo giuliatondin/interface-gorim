@@ -18,9 +18,6 @@ export class RightSideBarComponent implements OnInit, OnDestroy {
     finalizadosEtapa: number[] = [];
     pessoas: PersonSimplified[] = [];
 
-    private todosTerminaramEtapa: boolean = false;
-    private mestreTerminouEtapa: boolean = false;
-
     private notificationSubscription: Subscription;
 
     constructor(
@@ -38,14 +35,7 @@ export class RightSideBarComponent implements OnInit, OnDestroy {
                 if(gameNotification != null){
                     if(gameNotification.code == EC_GAME_STATUS){
                         let notificationMessage: ECGameStatusMessage = gameNotification.message as ECGameStatusMessage;
-                        if(notificationMessage.status == GS_JOGADORES_ACABARAM_ETAPA) this.todosTerminaramEtapa = true;
-                        else if(notificationMessage.status == GS_MESTRE_TERMINOU_ETAPA) this.mestreTerminouEtapa = true;
-
-                        if(this.mestreTerminouEtapa && this.todosTerminaramEtapa){
-                            this.todosTerminaramEtapa = false;
-                            this.mestreTerminouEtapa = false;
-                            this.getInfoPessoas();
-                        }
+                        if(notificationMessage.status == GS_JOGADORES_ACABARAM_ETAPA) this.getInfoPessoas();
                     }
                     else if(gameNotification.code == EC_PESSOA_COMECOU_JOGADA){
                         let pessoComecouEtapa: ECPessoaComecouJogadaInterface = gameNotification.message as ECPessoaComecouJogadaInterface;

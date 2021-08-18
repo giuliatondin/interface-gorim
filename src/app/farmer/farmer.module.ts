@@ -15,6 +15,7 @@ import { FarmerHistoryComponent } from './farmer-history/farmer-history.componen
 import { VendaComponent } from './venda/venda.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProdutoService } from './produto.service';
+import { FarmerService } from './farmer.service';
 
 @NgModule({
     declarations: [
@@ -38,7 +39,8 @@ import { ProdutoService } from './produto.service';
         MatCheckboxModule
     ],
     providers: [
-        ProdutoService
+        ProdutoService,
+        FarmerService
     ],
     bootstrap: [ AppComponent ]
 })

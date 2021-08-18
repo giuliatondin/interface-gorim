@@ -13,8 +13,9 @@ import { TaxesService } from './taxes/taxes.service';
 import { WebSocketService } from '../world/web-socket/web-socket.service';
 import { ChatInfo } from '../world/chat/chat-info';
 import { ECGameStatusMessage, GameNotification } from '../world/models/game-notification';
-import { EC_GAME_STATUS, EC_SUGESTAO, GS_FIM_JOGO, GS_MESTRE_TERMINOU_ETAPA, GS_TODOS_JOGADORES_NA_ETAPA } from '../world/constants/constants';
+import { EC_GAME_STATUS, EC_SUGESTAO, GS_FIM_JOGO, GS_JOGADORES_ACABARAM_ETAPA, GS_MESTRE_TERMINOU_ETAPA, GS_TODOS_JOGADORES_NA_ETAPA } from '../world/constants/constants';
 import { AldermanSuggestion } from '../alderman/alderman-suggestion/alderman-suggestion';
+import { SharedDataWrap } from '../world/models/shared-data-wrap';
 
 @Component({
     selector: 'app-mayor',
@@ -41,6 +42,11 @@ export class MayorComponent implements OnInit {
     private actionsSubscription: Subscription;
     private taxesSubscription: Subscription;
     private notificationSubscription: Subscription;
+
+    private mestreTerminouEtapa: boolean = false;
+    private todosTerminaramEtapa: boolean = false;
+
+    private stageStartTime: number = Date.now();
 
     constructor(
         private prefService: MayorService,
@@ -94,7 +100,7 @@ export class MayorComponent implements OnInit {
                 this.prefService.verificaTodosComecaramEtapa(this.idJogo, 2).subscribe(
                     (data: number) => {
                         if(data == 0) this.processaGameStatus(GS_TODOS_JOGADORES_NA_ETAPA);
-                        else if(data == -2 || data == GS_FIM_JOGO) this.finalizarJogada(true, true);
+                        else if(data == -2 || data == GS_FIM_JOGO) this.finalizarJogo();
                     },
                     err => console.log(err)
                 );
@@ -109,9 +115,9 @@ export class MayorComponent implements OnInit {
         this.webStorageService.setData('pref'+ this.idPref + 'environmentalActions', this.environmentalActions);
 
         this.actionsSubscription = this.environmentalActService.sharedEnvironmentalAction.subscribe(
-            (data: number) => {
-                if(data > -1){
-                    this.environmentalActions.push(data);
+            (wrap: SharedDataWrap) => {
+                if((wrap != null) && (wrap.time > this.stageStartTime) && (wrap.data > -1)){
+                    this.environmentalActions.push(wrap.data);
                     this.webStorageService.setData('pref'+ this.idPref + 'environmentalActions', this.environmentalActions);
                 }
             },
@@ -123,15 +129,18 @@ export class MayorComponent implements OnInit {
         this.webStorageService.setData('pref'+ this.idPref + 'taxes', this.taxes);
 
         this.taxesSubscription = this.taxesService.sharedTaxes.subscribe(
-            (taxes: Tax[]) => {
-                taxes.forEach(
-                    (data: Tax) =>{
-                        if(data.tipo > -1){
-                            this.taxes.push(data);
-                            this.webStorageService.setData('pref'+ this.idPref + 'taxes', this.taxes);
+            (wrap: SharedDataWrap) => {
+                if((wrap != null) && (wrap.time > this.stageStartTime)){
+                    let taxes: Tax[] = wrap.data as Tax[];
+                    taxes.forEach(
+                        (data: Tax) =>{
+                            if(data.tipo > -1){
+                                this.taxes.push(data);
+                                this.webStorageService.setData('pref'+ this.idPref + 'taxes', this.taxes);
+                            }
                         }
-                    }
-                );
+                    );
+                }
             },
             err => console.log(err)
         );
@@ -152,16 +161,14 @@ export class MayorComponent implements OnInit {
     }
 
     processaGameStatus(status: number){
-        if (status == GS_FIM_JOGO) this.finalizarJogada(true, true);
-        else if(status == GS_TODOS_JOGADORES_NA_ETAPA){
-            this.liberaBotao = true;
-            this.inLineAlertButton = '';
-        }
-        else if(status == GS_MESTRE_TERMINOU_ETAPA) this.finalizarJogada(true);
+        if (status == GS_FIM_JOGO) this.finalizarJogo();
+        else if(status == GS_TODOS_JOGADORES_NA_ETAPA) this.alertService.info('Todos entraram na etapa.');
+        else if(status == GS_MESTRE_TERMINOU_ETAPA) this.finalizarJogada();
+        else if(status == GS_JOGADORES_ACABARAM_ETAPA) this.proximaEtapa();
     }
 
-    finalizarJogada(finishedByMaster: boolean = false, gameover: boolean = false){
-        this.webStorageService.setData('hasMasterFinishedStage', finishedByMaster);
+    finalizarJogada(){
+        this.mestreTerminouEtapa = true;
         this.prefService.finalizaJogada(
             this.idJogo,
             this.idPref,
@@ -171,31 +178,42 @@ export class MayorComponent implements OnInit {
             } as PostForm
         ).subscribe(
             () => {
-                this.webStorageService.removeData([
-                    'envivonmentalAction' + this.idPref + 'formControl',
-                    'envivonmentalAction' + this.idPref + 'anyDisabled',
-                    'taxes' + this.idPref + 'formControl',
-                    'pref'+ this.idPref + 'environmentalActions',
-                    'pref'+ this.idPref + 'taxes'
-                ]);
-                this.actionsSubscription.unsubscribe();
-                this.taxesSubscription.unsubscribe();
-                this.notificationSubscription.unsubscribe();
-                if(!gameover){
-                    if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
-                    else this.alertService.success('Jogada finalizada.', true);
-
-                    this.router.navigate([this.idJogo, 'waitingPage', this.idPref]);
-                }
-                else{
-                    this.alertService.warning('O jogo terminou', true);
-                    this.router.navigate([this.idJogo, 'gameover']);
-                }
+                if(this.todosTerminaramEtapa) this.proximaEtapa();
             },
             err => {
                 console.log(err);
                 this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
             }
         );
+    }
+
+    proximaEtapa(){
+        this.todosTerminaramEtapa = true;
+        if(this.mestreTerminouEtapa){
+            this.mestreTerminouEtapa = false;
+            this.webStorageService.removeData([
+                'envivonmentalAction' + this.idPref + 'formControl',
+                'envivonmentalAction' + this.idPref + 'anyDisabled',
+                'taxes' + this.idPref + 'formControl',
+                'pref'+ this.idPref + 'environmentalActions',
+                'pref'+ this.idPref + 'taxes'
+            ]);
+            this.actionsSubscription.unsubscribe();
+            this.taxesSubscription.unsubscribe();
+            this.notificationSubscription.unsubscribe();
+
+            this.alertService.success('Jogada finalizada.', true);
+            //this.router.navigate([this.idJogo, 'waitingPage', this.idVer]);
+
+            let infoFirstStage: ChatInfo = JSON.parse(this.webStorageService.getData(this.idJogo + 'papel')) as ChatInfo;
+            this.router.navigate([this.idJogo, infoFirstStage.role, infoFirstStage.idPessoa]);
+        }
+    }
+
+    finalizarJogo(){
+        this.alertService.warning('O jogo terminou', true);
+                
+        this.notificationSubscription.unsubscribe();
+        this.router.navigate([this.idJogo, 'gameover']);
     }
 }

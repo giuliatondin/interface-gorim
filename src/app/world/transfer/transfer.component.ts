@@ -26,14 +26,16 @@ export class TransferComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.transferService.getInfoPessoas(this.idJogo)
-            .subscribe(
-                (data: PersonSimplified[]) => {
-                    if(data != null) this.pessoas = data;
-                },
-                err => console.log(err)
-            );
-        
+        this.transferService.getInfoPessoas(this.idJogo).subscribe(
+            (data: PersonSimplified[]) => {
+                if(data != null) this.pessoas = data;
+            },
+            err => console.log(err)
+        );
+        this.restartaForm()
+    }
+
+    restartaForm(){
         this.transferForm = this.formBuilder.group({
             destinatario: ['', Validators.required],
             quantia: ['', [Validators.required]],
@@ -52,11 +54,11 @@ export class TransferComponent implements OnInit {
                     (data: boolean) => {
                         if(data){
                             this.alertService.success('Transferência enviada.');
-                            this.transferForm.reset();
+                            this.restartaForm();
                         }
                         else {
                             this.alertService.warning('Transferência não enviada. Tente novamente.');
-                            this.transferForm.reset();
+                            this.restartaForm();
                         }
                     },
                     err => {

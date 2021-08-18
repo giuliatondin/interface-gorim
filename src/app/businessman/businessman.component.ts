@@ -12,7 +12,7 @@ import { WebStorageService } from '../world/web-storage/webstorage.service';
 import { WebSocketService } from '../world/web-socket/web-socket.service';
 import { ChatInfo } from '../world/chat/chat-info';
 import { ECGameStatusMessage, GameNotification } from '../world/models/game-notification';
-import { GS_FIM_JOGO, GS_MESTRE_TERMINOU_ETAPA, GS_TODOS_JOGADORES_NA_ETAPA } from '../world/constants/constants';
+import { GS_FIM_JOGO, GS_JOGADORES_ACABARAM_ETAPA, GS_MESTRE_TERMINOU_ETAPA, GS_TODOS_JOGADORES_NA_ETAPA } from '../world/constants/constants';
 
 @Component({
     selector: 'app-businessman',
@@ -39,6 +39,9 @@ export class BusinessmanComponent implements OnInit {
     bIsElectionTurn: boolean;
 
     private notificationSubscription: Subscription;
+
+    private mestreTerminouEtapa: boolean = false;
+    private todosTerminaramEtapa: boolean = false;
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -107,7 +110,7 @@ export class BusinessmanComponent implements OnInit {
                     this.empService.verificaTodosComecaramEtapa(this.idJogo, 1).subscribe(
                         (data: number) => {
                             if(data == 0) this.processaGameStatus(GS_TODOS_JOGADORES_NA_ETAPA);
-                            else if(data == -2 || data == GS_FIM_JOGO) this.finalizarJogada(true, true);
+                            else if(data == -2 || data == GS_FIM_JOGO) this.finalizarJogo();
                         },
                         err => console.log(err)
                     );
@@ -148,12 +151,10 @@ export class BusinessmanComponent implements OnInit {
     }
 
     processaGameStatus(status: number){
-        if (status == GS_FIM_JOGO) this.finalizarJogada(true, true);
-        else if(status == GS_TODOS_JOGADORES_NA_ETAPA) {
-            this.liberaBotao = true;
-            this.inLineAlertButton = '';
-        }
-        else if(status == GS_MESTRE_TERMINOU_ETAPA) this.finalizarJogada(true);
+        if (status == GS_FIM_JOGO) this.finalizarJogo();
+        else if(status == GS_TODOS_JOGADORES_NA_ETAPA) this.alertService.info('Todos entraram na etapa.');
+        else if(status == GS_JOGADORES_ACABARAM_ETAPA) this.proximaEtapa();
+        else if(status == GS_MESTRE_TERMINOU_ETAPA) this.finalizarJogada();
     }
 
     shouldLetFinish(finishedByMaster: boolean){
@@ -164,36 +165,53 @@ export class BusinessmanComponent implements OnInit {
         );
     }
 
-    finalizarJogada(finishedByMaster: boolean = false, gameover: boolean = false){
-        console.log('finishedByMaster=' + finishedByMaster);
-        if(this.shouldLetFinish(finishedByMaster)){
-            this.webStorageService.setData('hasMasterFinishedStage', finishedByMaster);
-            this.empService.finalizaJogada(this.idJogo, this.idEmp).subscribe(
-                () => {
-                    this.webStorageService.removeData([
-                        'orderProduct' + this.idEmp + 'idOrcamento',
-                        this.idEmp + 'voting'
-                    ]);
-                    this.notificationSubscription.unsubscribe();
-                    if(!gameover){
-                        if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
-                        else this.alertService.success('Jogada finalizada.', true);
-                        this.router.navigate([this.idJogo, 'waitingPage', this.idEmp]);
-                    }
+    finalizarJogada(){
+        this.mestreTerminouEtapa = true;
+        this.empService.finalizaJogada(this.idJogo, this.idEmp).subscribe(
+            () => {
+                if(this.todosTerminaramEtapa) this.proximaEtapa();
+            },
+            err => {
+                console.log(err);
+                this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
+            }
+        );
+    }
+
+    proximaEtapa(){
+        this.todosTerminaramEtapa = true;
+        if(this.mestreTerminouEtapa){
+            this.mestreTerminouEtapa = false;
+            this.webStorageService.removeData([
+                'orderProduct' + this.idEmp + 'idOrcamento',
+                this.idEmp + 'voting'
+            ]);
+            this.notificationSubscription.unsubscribe();
+            this.alertService.success('Jogada finalizada.', true);
+
+            this.empService.getPapelSegundaEtapa(this.idJogo, this.idEmp).subscribe(
+                (idProximaEtapa: number) => {
+                    this.alertService.info('A segunta etapa vai começar.');
+                    if(idProximaEtapa == 0)
+                        this.router.navigate([this.idJogo, 'segundaEtapa', this.idEmp]);
                     else {
-                        this.alertService.warning('O jogo terminou', true);
-                        this.router.navigate([this.idJogo, 'gameover']);
+                        let id = Math.floor(idProximaEtapa/10);
+                        let papel: string;
+
+                        if(idProximaEtapa%10 == 0) papel = 'fiscalAmbiental';
+                        else if(idProximaEtapa%10 == 1) papel = 'prefeito';
+                        else papel = 'vereador';
+
+                        this.router.navigate([this.idJogo, papel, id]);
                     }
-                },
-                err => {
-                    console.log(err);
-                    this.alertService.danger('Algo deu errado. Por favor, tente novamente.');
                 }
             );
         }
-        else {
-            this.inLineAlertButton = 'É preciso votar para terminar a etapa.';
-        }
     }
 
+    finalizarJogo(){
+        this.notificationSubscription.unsubscribe();
+        this.alertService.success('Jogo finalizado..', true);
+        this.router.navigate([this.idJogo, 'gameover']);
+    }
 }

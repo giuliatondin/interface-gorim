@@ -4,7 +4,7 @@ import { Observable, Subscription } from 'rxjs';
 
 import { AlertService } from '../world/alert/alert.service';
 import { ChatInfo } from '../world/chat/chat-info';
-import { EC_GAME_STATUS, EC_SUGESTAO_RESPOSTA, GS_FIM_JOGO, GS_MESTRE_TERMINOU_ETAPA, GS_TODOS_JOGADORES_NA_ETAPA } from '../world/constants/constants';
+import { EC_GAME_STATUS, EC_SUGESTAO_RESPOSTA, GS_FIM_JOGO, GS_JOGADORES_ACABARAM_ETAPA, GS_MESTRE_TERMINOU_ETAPA, GS_TODOS_JOGADORES_NA_ETAPA } from '../world/constants/constants';
 import { ECGameStatusMessage, GameNotification } from '../world/models/game-notification';
 import { WebSocketService } from '../world/web-socket/web-socket.service';
 import { WebStorageService } from '../world/web-storage/webstorage.service';
@@ -33,6 +33,9 @@ export class AldermanComponent implements OnInit {
     chatInfo: ChatInfo;
 
     private notificationSubscription: Subscription;
+
+    private mestreTerminouEtapa: boolean = false;
+    private todosTerminaramEtapa: boolean = false;
     
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -84,7 +87,7 @@ export class AldermanComponent implements OnInit {
                     this.verService.verificaTodosComecaramEtapa(this.idJogo, 2).subscribe(
                         (data: number) => {
                             if(data == 0) this.processaGameStatus(GS_TODOS_JOGADORES_NA_ETAPA);
-                            else if(data == -2 || data == GS_FIM_JOGO) this.finalizaJogada(true, true);
+                            else if(data == -2 || data == GS_FIM_JOGO) this.finalizarJogo();
                         },
                         err => console.log(err)
                     );
@@ -98,41 +101,45 @@ export class AldermanComponent implements OnInit {
     }
 
     processaGameStatus(status: number){
-        if (status == GS_FIM_JOGO) this.finalizaJogada(true, true);
-        else if(status == GS_TODOS_JOGADORES_NA_ETAPA){
-            this.liberaBotao = true;
-            this.inLineAlertButton = '';
-        }
-        else if(status == GS_MESTRE_TERMINOU_ETAPA) this.finalizaJogada(true);
+        if (status == GS_FIM_JOGO) this.finalizarJogo();
+        else if(status == GS_TODOS_JOGADORES_NA_ETAPA) this.alertService.info('Todos entraram na etapa.');
+        else if(status == GS_MESTRE_TERMINOU_ETAPA) this.finalizaJogada();
+        else if(status == GS_JOGADORES_ACABARAM_ETAPA) this.proximaEtapa();
     }
 
-    finalizaJogada(finishedByMaster: boolean = false, gameover: boolean = false){
-        if(gameover) {
-            this.webStorageService.removeData(['suggestion' + this.idVer + 'idSugestao']);
-            
-            this.alertService.warning('O jogo terminou', true);
-                    
-            this.notificationSubscription.unsubscribe();
-            this.router.navigate([this.idJogo, 'gameover']);
-        }
-        else {
-            this.webStorageService.setData('hasMasterFinishedStage', finishedByMaster);
-            this.verService.finalizaJogada(this.idJogo, this.idVer).subscribe(
-                () => {
-                    this.webStorageService.removeData(['suggestion' + this.idVer + 'idSugestao']);
-                    
-                    this.notificationSubscription.unsubscribe();
+    finalizaJogada(){
+        this.mestreTerminouEtapa = true;
+        this.verService.finalizaJogada(this.idJogo, this.idVer).subscribe(
+            () => {
+                if(this.todosTerminaramEtapa) this.proximaEtapa();
+            },
+            err => {
+                console.log(err);
+                this.alertService.danger('Algo deu errado. Por favor, fale com o mestre.');
+            }
+        );
+    }
 
-                    if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
-                    else this.alertService.success('Jogada finalizada.', true);
-                    this.router.navigate([this.idJogo, 'waitingPage', this.idVer]);
-                },
-                err => {
-                    console.log(err);
-                    this.alertService.danger('Algo deu errado. Por favor, fale com o mestre.');
-                }
-            );
+    proximaEtapa(){
+        this.todosTerminaramEtapa = true;
+        if(this.mestreTerminouEtapa){
+            this.mestreTerminouEtapa = false;
+            this.webStorageService.removeData(['suggestion' + this.idVer + 'idSugestao']);
+                
+            this.notificationSubscription.unsubscribe();
+
+            this.alertService.success('Jogada finalizada.', true);
+
+            let infoFirstStage: ChatInfo = JSON.parse(this.webStorageService.getData(this.idJogo + 'papel')) as ChatInfo;
+            this.router.navigate([this.idJogo, infoFirstStage.role, infoFirstStage.idPessoa]);
         }
+    }
+
+    finalizarJogo(){
+        this.alertService.warning('O jogo terminou', true);
+                
+        this.notificationSubscription.unsubscribe();
+        this.router.navigate([this.idJogo, 'gameover']);
     }
 
 

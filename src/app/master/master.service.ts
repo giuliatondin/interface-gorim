@@ -15,9 +15,6 @@ const MASTER_ROUTE = '/mestre';
 })
 export class MasterService {
 
-    private gameFinished = new BehaviorSubject<boolean>(false);
-    sharedGameStatus = this.gameFinished.asObservable();
-
     private gameNotification = new BehaviorSubject<GameNotification>(null);
     sharedGameNotification = this.gameNotification.asObservable();
     
@@ -25,11 +22,6 @@ export class MasterService {
         private httpClient : HttpClient
     ){
         //
-    }
-
-    nextGameStatus(gameFinished: boolean) {
-        if(gameFinished)
-            this.gameFinished.next(gameFinished);
     }
 
     nextGameNotification(newGameNotification: GameNotification){

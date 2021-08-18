@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { PersonSimplified } from 'src/app/world/models/person.simplified';
+import { SharedDataWrap } from 'src/app/world/models/shared-data-wrap';
 import { environment } from 'src/environments/environment';
 import { Fine } from '../postForm';
 
@@ -13,10 +14,7 @@ const MASTER_ROUTE = '/mestre';
 })
 export class FineService{
 
-    private fine = new BehaviorSubject<Fine>({
-        idPessoa: 0,
-        tipo: 0
-    });
+    private fine = new BehaviorSubject<SharedDataWrap>(null);
     sharedFines = this.fine.asObservable();
 
     private desmultaId = new BehaviorSubject<number>(0);
@@ -27,7 +25,10 @@ export class FineService{
     ){ }
 
     nextFine(fine: Fine) {
-        this.fine.next(fine);
+        if(fine != null){
+            let wrap: SharedDataWrap = {time: Date.now(), data: fine} as SharedDataWrap;
+            this.fine.next(wrap);
+        }
     }
 
     nextDesmultaId(idPessoa: number){

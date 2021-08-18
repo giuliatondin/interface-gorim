@@ -7,6 +7,7 @@ import { PostForm } from './postForm';
 import { World } from '../world/world';
 import { Mayor } from './mayor';
 import { AldermanSuggestion } from '../alderman/alderman-suggestion/alderman-suggestion';
+import { SharedDataWrap } from '../world/models/shared-data-wrap';
 
 const API = environment.ApiUrl + '/request/api';
 const MAYOR_ROUTE = '/prefeito';
@@ -17,7 +18,7 @@ const MASTER_ROUTE = '/mestre';
 })
 export class MayorService {
     
-    private newSuggestion = new BehaviorSubject<AldermanSuggestion>(null);
+    private newSuggestion = new BehaviorSubject<SharedDataWrap>(null);
     sharedNewSuggestion = this.newSuggestion.asObservable();
     
     constructor(
@@ -25,8 +26,10 @@ export class MayorService {
     ){ }
 
     nextSuggestion(newSuggestion: AldermanSuggestion) {
-        if(newSuggestion)
-            this.newSuggestion.next(newSuggestion);
+        if(newSuggestion){
+            let wrap: SharedDataWrap = {time: Date.now(), data: newSuggestion} as SharedDataWrap;
+            this.newSuggestion.next(wrap);
+        }
     }
 
     getInfo(idJogo: number, idPref: number){

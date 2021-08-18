@@ -4,7 +4,6 @@ import { BehaviorSubject } from "rxjs";
 
 import { environment } from "src/environments/environment";
 import { PersonSimplified } from "../models/person.simplified";
-import { WebStorageService } from "../web-storage/webstorage.service";
 import { ChatNotification } from "./chat-notification";
 import { Message } from "./message";
 
@@ -40,7 +39,6 @@ export class ChatService {
     sharedSentMessages = this.sentMessages.asObservable();
 
     constructor(
-        private webStorageService: WebStorageService,
         private httpClient: HttpClient
     ){ }
 

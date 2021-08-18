@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { GameNotification } from '../world/models/game-notification';
+import { SharedDataWrap } from '../world/models/shared-data-wrap';
 import { World } from '../world/world';
 import { Alderman } from './alderman';
 import { AldermanSuggestion } from './alderman-suggestion/alderman-suggestion';
@@ -16,7 +16,7 @@ const MASTER_ROUTE = '/mestre';
 })
 export class AldermanService {
 
-    private newSuggestionResponse = new BehaviorSubject<AldermanSuggestion>(null);
+    private newSuggestionResponse = new BehaviorSubject<SharedDataWrap>(null);
     sharedSuggestions = this.newSuggestionResponse.asObservable();
 
     constructor(
@@ -24,8 +24,10 @@ export class AldermanService {
     ){ }
 
     nextNewSuggestionResponses(newSuggestionResponse: AldermanSuggestion) {
-        if(newSuggestionResponse)
-            this.newSuggestionResponse.next(newSuggestionResponse);
+        if(newSuggestionResponse != null){
+            let wrap: SharedDataWrap = {time: Date.now(), data: newSuggestionResponse} as SharedDataWrap;
+            this.newSuggestionResponse.next(wrap);
+        }
     }
 
     getInfo(idJogo: number, idVer: number){

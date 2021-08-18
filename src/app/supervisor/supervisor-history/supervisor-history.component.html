@@ -88,7 +88,7 @@
                                     <div class="col-md-4 mb-4">
                                         <div class="history-list-info">Poluição: {{ empresario.poluicao | number:'.0-2' }}</div>
                                     </div>
-                                    <div class="col-md-4 mb-4" *ngIf="etapa.etapa == 2">
+                                    <div class="col-md-4 mb-4" *ngIf="(etapa.etapa == 2) && (empresario.multa > 0)">
                                         <div class="history-list-info">Multa aplicada: {{ empresario.multa }}</div>
                                     </div>
                                 </div>
@@ -108,7 +108,7 @@
                                     <div class="col-md-4 mb-4">
                                         <div class="history-list-info">Poluição: {{ agricultor.poluicaoMedia | number:'.0-2' }}</div>
                                     </div>
-                                    <div class="col-md-4 mb-4" *ngIf="etapa.etapa == 2">
+                                    <div class="col-md-4 mb-4" *ngIf="(etapa.etapa == 2) && (agricultor.multa > 0)">
                                         <div class="history-list-info">Multa: D${{ agricultor.multa }}</div>
                                     </div>
                                 </div>

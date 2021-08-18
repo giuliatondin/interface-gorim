@@ -4,6 +4,7 @@ import { WebStorageService } from 'src/app/world/web-storage/webstorage.service'
 import { AlertService } from 'src/app/world/alert/alert.service';
 import { EnvironmentalAction } from '../mayor';
 import { EnvironmentalActionService } from './environmental-action.service';
+import { SharedDataWrap } from 'src/app/world/models/shared-data-wrap';
 
 @Component({
     selector: 'app-environmental-action',
@@ -22,6 +23,8 @@ export class EnvironmentalActionComponent implements OnInit{
     anyDisabled: boolean = false;
 
     environmentalActForm: FormGroup;
+
+    private stageStartTime: number = Date.now();
 
     constructor(
         private acoesAmbService: EnvironmentalActionService,
@@ -46,9 +49,9 @@ export class EnvironmentalActionComponent implements OnInit{
         this.webStorageService.setData('envivonmentalAction' + this.idPref + 'anyDisabled', this.anyDisabled);
 
         this.acoesAmbService.sharedTroca.subscribe(
-            (data: number) => {
-                if(data > -1){
-                    this.formControl[data] = false;
+            (wrap: SharedDataWrap) => {
+                if((wrap != null) && (wrap.time > this.stageStartTime) && (wrap.data > -1)){
+                    this.formControl[wrap.data] = false;
                     this.webStorageService.setData('envivonmentalAction' + this.idPref + 'formControl', this.formControl);
                     this.anyDisabled = this.atualizaAnyDisabled();
                     this.webStorageService.setData('envivonmentalAction' + this.idPref + 'anyDisabled', this.anyDisabled);

@@ -48,12 +48,17 @@ export class WaitingPageComponent implements OnInit {
         this.chatInfo = JSON.parse(this.webStorageService.getData(this.idJogo + 'papel')) as ChatInfo;
 
         this.etapa = this.webStorageService.getData(this.idJogo + 'etapa');
+        
+        this.mestreTerminouEtapa = false;
+        if (this.webStorageService.hasData('hasMasterFinishedStage'))
+            this.mestreTerminouEtapa = this.webStorageService.getData('hasMasterFinishedStage');
 
-        this.mestreTerminouEtapa = this.webStorageService.getData('hasMasterFinishedStage');
+        console.log('ngOnInit: mestreTerminouEtapa=' + this.mestreTerminouEtapa);
 
         this.notificationSubscription = this.wsService.sharedNewGameNotification.subscribe(
             (notification: GameNotification) => {
                 if(notification != null && notification.code === EC_GAME_STATUS){
+                    console.log(notification);
                     let gameStatus: ECGameStatusMessage = notification.message as ECGameStatusMessage;
                     this.processaGameStatus(gameStatus.status, gameStatus.etapa);
                 }

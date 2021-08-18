@@ -70,4 +70,10 @@ export class BusinessmanService{
             API + '/' + idJogo + MASTER_ROUTE + '/verificaTodosComecaramEtapa/' + etapa
         );
     }
+
+    getPapelSegundaEtapa(idJogo: number, idPessoa: number){
+        return this.httpClient.get(
+            API + '/' + idJogo + MASTER_ROUTE + '/papelSegundaEtapa/' + idPessoa
+        );
+    }
 }

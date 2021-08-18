@@ -1,8 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { interval, Observable, Subscription } from 'rxjs';
-import { flatMap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { AlertService } from 'src/app/world/alert/alert.service';
+import { SharedDataWrap } from 'src/app/world/models/shared-data-wrap';
 import { AldermanSuggestion } from '../alderman-suggestion/alderman-suggestion';
 import { AldermanService } from '../alderman.service';
 import { ResponseListService } from './response-list.service';
@@ -20,6 +19,8 @@ export class ResponseListComponent implements OnInit, OnDestroy {
     responses: AldermanSuggestion[] = [];
 
     private newResponsesSubscription: Subscription;
+
+    private stageStartTime = Date.now();
 
     constructor(
         private responseListService: ResponseListService,
@@ -41,10 +42,11 @@ export class ResponseListComponent implements OnInit, OnDestroy {
         );
 
         this.newResponsesSubscription = this.verService.sharedSuggestions.subscribe(
-            (newSuggestionResponse: AldermanSuggestion) => { 
-                if(newSuggestionResponse != null){
+            (wrap: SharedDataWrap) => { 
+                if((wrap != null) && (wrap.time > this.stageStartTime)){
+                    this.alertService.info('Você tem novas respostas do Prefeito.');
                     this.quantidadeRespostas++;
-                    this.responses.push(newSuggestionResponse);
+                    this.responses.push(wrap.data);
                 }
             }
         );

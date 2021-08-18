@@ -39,7 +39,7 @@
                             <div class="history-list-info">Imposto: D${{ rodada.imposto }}</div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <div class="history-list-info" *ngIf="rodada.multa">Multa: D${{ rodada.multa }}</div>
+                            <div class="history-list-info" *ngIf="rodada.multa > 0">Multa: D${{ rodada.multa }}</div>
                         </div>
                         <div class="col-md-3 mb-3" *ngIf="rodada.transferencias.enviado">
                             <div class="row" *ngFor="let enviada of rodada.transferencias.enviado">
@@ -64,7 +64,7 @@
                     <h3><span style="color: grey;">Info Mundo</span></h3>
                     <div class="row align-items-center">
                         <div class="col-md-6 mb-3">
-                            <div class="history-list-info">Poluição Causada no Mundo: {{ rodada.poluicaoCausadaMundo }}%</div>
+                            <div class="history-list-info">Poluição Causada no Mundo: {{ rodada.poluicaoCausadaMundo | number:'.0-6' }}%</div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="history-list-info">Poluição Mundial: {{ rodada.poluicaoMundial | number:'.0-2' }}%</div>

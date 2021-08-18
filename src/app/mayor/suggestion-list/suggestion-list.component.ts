@@ -2,6 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AldermanSuggestion } from 'src/app/alderman/alderman-suggestion/alderman-suggestion';
 import { AlertService } from 'src/app/world/alert/alert.service';
+import { SharedDataWrap } from 'src/app/world/models/shared-data-wrap';
 import { MayorService } from '../mayor.service';
 import { SuggestionListService } from './suggestion-list.service';
 
@@ -19,6 +20,8 @@ export class SuggestionListComponent implements OnInit, OnDestroy {
     suggestions: AldermanSuggestion[] = [];
 
     private suggestionsSubscription: Subscription;
+
+    private stageStartTime = Date.now();
 
     constructor(
         private suggestionListService: SuggestionListService,
@@ -40,8 +43,9 @@ export class SuggestionListComponent implements OnInit, OnDestroy {
         );
 
         this.suggestionsSubscription = this.prefService.sharedNewSuggestion.subscribe(
-            (newSuggestion: AldermanSuggestion) => {
-                if(newSuggestion != null){
+            (wrap: SharedDataWrap) => {
+                if((wrap != null) && (wrap.time > this.stageStartTime)){
+                    let newSuggestion: AldermanSuggestion = wrap.data as AldermanSuggestion;
                     this.quantidadeSugestoes++;
                     this.suggestions.push(newSuggestion);
                     this.alertService.info('Você tem novas sugestões do Vereador.');

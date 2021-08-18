@@ -4,6 +4,7 @@ import { WebStorageService } from 'src/app/world/web-storage/webstorage.service'
 import { AlertService } from 'src/app/world/alert/alert.service';
 import { Tax } from '../postForm';
 import { TaxesService } from './taxes.service';
+import { SharedDataWrap } from 'src/app/world/models/shared-data-wrap';
 
 @Component({
     selector: 'app-taxes',
@@ -18,6 +19,8 @@ export class TaxesComponent implements OnInit {
     taxesForm: FormGroup;
     formControl: boolean[] = [false, false, false];
 
+    private stageStartTime: number = Date.now();
+
     constructor(
         private taxesService: TaxesService,
         private alertService: AlertService,
@@ -31,9 +34,10 @@ export class TaxesComponent implements OnInit {
         this.webStorageService.setData('taxes' + this.idPref + 'formControl', this.formControl);
 
         this.taxesService.sharedTipo.subscribe(
-            (data: number) => {
-                if(data > -1){
-                    this.formControl[data-1] = false;
+            (wrap: SharedDataWrap) => {
+                if((wrap != null) && (wrap.time) && (wrap.data > -1)){
+                    let tax: number = wrap.data as number;
+                    this.formControl[tax-1] = false;
                     this.webStorageService.setData('taxes' + this.idPref + 'formControl', this.formControl);
                 }
             },

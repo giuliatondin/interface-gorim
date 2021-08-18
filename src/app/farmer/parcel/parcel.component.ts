@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatRadioChange } from '@angular/material/radio';
@@ -14,14 +14,15 @@ import { Parcel, Prod } from './parcel';
 import { PostForm } from '../postForm';
 import { FarmerService } from '../farmer.service';
 import { ECGameStatusMessage, GameNotification } from 'src/app/world/models/game-notification';
-import { EC_GAME_STATUS, GS_FIM_JOGO, GS_MESTRE_TERMINOU_ETAPA, GS_TODOS_JOGADORES_NA_ETAPA } from 'src/app/world/constants/constants';
+import { EC_GAME_STATUS, GS_MESTRE_TERMINOU_ETAPA, GS_TODOS_JOGADORES_NA_ETAPA } from 'src/app/world/constants/constants';
+import { SharedDataWrap } from 'src/app/world/models/shared-data-wrap';
 
 @Component({
     selector: 'app-parcel',
     templateUrl: './parcel.component.html',
     styleUrls: ['./parcel.component.scss']
 })
-export class ParcelComponent implements OnInit {
+export class ParcelComponent implements OnInit, OnDestroy {
 
     @Input() rodada: number;
 
@@ -42,13 +43,13 @@ export class ParcelComponent implements OnInit {
     private produtoSubscription: Subscription;
     private notificationSubscription: Subscription;
 
+    private stageStartTime = Date.now();
+
     constructor(
         private produtoService: ProdutoService,
         private agrService: FarmerService,
         private formBuilder: FormBuilder,
-        private webStorageService: WebStorageService,
-        private router: Router,
-        private alertService: AlertService
+        private webStorageService: WebStorageService
     ) { }
 
     ngOnInit(): void {
@@ -58,12 +59,11 @@ export class ParcelComponent implements OnInit {
         this.iniciaArrays();
 
         this.produtoSubscription = this.produtoService.sharedProdutos.subscribe(
-            (produto: Produto) => {
-                if(produto != null){
-                    if(produto.nome != ""){
-                        this.quantidades[produto.id-1][produto.preco] += produto.quantidade;
-                        this.webStorageService.setData('agr'+ this.idAgr + 'ParcelQuantidades', this.quantidades);
-                    }
+            (wrap: SharedDataWrap) => {
+                if((wrap != null) && (wrap.time > this.stageStartTime)){
+                    let produto: Produto = wrap.data as Produto;
+                    this.quantidades[produto.id-1][produto.preco] += produto.quantidade;
+                    this.webStorageService.setData('agr'+ this.idAgr + 'ParcelQuantidades', this.quantidades);
                 }
             },
             err => console.log(err)
@@ -214,14 +214,11 @@ export class ParcelComponent implements OnInit {
                 }
             }
         );
-                    
-        this.agrService.verificaTodosComecaramEtapa(this.idJogo, 1).subscribe(
-            (data: number) => {
-                if(data == 0) this.processaGameStatus(GS_TODOS_JOGADORES_NA_ETAPA);
-                else if(data == -2 || data == GS_FIM_JOGO) this.finalizarJogada(true, true);
-            },
-            err => console.log(err)
-        );
+    }
+
+    ngOnDestroy(){
+        this.produtoSubscription.unsubscribe();
+        this.notificationSubscription.unsubscribe();
     }
 
     iniciaArrays(){
@@ -265,8 +262,8 @@ export class ParcelComponent implements OnInit {
     }
 
     getIndiceProduto(idEmp: number, idProduto: number){
-        if(idEmp < 3) return (idEmp - 1)
-        else if(idProduto == 10) return 3
+        if(idEmp < 3) return (idEmp - 1);
+        else if(idProduto == 10) return 3;
         else return 2;
     }
 
@@ -307,12 +304,10 @@ export class ParcelComponent implements OnInit {
     }
 
     processaGameStatus(status: number){
-        if (status == GS_FIM_JOGO) this.finalizarJogada(true, true);
-        else if(status == GS_TODOS_JOGADORES_NA_ETAPA) {
-            this.liberaBotao = true;
-            this.inLineAlertButtonMessage = '';
+        console.log('MESTRE_TERMINOU=' + GS_MESTRE_TERMINOU_ETAPA + '; status=' + status);
+        if(status == GS_MESTRE_TERMINOU_ETAPA){
+            this.finalizarJogada();
         }
-        else if(status == GS_MESTRE_TERMINOU_ETAPA) this.finalizarJogada(true);
     }
 
     hasUnsetProducts(){
@@ -332,68 +327,37 @@ export class ParcelComponent implements OnInit {
         else return false;
     }
 
-    shouldLetFinish(finishedByMaster: boolean){
-        return (
-            (this.isElectionTurn() && this.webStorageService.hasData(this.idAgr + 'voting')) ||
-            !this.isElectionTurn() ||
-            finishedByMaster
+    finalizarJogada(){
+        let parcelas: Parcel[] = [];
+        this.checkedButtons.forEach(
+            parcela => {
+
+                let produtos: Prod[] = [];
+                parcela.forEach(
+                    (produto: number) => {
+                        produtos.push({
+                            id: Math.floor(produto/10),
+                            preco: produto%10
+                        });
+                    }
+                );
+
+                const parcel: Parcel = {
+                    produtos: produtos
+                };
+
+                parcelas.push(parcel);
+            }
         );
-    }
 
-    finalizarJogada(finishedByMaster: boolean = false, gameover: boolean = false){
-        console.log('finishedByMaster=' + finishedByMaster);
-        if(this.shouldLetFinish(finishedByMaster)){
-            let parcelas: Parcel[] = [];
-            this.checkedButtons.forEach(
-                parcela => {
+        let postForm: PostForm = {
+            parcelas: parcelas,
+            seloVerde: this.parcelasForm.getRawValue().seloVerde
+        };
 
-                    let produtos: Prod[] = [];
-                    parcela.forEach(
-                        produto => {
-                            produtos.push({
-                                id: Math.floor(produto/10),
-                                preco: produto%10
-                            })
-                        }
-                    );
-
-                    const parcel: Parcel = {
-                        produtos: produtos
-                    };
-
-                    parcelas.push(parcel);
-                }
-            );
-
-            let postForm: PostForm = {
-                parcelas: parcelas,
-                seloVerde: this.parcelasForm.getRawValue().seloVerde
-            };
-            
-            if (!gameover){
-                this.webStorageService.setData('hasMasterFinishedStage', finishedByMaster);
-
-                if(finishedByMaster) this.alertService.warning('Jogada finalizada pelo Mestre.', true);
-                else this.alertService.success('Jogada finalizada.', true);
-
-                this.produtoSubscription.unsubscribe();
-                this.notificationSubscription.unsubscribe();
-
-                this.agrService.nextPostForm(postForm);
-            }
-            else{
-                this.alertService.warning('O jogo terminou', true);
-                this.produtoSubscription.unsubscribe();
-                this.notificationSubscription.unsubscribe();
-                this.router.navigate([this.idJogo, 'gameover']);
-            }
-        }
-        else {
-            if(this.hasUnsetProducts())
-                this.inLineAlertButtonMessage = 'É preciso colocar todos os produtos comprados em parcelas antes de terminar a etapa.';
-            else if(!this.webStorageService.hasData(this.idAgr + 'voting'))
-                this.inLineAlertButtonMessage = 'É preciso votar para terminar a etapa.';
-        }
+        console.log('ParcelComponent.finalizarJogada: devia vim aqui?');
+        let postFormWrap: SharedDataWrap = {time: Date.now(), data: postForm};
+        this.agrService.nextPostForm(postFormWrap);
 
     }
 }

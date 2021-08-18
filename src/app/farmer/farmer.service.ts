@@ -8,20 +8,19 @@ import { ProdutoSimplified } from '../world/models/produto.simplified';
 import { BehaviorSubject } from 'rxjs';
 import { GameNotification } from '../world/models/game-notification';
 import { PostForm } from './postForm';
+import { SharedDataWrap } from '../world/models/shared-data-wrap';
 
 const API = environment.ApiUrl + '/request/api';
 const AGR_ROUTE = '/agricultor';
 const MASTER_ROUTE = '/mestre';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class FarmerService{
 
     private gameNotification = new BehaviorSubject<GameNotification>(null);
     sharedGameNotification = this.gameNotification.asObservable();
 
-    private farmerPostForm = new BehaviorSubject<PostForm>(null);
+    private farmerPostForm = new BehaviorSubject<SharedDataWrap>(null);
     sharedPostForm = this.farmerPostForm.asObservable();
     
     constructor(
@@ -33,9 +32,11 @@ export class FarmerService{
             this.gameNotification.next(newGameNotification);
     }
 
-    nextPostForm(newPostForm: PostForm){
-        if(newPostForm != null)
+    nextPostForm(newPostForm: SharedDataWrap){
+        if(newPostForm != null){
+            console.log('FarmerService.nextPostForm: payload=' + newPostForm);
             this.farmerPostForm.next(newPostForm);
+        }
     }
 
     getInfo(idJogo: number, idAgr: number){
@@ -72,6 +73,12 @@ export class FarmerService{
         return this.httpClient.post(
             API + '/' + idJogo + AGR_ROUTE + '/' + idAgr,
             postForm
+        );
+    }
+
+    getPapelSegundaEtapa(idJogo: number, idPessoa: number){
+        return this.httpClient.get(
+            API + '/' + idJogo + MASTER_ROUTE + '/papelSegundaEtapa/' + idPessoa
         );
     }
 
