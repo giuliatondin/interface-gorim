@@ -90,7 +90,10 @@ export class ChatRoomComponent implements OnInit, AfterViewChecked {
 
     getHour(timestamp: number){
         var newDate: Date = new Date(timestamp);
-        return newDate.getHours().toString() + ':' + newDate.getMinutes().toString();
+        var strMinutes = newDate.getMinutes().toString();
+        if (newDate.getMinutes() < 10) strMinutes = '0' + strMinutes;
+        
+        return newDate.getHours().toString() + ':' + strMinutes;
     }
 
     enterPressed(event: KeyboardEvent){

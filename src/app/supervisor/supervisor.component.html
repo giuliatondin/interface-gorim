@@ -42,7 +42,7 @@
                                                 <ng-template #impar>
                                                     <h5>{{ pessoas[(fine.idPessoa - (fine.idPessoa/2) - 0.5)].nome }}</h5>
                                                 </ng-template>
-                                                <p>Tipo de multa: {{ nomeFines[fine.tipo] }}</p>
+                                                <p>Tipo de multa: {{ nomeFines[fine.tipo-1] }}</p>
                                             </div>
                                         </div>
                                     </mat-expansion-panel>
@@ -94,14 +94,6 @@
                             class="btn btn--primary mb-2"
                         >Abrir histórico</a>
                         <app-transfer [idJogo]="idJogo" [idPessoa]="idFis"></app-transfer>
-                        <!--button
-                            class="btn btn--secondary mt-3"
-                            (click)="finalizarJogada()"
-                            [disabled]="!liberaBotao"
-                        >Finalizar jogada</button>
-                        <app-inline-alert
-                            [message]="inLineAlertButton"
-                        ></app-inline-alert-->
                     </div>
                 </div>
                 

@@ -208,7 +208,6 @@ export class SupervisorComponent implements OnInit {
             this.notificationSubscription.unsubscribe();
 
             this.alertService.success('Jogada finalizada.', true);
-            //this.router.navigate([this.idJogo, 'waitingPage', this.idVer]);
 
             let infoFirstStage: ChatInfo = JSON.parse(this.webStorageService.getData(this.idJogo + 'papel')) as ChatInfo;
             this.router.navigate([this.idJogo, infoFirstStage.role, infoFirstStage.idPessoa]);
